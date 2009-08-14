@@ -1,0 +1,65 @@
+--- data_injection/inc/plugin_data_injection.mapping.function.php	2009-06-22 17:57:32.000000000 -0700
++++ data_injection/inc/plugin_data_injection.mapping.function.php	2009-06-23 15:29:51.000000000 -0700
+@@ -64,6 +64,12 @@
+ 	if (in_array($primary_type,$CONNECT_TO_ALL_TYPES)) {
+ 		$types[] = array(CONNECTION_ALL_TYPES,$LANG["datainjection"]["associate"][0]);		
+ 	}
++	///////// begin modification for customfields plugin ///////////
++	global $ACTIVE_CUSTOMFIELDS_TYPES,$LANGCUSTOMFIELDS;
++	if (isset($ACTIVE_CUSTOMFIELDS_TYPES) && in_array($primary_type,$ACTIVE_CUSTOMFIELDS_TYPES)) {
++		$types[] = array($primary_type+5200,$LANG["plugin_customfields"]["title"]); // the corresponding customfield type
++	}
++	///////// end modification for customfields plugin //////////
+ 	
+ 	asort($types);
+ 	return $types;
+--- data_injection/inc/plugin_data_injection.engine.function.php	2009-07-19 11:38:17.000000000 -0700
++++ data_injection/inc/plugin_data_injection.engine.function.php	2009-08-12 10:48:04.000000000 -0700
+@@ -154,6 +154,10 @@
+ 				break;
+ 
+ 			default :
++				///////// begin modification for customfields plugin ///////////
++				if(($type>=5200) && ($type<=7699)) // Range reserved for custom fields
++					$where .= " AND ID=" . $fields["ID"]; // link by ID
++				///////// end modification for customfields plugin //////////
+ 				break;
+ 		}
+ 	}
+@@ -214,6 +218,10 @@
+ 
+ 			//Plugins
+ 		default :
++			///////// begin modification for customfields plugin ///////////
++			if(($device_type>=5200) && ($device_type<=7699)) // Range reserved for custom fields
++				return new plugin_customfields($device_type - 5200);
++			///////// end modification for customfields plugin //////////
+ 			$commonitem = new CommonItem;
+ 			$commonitem->setType($device_type, 1);
+ 			return $commonitem->obj;
+@@ -484,6 +492,7 @@
+ 		default :
+ 			break;
+ 	}
++	addField($common_fields, "customfields_ID", $ID); // used by customfields plugin
+ 
+ 	setFields($fields, $common_fields, $setFields);
+ }
+@@ -646,11 +655,17 @@
+ 			break;
+ 			
+ 		default :
++			///////// begin modification for customfields plugin ///////////
++			if(($type>=5200) && ($type<=7699)) // Range reserved for custom fields
++				addField($fields, "ID", $common_fields["customfields_ID"]);
++			else
++			///////// end modification for customfields plugin //////////
+ 			//Add entity field for plugins
+ 			if ($type > 1000)
+ 				addField($fields, "FK_entities", $entity);
+ 			break;
+ 	}
++	$unsetFields[]='customfields_ID'; // Used by customfields plugin
+ 	unsetFields($fields, $unsetFields);
+ }
+ 
