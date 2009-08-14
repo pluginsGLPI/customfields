@@ -26,13 +26,12 @@
 // Original Author of file: Ryan Foster
 // Contact: Matt Hoover <dev@opensourcegov.net>
 // Project Website: http://www.opensourcegov.net
-// Purpose of file: Italian translation of plugin customfields ver. 1.1.0
+// Purpose of file: Italian translation of plugin customfields 
 // by Passero 25.07.2009
 ----------------------------------------------------------------------
  */
 
 $title = 'Campi personalizzati';
-$version = '1.1.0';
 
 //English
 

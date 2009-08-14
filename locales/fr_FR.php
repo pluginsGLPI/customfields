@@ -32,7 +32,6 @@
  */
 
 $title = 'Champs Personnalisés';
-$version = '1.1.0';
 
 //Français
 

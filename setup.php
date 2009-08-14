@@ -37,7 +37,7 @@
 
 // This will be set to true when applying the glpi patch. 
 // See instructions in the patch directory
-define('CUSTOMFIELDS_GLPI_PATCH_APPLIED', false);
+define('CUSTOMFIELDS_GLPI_PATCH_APPLIED', true);
 
 // If auto activate set to true, custom fields will be automatically
 // added when a new record is inserted. If set to false, users must
@@ -129,7 +129,7 @@ function plugin_version_customfields()
 		'author' => 'Oregon State Data Center',
 		'homepage' => 'http://www.opensourcegov.net/projects/glpi-cf',
 		'minGlpiVersion' => '0.72',
-		'version' => '1.1.0');
+		'version' => '1.1.1');
 }
 // Checks prerequisites before install. May print errors or add message after redirect
 function plugin_customfields_check_prerequisites()

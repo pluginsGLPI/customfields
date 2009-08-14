@@ -31,7 +31,6 @@
  */
 
 $title = 'Custom Fields';
-$version = '1.1.0';
 
 //English
 
