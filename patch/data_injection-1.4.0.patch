@@ -1,0 +1,52 @@
+diff -ur data_injection/inc/plugin_data_injection.engine.function.php data_injection/inc/plugin_data_injection.engine.function.php
+--- data_injection/inc/plugin_data_injection.engine.function.php	2009-01-03 14:03:32.000000000 -0800
++++ data_injection/inc/plugin_data_injection.engine.function.php	2009-02-25 08:39:36.000000000 -0800
+@@ -151,6 +151,10 @@
+ 				break;
+ 
+ 			default :
++				///////// begin modification for customfields plugin ///////////
++				if(($type>=5200) && ($type<=5399)) // Range reserved for custom fields
++					$where .= " AND ID=" . $fields["ID"]; // link by ID
++				///////// end modification for customfields plugin //////////
+ 				break;
+ 		}
+ 	}
+@@ -211,6 +215,10 @@
+ 
+ 			//Plugins
+ 		default :
++			///////// begin modification for customfields plugin ///////////
++			if(($device_type>=5200) && ($device_type<=5399)) // Range reserved for custom fields
++				return new plugin_customfields($device_type - 5200);
++			///////// end modification for customfields plugin //////////
+ 			$commonitem = new CommonItem;
+ 			$commonitem->setType($device_type, 1);
+ 			return $commonitem->obj;
+@@ -608,6 +616,10 @@
+ 			addField($fields, "device_type", $model->getDeviceType());
+ 			break;
+ 		default :
++			///////// begin modification for customfields plugin ///////////
++			if(($type>=5200) && ($type<=5399)) // Range reserved for custom fields
++				addField($fields, "ID", $common_fields["device_id"]);
++			///////// end modification for customfields plugin //////////
+ 			//Add entity field for plugins
+ 			if ($type > 1000)
+ 				addField($fields, "FK_entities", $entity);
+diff -ur data_injection/inc/plugin_data_injection.mapping.function.php data_injection/inc/plugin_data_injection.mapping.function.php
+--- data_injection/inc/plugin_data_injection.mapping.function.php	2009-01-03 14:03:32.000000000 -0800
++++ data_injection/inc/plugin_data_injection.mapping.function.php	2009-02-25 08:45:26.000000000 -0800
+@@ -64,6 +64,12 @@
+ 	if (in_array($primary_type,$CONNECT_TO_SOFTWARE_TYPES)) {
+ 		$types[] = array(SOFTWARE_CONNECTION_TYPE,$LANG["help"][31]);		
+ 	}
++	///////// begin modification for customfields plugin ///////////
++	global $ACTIVE_CUSTOMFIELDS_TYPES,$LANGCUSTOMFIELDS;
++	if (isset($ACTIVE_CUSTOMFIELDS_TYPES) && in_array($primary_type,$ACTIVE_CUSTOMFIELDS_TYPES)) {
++		$types[] = array($primary_type+5200,$LANGCUSTOMFIELDS["title"]); // the corresponding customfield type
++	}
++	///////// end modification for customfields plugin //////////
+ 	
+ 	asort($types);
+ 	return $types;
