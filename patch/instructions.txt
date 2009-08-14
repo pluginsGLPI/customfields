@@ -1,0 +1,27 @@
+WARNING: USE THESE PATCHES AT YOUR OWN RISK. WE RECOMMEND MAKING A BACKUP OF YOUR FILES FIRST!
+These instructions are for linux/unix systems. For other systems, open the patch files in a
+text editor and add the new code to the appropriate files manually.
+-------------------------------------------------------------------------------------------------
+
+To enable full functionality of Custom Fields, apply the GLPI patch (for version 0.71.5):
+1) Make sure that your GLPI version matches the version number of the patch.
+2) Backup these files:
+   inc/search.function.php
+   ajax/dropdownMassiveActionField.php
+   plugins/customfields/setup.php
+3) Go to the main glpi folder
+4) Run the command below:
+sudo patch -p0 < plugins/customfields/patch/glpi-0.71.5.patch
+
+
+-------------------------------------------------------------------------------------------------
+To enable data injection support for Custom Fields, apply the data injection patch (for version
+1.4.0):
+1) Make sure that your Data Injection version matches the version number of the patch.
+2) Backup these files: 
+   plugins/data_injection/inc/plugin_data_injection.engine.function.php
+   plugins/data_injection/inc/plugin_data_injection.mapping.function.php
+3) Go to the plugins folder
+4) Run the command below:
+sudo patch -p0 < customfields/patch/data_injection-1.4.0.patch
+
