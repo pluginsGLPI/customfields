@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS `glpi_plugin_customfields_fields`;
 CREATE TABLE `glpi_plugin_customfields_fields` (
         `ID` int(11) NOT NULL auto_increment,
-		`device_type` tinyint(11) NOT NULL default '0',
+	`device_type` int(11) NOT NULL default '0',
         `system_name` varchar(40) collate utf8_unicode_ci NOT NULL default '',
         `label` varchar(70) collate utf8_unicode_ci NOT NULL default '',
         `data_type` varchar(30) collate utf8_unicode_ci NOT NULL default 'int(11)',
@@ -11,6 +11,8 @@ CREATE TABLE `glpi_plugin_customfields_fields` (
         `dropdown_table` varchar(255) collate utf8_unicode_ci NOT NULL default '',
         `deleted` smallint(6) NOT NULL DEFAULT '0',
         `sopt_pos` int(11) NOT NULL DEFAULT '0',
+        `required` smallint(6) NOT NULL DEFAULT '0',
+        `entities` VARCHAR(255) NOT NULL DEFAULT '*',
         PRIMARY KEY  (`ID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3 ;
 

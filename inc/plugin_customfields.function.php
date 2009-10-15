@@ -310,6 +310,18 @@ function plugin_customfields_showAssociated($device_type,$ID,$withtemplate='')
 	if($info['enabled']!=1)
 		return;
 	
+	$table = plugin_customfields_link_id_table($device_type);
+	$query="SELECT FK_entities FROM `$table` WHERE ID='$ID'";
+	$result = $DB->query($query);
+	$number = $DB->numrows($result);
+	if ($number==1)
+	{
+		$data=$DB->fetch_array($result);
+		$entity=$data['FK_entities'];
+	}
+	else
+		$entity=0;
+		
 	$table=plugin_customfields_table($device_type);
 	if ($table)
 	{
@@ -332,17 +344,33 @@ function plugin_customfields_showAssociated($device_type,$ID,$withtemplate='')
 	else // Data was found, so display it
 	{
 		$data=$DB->fetch_array($result);
-		$query="SELECT * FROM glpi_plugin_customfields_fields WHERE device_type='$device_type' AND hidden='0' AND deleted='0' ORDER BY sort_order;";
+		$query="SELECT * FROM glpi_plugin_customfields_fields WHERE device_type='$device_type' AND hidden='0' AND deleted='0'  AND (entities='*' OR entities LIKE '%$entity%') ORDER BY sort_order;";
 		$result = $DB->query($query);
 
 		echo '<form action="'.GLPI_ROOT.'/plugins/customfields/front/plugin_customfields.form.php" method="post" name="form_cf">';
 		echo '<table class="tab_cadre_fixe">';
 		$count=0;
 		while ($fields=$DB->fetch_array($result)){
+			if($fields['entities']!='*')
+			{
+				$entities=explode(',',$fields['entities']);
+				// don't process the field if it shouldn't be shown for this entity
+				if(!in_array($entity,$entities))
+					continue;
+			}
+			
 			$field_name=$fields['system_name'];
 			if($fields['data_type']!='sectionhead')
 				$value=$data[$field_name];
 			$count++;
+
+			if($fields['required']) {
+				$classnames = ' required';
+				$classes = ' class="required"';
+			} else {
+				$classnames = '';
+				$classes = '';
+			}
 
 			if($fields['data_type']=='sectionhead'
 				 || $fields['data_type']=='notes' 
@@ -361,7 +389,7 @@ function plugin_customfields_showAssociated($device_type,$ID,$withtemplate='')
 				elseif($fields['data_type']=='notes')
 				{
 					echo '<tr class="tab_bg_1">';
-					echo '<td colspan="4" valign="middle" align="center" class="tab_bg_1">';
+					echo '<td colspan="4" valign="middle" align="center" class="tab_bg_1'.$classnames.'">';
 					echo $fields['label'].':<br>';
 					echo '<textarea name="'.$field_name.'" rows="20" cols="100">'.$value.'</textarea>';
 					echo '</td></tr>';
@@ -370,7 +398,7 @@ function plugin_customfields_showAssociated($device_type,$ID,$withtemplate='')
 				{
 					echo '<tr class="tab_bg_1">';
 					echo '<td valign="top">'.$fields['label'].': </td>';
-					echo '<td colspan="3" align="center">';
+					echo '<td colspan="3" align="center"'.$classes.'>';
 					echo '<textarea name="'.$field_name.'" rows="4" cols="75">'.$value.'</textarea>';
 					echo '</td></tr>';
 				}
@@ -380,8 +408,8 @@ function plugin_customfields_showAssociated($device_type,$ID,$withtemplate='')
 			{
 				if($count % 2)
 					echo '<tr class="tab_bg_1">';
-				echo '<td>'.$fields['label'].': </td>';
-				echo '<td>';
+				echo '<td'.$classes.'>'.$fields['label'].': </td>';
+				echo '<td'.$classes.'>';
 				switch($fields['data_type'])
 				{
 					case 'general':
@@ -544,6 +572,22 @@ function plugin_customfields_upgrade($oldversion)
 		}
 	}
  	
+	// Add a column to indicate if a field is required
+	if($oldversion < 112)
+	{
+		$sql = "ALTER TABLE `glpi_plugin_customfields_fields` ADD `required` smallint(6) NOT NULL DEFAULT '0';";
+		$result=$DB->query($sql);
+		$sql = "ALTER TABLE `glpi_plugin_customfields_fields` CHANGE `device_type` `device_type` INT(11) NOT NULL DEFAULT '0';";
+		$result=$DB->query($sql);
+	}
+
+	// Add a column to indicate which entites to show the field with
+	if($oldversion < 113)
+	{
+		$sql = "ALTER TABLE `glpi_plugin_customfields_fields` ADD `entities` VARCHAR(255) NOT NULL DEFAULT '*';";
+		$result=$DB->query($sql);
+	}
+
 	// Upgrade
 	$DB_file = GLPI_ROOT.'/plugins/customfields/inc/plugin_customfields.setup1.sql';
 	$DBf_handle = fopen($DB_file, 'rt');
