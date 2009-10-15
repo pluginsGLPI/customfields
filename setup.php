@@ -37,7 +37,7 @@
 
 // This will be set to true when applying the glpi patch. 
 // See instructions in the patch directory
-define('CUSTOMFIELDS_GLPI_PATCH_APPLIED', true);
+define('CUSTOMFIELDS_GLPI_PATCH_APPLIED', false);
 
 // If auto activate set to true, custom fields will be automatically
 // added when a new record is inserted. If set to false, users must
