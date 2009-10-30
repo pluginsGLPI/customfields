@@ -114,7 +114,8 @@ function plugin_customfields_getSearchOption()
 	{
 		// Range 5200-7699 used by this plugin
 		$lpos = $data['sopt_pos'] + 5200; // first 1000 used for logging
-		$spos = $data['sopt_pos'] + 6200; // next 1000 used for searches
+		$spos = $data['sopt_pos'] + 6200; // next 900 used for regular searches
+		$xspos = $data['sopt_pos'] + 7100; // next 100 used for extended searches
 		if($data['device_type']!=$device_type)
 		{
 			$mupos = 7200; // last 500 used for mass update 
@@ -136,6 +137,11 @@ function plugin_customfields_getSearchOption()
 		elseif($data['data_type']=='sectionhead')
 		{
 			$sopt[$device_type]['customfields_'.$data['system_name']]=$data['label'];
+			if($device_type==NETWORKING_PORT_TYPE)
+			{
+				foreach(array(COMPUTER_TYPE, NETWORKING_TYPE, PRINTER_TYPE, PERIPHERAL_TYPE, PHONE_TYPE) as $type)
+					$sopt[$type]['customfields_'.$data['system_name']]=$data['label'];
+			}
 		}
 		elseif($data['data_type']=='dropdown')
 		{
@@ -147,6 +153,22 @@ function plugin_customfields_getSearchOption()
 				$sopt[$device_type][$lpos]['field']='name';
 			$sopt[$device_type][$lpos]['linkfield']=$data['system_name'];
 			$sopt[$device_type][$lpos]['name']=$data['label'];
+
+			if($device_type==NETWORKING_PORT_TYPE)
+			{
+				foreach(array(COMPUTER_TYPE, NETWORKING_TYPE, PRINTER_TYPE, PERIPHERAL_TYPE, PHONE_TYPE) as $type)
+				{
+					$sopt[$type][$xspos]['table']=$data['dropdown_table'];
+					if($data['is_tree']==1)
+						$sopt[$type][$xspos]['field']='completename';
+					else
+						$sopt[$type][$xspos]['field']='name';
+					$sopt[$type][$xspos]['linkfield']=$data['system_name'];
+					$sopt[$type][$xspos]['name']=$data['label'];
+					$sopt[$type][$xspos]['forcegroupby']=true;
+					$sopt[$type][$xspos]['purpose']='search';
+				}
+			}
 		}
 		else
 		{
@@ -173,11 +195,26 @@ function plugin_customfields_getSearchOption()
 				$sopt[$device_type][$mupos]['purpose']='update'; // an extra field used to clean search options
 			}
 			// for search
-			$sopt[$device_type][$spos]['table']=$table2;
-			$sopt[$device_type][$spos]['field']=$data['system_name'];
-			$sopt[$device_type][$spos]['linkfield']='ID';
-			$sopt[$device_type][$spos]['name']=$data['label'];
-			$sopt[$device_type][$spos]['purpose']='search'; // an extra field used to clean search options
+			if($device_type==NETWORKING_PORT_TYPE)
+			{
+				foreach(array(COMPUTER_TYPE, NETWORKING_TYPE, PRINTER_TYPE, PERIPHERAL_TYPE, PHONE_TYPE) as $type)
+				{
+					$sopt[$type][$xspos]['table']='glpi_plugin_customfields_networking_ports';
+					$sopt[$type][$xspos]['field']=$data['system_name'];
+					$sopt[$type][$xspos]['linkfield']='ID';
+					$sopt[$type][$xspos]['name']=$data['label'];
+					$sopt[$type][$xspos]['forcegroupby']=true;
+					$sopt[$type][$xspos]['purpose']='search';
+				}
+			}
+			else
+			{
+				$sopt[$device_type][$spos]['table']=$table2;
+				$sopt[$device_type][$spos]['field']=$data['system_name'];
+				$sopt[$device_type][$spos]['linkfield']='ID';
+				$sopt[$device_type][$spos]['name']=$data['label'];
+				$sopt[$device_type][$spos]['purpose']='search'; // an extra field used to clean search options
+			}
 		}
 	}
 
@@ -218,10 +255,32 @@ function plugin_customfields_addLeftJoin($type,$ref_table,$new_table,$linkfield,
 		$out=addLeftJoin($type,$ref_table,$already_link_tables,$new_table,$linkfield);
 		return $out;
 	}
+	elseif ($new_table=='glpi_plugin_customfields_networking_ports')
+	{
+		$out=addLeftJoin($type,$ref_table,$already_link_tables,"glpi_networking_ports",'');
+//		$out.=addLeftJoin(NETWORKING_PORT_TYPE,'glpi_networking_ports',$already_link_tables,"glpi_plugin_customfields_networking_ports",'ID'); 
+		// addLeftJoinThis doesn't work here for some reason, so we hard code the second join
+		$out.=" LEFT JOIN glpi_plugin_customfields_networking_ports ON (glpi_networking_ports.ID = glpi_plugin_customfields_networking_ports.ID) ";
+		return $out;
+	}
 	else // it is a custom dropdown
 	{
-		$out=addLeftJoin($type,$ref_table,$already_link_tables,$type_table,'ID');
-		$out.= " LEFT JOIN $new_table ON ($new_table.ID = $type_table.$linkfield) ";
+		global $DB;
+		$query="SELECT * FROM `glpi_plugin_customfields_fields` WHERE `dropdown_table`='$new_table' AND `device_type`='$type' AND `deleted`=0 AND `hidden`=0;";
+		$result=$DB->query($query);
+		if($DB->numrows($result)) // A regular dropdown (this fails if the same dd is used in the device AND in networking ports)
+		{
+			$out=addLeftJoin($type,$ref_table,$already_link_tables,$type_table,'ID');
+			$out.= " LEFT JOIN $new_table ON ($new_table.ID = $type_table.$linkfield) ";
+		}
+		else // a dropdown in network ports
+		{
+			// Link to glpi_networking_ports first
+			$out=addLeftJoin($type,$ref_table,$already_link_tables,"glpi_networking_ports",'');
+			$out.=addLeftJoin(NETWORKING_PORT_TYPE,'glpi_networking_ports',$already_link_tables,
+				"glpi_plugin_customfields_networking_ports",'ID');
+			$out.=" LEFT JOIN $new_table ON (glpi_plugin_customfields_networking_ports.$linkfield = $new_table.ID) ";
+		}
 		return $out;
 	}
 }
