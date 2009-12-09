@@ -93,7 +93,7 @@ if(isset($_GET['device_type']))
 			{
 				// Keep a record of the deleted field for the log
 				$sql="UPDATE glpi_plugin_customfields_fields SET deleted='1', ".
-					" system_name='DELETED',sort_order=0,hidden=1,dropdown_table='' ".
+					" system_name='DELETED',sort_order=0,dropdown_table='' ".
 					" WHERE device_type='$device_type' AND ID='".intval($ID)."' AND system_name='$system_name';";
 			}
 			else
@@ -127,7 +127,6 @@ if(isset($_GET['device_type']))
 	{
 		$data_ok=false;
 		$sort=intval($_POST['sort']);
-		$hidden=isset($_POST['hidden']) ? 1 : 0;
 
 		if(isset($_POST['dropdown_id'])) // Add a drop down menu
 		{
@@ -195,9 +194,9 @@ if(isset($_GET['device_type']))
 				$sopt_pos = 1;
 
 			$sql="INSERT INTO glpi_plugin_customfields_fields (device_type, system_name, label, data_type, ".
-				" sort_order, hidden, dropdown_table, deleted, sopt_pos)".
+				" sort_order, dropdown_table, deleted, sopt_pos, restricted)".
 				" VALUES ('$device_type','$system_name','$label','$data_type',".
-				" '$sort','$hidden','$dd_table',0,'$sopt_pos');";
+				" '$sort','$dd_table',0,'$sopt_pos',0);";
 			$result = $DB->query($sql);
 			
 			if($data_type!='sectionhead') // add the field to the data table if it isn't a section header
@@ -238,12 +237,23 @@ if(isset($_GET['device_type']))
 			$ID=$data['ID'];
 			$label=$_POST['label'][$ID];
 			$sort=intval($_POST['sort'][$ID]);
-			$hidden=isset($_POST['hidden'][$ID]) ? 1 : 0;
 			$required=isset($_POST['required'][$ID]) ? 1 : 0;
 			$entities=trim($_POST['entities'][$ID]);
-			$sql="UPDATE `glpi_plugin_customfields_fields` SET `label`='$label',`sort_order`='$sort',`hidden`='$hidden',`required`='$required',`entities`='$entities' ".
+			$restricted=isset($_POST['restricted'][$ID]) ? 1 : 0;
+			$sql="UPDATE `glpi_plugin_customfields_fields` SET `label`='$label',`sort_order`='$sort',".
+				" `required`='$required',`entities`='$entities',`restricted`='$restricted' ".
 				" WHERE `device_type`='$device_type' AND `ID`='$ID';";
 			$DB->query($sql);
+			if($restricted==1 && $data['restricted']==0) 
+			{
+				$sql="ALTER TABLE `glpi_plugin_customfields_profiledata` ADD `{$device_type}_{$data['system_name']}` char(1);";
+				$DB->query($sql);
+			}
+			elseif($restricted==0 && $data['restricted']==1) 
+			{
+				$sql="ALTER TABLE `glpi_plugin_customfields_profiledata` DROP `{$device_type}_{$data['system_name']}`;";
+				$DB->query($sql);
+			}
 		}
 		glpi_header($_SERVER['HTTP_REFERER']);
 	}
@@ -265,8 +275,8 @@ if(isset($_GET['device_type']))
 	echo '<th>'.$LANG['plugin_customfields']['System_Name'].'</th>';
 	echo '<th>'.$LANG['plugin_customfields']['Type'].'</th>';
 	echo '<th>'.$LANG['plugin_customfields']['Sort'].'</th>';
-	echo '<th>'.$LANG['plugin_customfields']['Hidden'].'</th>';
 	echo '<th>'.$LANG['plugin_customfields']['Required'].'</th>';
+	echo '<th>'.$LANG['plugin_customfields']['Restricted'].'</th>';
 	echo '<th>'.$LANG['plugin_customfields']['Entities'].'</th>';
 	echo '<th></th>';
 	echo '</tr>';
@@ -283,11 +293,16 @@ if(isset($_GET['device_type']))
 		echo '<td>'.$data['system_name'].'</td>';
 		echo '<td>'.$LANG['plugin_customfields'][$data['data_type']].'</td>';
 		echo '<td><input name="sort['.$ID.']" value="'.$data['sort_order'].'" size="2"></td>';
-		echo '<td align="center"><input name="hidden['.$ID.']" type="checkbox"';
-		if($data['hidden']) echo ' checked="checked"';
-		echo '></td>';
-		echo '<td align="center"><input name="required['.$ID.']" type="checkbox"';
-		if($data['required']) echo ' checked="checked"';
+		if($data['data_type']!='sectionhead')
+		{
+			echo '<td align="center"><input name="required['.$ID.']" type="checkbox"';
+			if($data['required']) echo ' checked="checked"';
+			echo '></td>';
+		}
+		else
+			echo '<td></td>';
+		echo '<td align="center"><input name="restricted['.$ID.']" type="checkbox"';
+		if($data['restricted']) echo ' checked="checked"';
 		echo '></td>';
 		echo '<td><input name="entities['.$ID.']" value="'.$data['entities'].'" size="7"></td>';
 		echo '<td><input name="delete['.$ID.']" class="submit" type="submit" value="'.$LANG['buttons'][6].'"></td>';
@@ -313,7 +328,6 @@ if(isset($_GET['device_type']))
 	echo '<th>'.$LANG['plugin_customfields']['System_Name'].'</th>';
 	echo '<th>'.$LANG['plugin_customfields']['Type'].'</th>';
 	echo '<th>'.$LANG['plugin_customfields']['Sort'].'</th>';
-//	echo '<th>'.$LANG['plugin_customfields']['Hidden'].'</th>';
 	echo '<th></th>';
 	echo '</tr>';
 	echo '<tr class="tab_bg_1">';
@@ -330,7 +344,6 @@ if(isset($_GET['device_type']))
 	echo '<option value="sectionhead">'.$LANG['plugin_customfields']['sectionhead'].'</option>';
 	echo '</select></td>';
 	echo '<td><input name="sort" size="2"></td>';
-//	echo '<td align="center"><input name="hidden" type="checkbox"></td>';
 	echo '<td><input name="add" class="submit" type="submit" value="'.$LANG['buttons'][8].'"></td>';
 	echo '</tr>';
 	echo '</table>';
@@ -351,7 +364,6 @@ if(isset($_GET['device_type']))
 		echo '<tr>';
 		echo '<th>'.$LANG['plugin_customfields']['Field'].'</th>';
 		echo '<th>'.$LANG['plugin_customfields']['Sort'].'</th>';
-//		echo '<th>'.$LANG['plugin_customfields']['Hidden'].'</th>';
 		echo '<th></th>';
 		echo '</tr>';
 		echo '<tr class="tab_bg_1">';
@@ -362,7 +374,6 @@ if(isset($_GET['device_type']))
 		}
 		echo '</select></td>';
 		echo '<td><input name="sort" size="2"></td>';
-//		echo '<td align="center"><input name="hidden" type="checkbox"></td>';
 		echo '<td><input name="add" class="submit" type="submit" value="'.$LANG['buttons'][8].'"></td>';
 		echo '</tr>';
 		echo '</table>';
@@ -384,7 +395,6 @@ if(isset($_GET['device_type']))
 		echo '<tr>';
 		echo '<th>'.$LANG['plugin_customfields']['Dropdown_Name'].'</th>';
 		echo '<th>'.$LANG['plugin_customfields']['Sort'].'</th>';
-//		echo '<th>'.$LANG['plugin_customfields']['Hidden'].'</th>';
 		echo '<th></th>';
 		echo '</tr>';
 		echo '<tr class="tab_bg_1">';
@@ -394,7 +404,6 @@ if(isset($_GET['device_type']))
 		}
 		echo '</select></td>';
 		echo '<td><input name="sort" value="'.$data['sort_order'].'" size="2"></td>';
-//		echo '<td align="center"><input name="hidden" type="checkbox"></td>';
 		echo '<td><input name="add" class="submit" type="submit" value="'.$LANG['buttons'][8].'"></td>';
 		echo '</tr>';
 		echo '</table>';

@@ -47,7 +47,7 @@ function plugin_customfields_getDatabaseRelations()
 	if ($plugin->isActivated("customfields"))
 	{
 		$relations=array();
-		$query="SELECT * FROM glpi_plugin_customfields_fields WHERE hidden=0 AND deleted=0 AND data_type='dropdown' ORDER BY device_type";
+		$query="SELECT * FROM glpi_plugin_customfields_fields WHERE entities!='' AND deleted=0 AND data_type='dropdown' ORDER BY device_type";
 		$result=$DB->query($query);
 		while ($data=$DB->fetch_assoc($result))
 		{
@@ -124,7 +124,7 @@ function plugin_customfields_getSearchOption()
 		}
 
 		$device_type=$data['device_type'];
-		if($data['deleted'] || $data['hidden'] || !$data['enabled']) // preserve names for log history
+		if($data['deleted'] || $data['entities']=='' || !$data['enabled']) // preserve names for log history
 		{
 			if(CUSTOMFIELDS_GLPI_PATCH_APPLIED)
 			{
@@ -266,7 +266,7 @@ function plugin_customfields_addLeftJoin($type,$ref_table,$new_table,$linkfield,
 	else // it is a custom dropdown
 	{
 		global $DB;
-		$query="SELECT * FROM `glpi_plugin_customfields_fields` WHERE `dropdown_table`='$new_table' AND `device_type`='$type' AND `deleted`=0 AND `hidden`=0;";
+		$query="SELECT * FROM `glpi_plugin_customfields_fields` WHERE `dropdown_table`='$new_table' AND `device_type`='$type' AND `deleted`=0 AND `entities`!='';";
 		$result=$DB->query($query);
 		if($DB->numrows($result)) // A regular dropdown (this fails if the same dd is used in the device AND in networking ports)
 		{
@@ -391,10 +391,10 @@ function plugin_get_headings_customfields($type,$ID,$withtemplate)
 	global $LANG, $ACTIVE_CUSTOMFIELDS_TYPES;
 
 	// Show the tab if Custom fields have been activated for this device type
-	if (!empty($ACTIVE_CUSTOMFIELDS_TYPES) && in_array($type,$ACTIVE_CUSTOMFIELDS_TYPES)) 
+	if ($type==PROFILE_TYPE || !empty($ACTIVE_CUSTOMFIELDS_TYPES) && in_array($type,$ACTIVE_CUSTOMFIELDS_TYPES)) 
 	{
 		// template case
-		if ($withtemplate)
+		if ($withtemplate || $ID<0 || $ID=='')
 			return array();
 		// Non template case
 		else 
@@ -410,7 +410,7 @@ function plugin_headings_actions_customfields($type)
 {
 	global $ACTIVE_CUSTOMFIELDS_TYPES;
 
-	if (!empty($ACTIVE_CUSTOMFIELDS_TYPES) && in_array($type,$ACTIVE_CUSTOMFIELDS_TYPES))
+	if ($type==PROFILE_TYPE || !empty($ACTIVE_CUSTOMFIELDS_TYPES) && in_array($type,$ACTIVE_CUSTOMFIELDS_TYPES))
 		return array(1 => 'plugin_headings_customfields');
 	else
 		return false;
@@ -419,6 +419,14 @@ function plugin_headings_actions_customfields($type)
 // customfields of an action heading -- show the custom fields
 function plugin_headings_customfields($type,$ID,$withtemplate=0)
 {
+	if($type==PROFILE_TYPE) 
+	{
+		global $CFG_GLPI;
+		$prof=new plugin_customfields_Profile();
+		if (!$prof->GetfromDB($ID))
+			plugin_customfields_createaccess($ID);
+		$prof->showForm($CFG_GLPI["root_doc"]."/plugins/customfields/front/plugin_customfields.profile.php",$ID);
+	} else
 	if ($ID > -1)
 	{
 		echo '<div align="center">';

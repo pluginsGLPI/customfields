@@ -6,13 +6,13 @@ CREATE TABLE `glpi_plugin_customfields_fields` (
         `label` varchar(70) collate utf8_unicode_ci NOT NULL default '',
         `data_type` varchar(30) collate utf8_unicode_ci NOT NULL default 'int(11)',
         `sort_order` smallint(6) NOT NULL default '0',
-        `hidden` smallint(6) NOT NULL default '0',
         `default_value` varchar(255) collate utf8_unicode_ci NOT NULL default '',
         `dropdown_table` varchar(255) collate utf8_unicode_ci NOT NULL default '',
         `deleted` smallint(6) NOT NULL DEFAULT '0',
         `sopt_pos` int(11) NOT NULL DEFAULT '0',
         `required` smallint(6) NOT NULL DEFAULT '0',
         `entities` VARCHAR(255) NOT NULL DEFAULT '*',
+        `restricted` smallint(6) NOT NULL DEFAULT '0',
         PRIMARY KEY  (`ID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3 ;
 

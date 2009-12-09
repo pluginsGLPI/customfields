@@ -35,7 +35,7 @@
 // Purpose of file: Perform update, activate, and delete actions
 // ----------------------------------------------------------------------
 
-$NEEDED_ITEMS=array('computer','printer','networking','monitor','software','peripheral','phone','user','enterprise','contract','infocom','group');
+$NEEDED_ITEMS=array('computer','printer','networking','monitor','software','peripheral','phone','user','enterprise','contract','infocom','group','entity');
 define('GLPI_ROOT', '../../..');
 
 include (GLPI_ROOT.'/inc/includes.php');

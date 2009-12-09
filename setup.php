@@ -46,13 +46,14 @@ define('CUSTOMFIELDS_AUTOACTIVATE', true);
 
 // This is the last version that any tables changed.  This version may be 
 // older than the plugin version if there were no changes db changes.
-define('CUSTOMFIELDS_DB_VERSION_REQUIRED', 113); // 1.1.3
+define('CUSTOMFIELDS_DB_VERSION_REQUIRED', 115); // 1.1.5
 
 $ACTIVE_CUSTOMFIELDS_TYPES = array();
 $ALL_CUSTOMFIELDS_TYPES = array();
 
 include_once ('inc/plugin_customfields.function.php');
 include_once ('inc/plugin_customfields.class.php');
+include_once ('inc/plugin_customfields.profile_class.php');
 
 // Initialize the plugin's hooks (this function is required)
 function plugin_init_customfields()
@@ -71,6 +72,8 @@ function plugin_init_customfields()
 	        'specif_entities_tables' => false,
 		'recursive_type' => false
 	        ));
+
+	$PLUGIN_HOOKS['change_profile']['customfields'] = 'plugin_customfields_changeprofile';
 
 	if (isset($_SESSION['glpiID']))
 	{
@@ -129,7 +132,7 @@ function plugin_version_customfields()
 		'author' => 'Oregon State Data Center',
 		'homepage' => 'http://www.opensourcegov.net/projects/glpi-cf',
 		'minGlpiVersion' => '0.72',
-		'version' => '1.1.3');
+		'version' => '1.1.5');
 }
 // Checks prerequisites before install. May print errors or add message after redirect
 function plugin_customfields_check_prerequisites()
