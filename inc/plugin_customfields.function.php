@@ -683,8 +683,12 @@ function plugin_customfields_upgrade($oldversion)
 			WHERE `deleted`='0' AND data_type!='sectionhead' AND data_type!='date'
 			ORDER BY `device_type`, `sort_order`, `ID`;";
 		$result=$DB->query($sql);
+		set_time_limit(300);
+		echo 'Updating Custom Fields...';
 		while ($data=$DB->fetch_array($result))
 		{
+			echo '.';
+			glpi_flush();
 			$table =plugin_customfields_table($data['device_type']);
 			$field = $data['system_name'];
 			$newtype = $transform[$data['data_type']];
@@ -697,6 +701,8 @@ function plugin_customfields_upgrade($oldversion)
 			}
 		}
 		plugin_customfields_exec_sql_file('/plugins/customfields/install/plugin_customfields.changes-116.sql');
+		echo 'finished.';
+		glpi_flush();
 	}
 
 	// Upgrade
