@@ -46,7 +46,7 @@ define('CUSTOMFIELDS_AUTOACTIVATE', true);
 
 // This is the last version that any tables changed.  This version may be 
 // older than the plugin version if there were no changes db changes.
-define('CUSTOMFIELDS_DB_VERSION_REQUIRED', 115); // 1.1.5
+define('CUSTOMFIELDS_DB_VERSION_REQUIRED', 116); // 1.1.6
 
 $ACTIVE_CUSTOMFIELDS_TYPES = array();
 $ALL_CUSTOMFIELDS_TYPES = array();
@@ -132,7 +132,7 @@ function plugin_version_customfields()
 		'author' => 'Oregon State Data Center',
 		'homepage' => 'http://www.opensourcegov.net/projects/glpi-cf',
 		'minGlpiVersion' => '0.72',
-		'version' => '1.1.5');
+		'version' => '1.1.6');
 }
 // Checks prerequisites before install. May print errors or add message after redirect
 function plugin_customfields_check_prerequisites()

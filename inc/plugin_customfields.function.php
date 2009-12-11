@@ -226,7 +226,7 @@ function plugin_customfields_create_data_table($device_type)
 
 	if(!TableExists($table))
 	{
-		$sql="CREATE TABLE `$table` (`ID` int(11) NOT NULL, PRIMARY KEY  (`ID`))".
+		$sql="CREATE TABLE `$table` (`ID` int(11) NOT NULL default '0', PRIMARY KEY  (`ID`))".
 			" ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3;";
 		$result = $DB->query($sql);
 		return ($result ? true : false);
@@ -564,9 +564,9 @@ function plugin_customfields_install()
 
 	if(!TableExists('glpi_plugin_customfields'))
 	{
-		plugin_customfields_exec_sql_file('/plugins/customfields/inc/plugin_customfields.setup1.sql');
-		plugin_customfields_exec_sql_file('/plugins/customfields/inc/plugin_customfields.setup2.sql');
-		plugin_customfields_exec_sql_file('/plugins/customfields/inc/plugin_customfields.setup3.sql');
+		plugin_customfields_exec_sql_file('/plugins/customfields/install/plugin_customfields.setup1.sql');
+		plugin_customfields_exec_sql_file('/plugins/customfields/install/plugin_customfields.setup2.sql');
+		plugin_customfields_exec_sql_file('/plugins/customfields/install/plugin_customfields.setup3.sql');
 		return true;
 	}
 	else
@@ -590,6 +590,8 @@ function plugin_customfields_install()
                 if($dbversion < CUSTOMFIELDS_DB_VERSION_REQUIRED)
 		{
 			addMessageAfterRedirect($LANG['plugin_customfields']['setup'][5]);
+			if(CUSTOMFIELDS_DB_VERSION_REQUIRED==116)
+				addMessageAfterRedirect('<b style="color:red">WE RECOMMEND BACKING UP YOUR DATA BEFORE ACTIVATING CUSTOM FIELDS VERSION 1.1.6!</b>');
                         return true;
 		}
 		else
@@ -662,19 +664,43 @@ function plugin_customfields_upgrade($oldversion)
 		$result=$DB->query($sql);
 		$sql = "ALTER TABLE `glpi_plugin_customfields_fields` ADD `restricted` smallint(6) NOT NULL DEFAULT '0';";
 		$result=$DB->query($sql);
-		plugin_customfields_exec_sql_file('/plugins/customfields/inc/plugin_customfields.setup3.sql');
+		plugin_customfields_exec_sql_file('/plugins/customfields/install/plugin_customfields.setup3.sql');
+	}
+
+	// Upgrade fields to be compatable with mysql strict mode
+	if($oldversion < 116)
+	{
+		$transform=array();
+		$transform['general'] = 'VARCHAR(255) collate utf8_unicode_ci default NULL';
+		$transform['dropdown']= 'INT(11) NOT NULL default \'0\'';
+		$transform['yesno']   = 'SMALLINT(6) NOT NULL default \'0\'';
+		$transform['text']    = 'TEXT collate utf8_unicode_ci';
+		$transform['notes']   = 'LONGTEXT collate utf8_unicode_ci';
+		$transform['number']  = 'INT(11) NOT NULL default \'0\'';
+		$transform['money']   = 'DECIMAL(20,4) NOT NULL default \'0.0000\'';
+
+		$sql="SELECT `device_type`,`system_name`,`data_type` FROM `glpi_plugin_customfields_fields` 
+			WHERE `deleted`='0' AND data_type!='sectionhead' AND data_type!='date'
+			ORDER BY `device_type`, `sort_order`, `ID`;";
+		$result=$DB->query($sql);
+		while ($data=$DB->fetch_array($result))
+		{
+			$table =plugin_customfields_table($data['device_type']);
+			$field = $data['system_name'];
+			$newtype = $transform[$data['data_type']];
+			$sql = "ALTER TABLE `$table` CHANGE `$field` `$field` $newtype;";
+			$DB->query($sql);
+			if(in_array($data['data_type'],array('general','text','notes')))
+			{
+				$sql = "UPDATE `$table` SET `$field`=NULL WHERE `$field`='';";
+				$DB->query($sql);
+			}
+		}
+		plugin_customfields_exec_sql_file('/plugins/customfields/install/plugin_customfields.changes-116.sql');
 	}
 
 	// Upgrade
-	$DB_file = GLPI_ROOT.'/plugins/customfields/inc/plugin_customfields.setup1.sql';
-	$DBf_handle = fopen($DB_file, 'rt');
-	$sql_query = fread($DBf_handle, filesize($DB_file));
-	fclose($DBf_handle);
-	foreach ( explode(";\n", "$sql_query") as $sql_line) 
-	{
-		if (get_magic_quotes_runtime()) $sql_line=stripslashes_deep($sql_line);
-		$DB->query($sql_line);
-	}
+	plugin_customfields_exec_sql_file('/plugins/customfields/install/plugin_customfields.setup1.sql');
 
 	// Restore settings
 	foreach($enabled as $device_type)

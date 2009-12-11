@@ -99,7 +99,7 @@ elseif(isset($_POST['add']) && $haveright)
 		$result = $DB->query($sql);
 
 		if($has_entities)
-			$entities='`FK_entities` int(11) NOT NULL,';
+			$entities='`FK_entities` int(11) NOT NULL default \'0\',';
 		else
 			$entities='';
 
@@ -110,19 +110,19 @@ elseif(isset($_POST['add']) && $haveright)
 			{
 				$sql="CREATE TABLE `$table` (`ID` int(11) NOT NULL auto_increment, ".$entities.
 					" `parentID` int(11) NOT NULL default '0',".
-					" `name` varchar(255) NOT NULL,".
-					" `completename` varchar(255) NOT NULL,".
-					" `comments` text NOT NULL,".
+					" `name` varchar(255) collate utf8_unicode_ci default NULL,".
+					" `completename` varchar(255) collate utf8_unicode_ci default NULL,".
+					" `comments` text collate utf8_unicode_ci,".
 					" `level` int(11) NOT NULL default '0',".
-					" PRIMARY KEY  (`ID`))".
+					" PRIMARY KEY (`ID`))".
 					" ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3;";
 			}
 			else
 			{
 				$sql="CREATE TABLE `$table` (`ID` int(11) NOT NULL auto_increment, ".$entities.
-					" `name` varchar(255) NOT NULL,".
-					" `comments` text NOT NULL,".
-					" PRIMARY KEY  (`ID`))".
+					" `name` varchar(255) collate utf8_unicode_ci default NULL,".
+					" `comments` text collate utf8_unicode_ci,".
+					" PRIMARY KEY (`ID`))".
 					" ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3;";
 			}
 			$result = $DB->query($sql);

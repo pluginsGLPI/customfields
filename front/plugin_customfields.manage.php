@@ -210,15 +210,15 @@ if(isset($_GET['device_type']))
 
 				switch($data_type) 
 				{
-					case 'dropdown': $db_data_type='INT(11) NOT NULL'; break;
-					case 'yesno': $db_data_type='SMALLINT(6) NOT NULL'; break;
-					case 'general': $db_data_type='VARCHAR(255) NOT NULL'; break;
-					case 'text': $db_data_type='TEXT NOT NULL'; break;
-					case 'notes': $db_data_type='LONGTEXT NOT NULL'; break;
-					case 'date': $db_data_type='DATE'; break; // allow dates to be null
-					case 'number': $db_data_type='INT(11) NOT NULL'; break;
-					case 'money': $db_data_type='DECIMAL(20,4) NOT NULL'; break;
-					default: $db_data_type='INT(11) NOT NULL';
+					case 'general': $db_data_type='VARCHAR(255) collate utf8_unicode_ci default NULL'; break;
+					case 'dropdown': $db_data_type='INT(11) NOT NULL default \'0\''; break;
+					case 'yesno': $db_data_type='SMALLINT(6) NOT NULL default \'0\''; break;
+					case 'text': $db_data_type='TEXT collate utf8_unicode_ci'; break;
+					case 'notes': $db_data_type='LONGTEXT collate utf8_unicode_ci'; break;
+					case 'date': $db_data_type='DATE default NULL'; break;
+					case 'number': $db_data_type='INT(11) NOT NULL default \'0\''; break;
+					case 'money': $db_data_type='DECIMAL(20,4) NOT NULL default \'0.0000\''; break;
+					default: $db_data_type='INT(11) NOT NULL default \'0\'';
 				}
 
 				$sql="ALTER TABLE `$table` ADD `$system_name` $db_data_type;";
@@ -246,7 +246,7 @@ if(isset($_GET['device_type']))
 			$DB->query($sql);
 			if($restricted==1 && $data['restricted']==0) 
 			{
-				$sql="ALTER TABLE `glpi_plugin_customfields_profiledata` ADD `{$device_type}_{$data['system_name']}` char(1);";
+				$sql="ALTER TABLE `glpi_plugin_customfields_profiledata` ADD `{$device_type}_{$data['system_name']}` char(1) default NULL;";
 				$DB->query($sql);
 			}
 			elseif($restricted==0 && $data['restricted']==1) 
