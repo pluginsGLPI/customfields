@@ -1,8 +1,8 @@
 <?php
 /*
  * @version $Id$
- ---------------------------------------------------------------------- 
- GLPI - Gestionnaire Libre de Parc Informatique 
+ ----------------------------------------------------------------------
+ GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2009 by the INDEPNET Development Team.
 
  http://indepnet.net/   http://glpi-project.org
@@ -33,17 +33,16 @@
 // Purpose of file:
 // ----------------------------------------------------------------------
 
-$NEEDED_ITEMS=array("profile");
-define('GLPI_ROOT', '../../..'); 
+define('GLPI_ROOT', '../../..');
 include (GLPI_ROOT."/inc/includes.php");
 
-checkRight("profile","r");
-$prof=new plugin_customfields_Profile();
+checkRight("profile", "r");
+$prof = new pluginCustomfieldsProfile();
 
 //Save profile
 if (isset ($_POST['update_user_profile'])) {
-	$prof->update($_POST);
-	glpi_header($_SERVER['HTTP_REFERER']);
+   $prof->update($_POST);
+   glpi_header($_SERVER['HTTP_REFERER']);
 }
 
 ?>

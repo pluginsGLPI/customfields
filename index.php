@@ -39,15 +39,13 @@
 define('GLPI_ROOT', '../..');
 include (GLPI_ROOT.'/inc/includes.php');
 
-commonHeader($LANG['plugin_customfields']['title'],$_SERVER['PHP_SELF'],'plugins','customfields');
+commonHeader($LANG['plugin_customfields']['title'], $_SERVER['PHP_SELF'], 'plugins', 'customfields');
 
-if(haveRight('config','w'))
-{
-	glpi_header('./front/plugin_customfields.config.php'); // redirect to the configuration page
-}
-else
-{
-	echo '<div align="center"><br><br><img src="'.$CFG_GLPI['root_doc'].'/pics/warning.png" alt="warning"><br><br>';
-	echo '<b>'.$LANG['login'][5].'</b></div>'; // Displays 'Access denied'
+if (haveRight('config','w')) {
+   glpi_header('./front/config.form.php'); // redirect to the configuration page
+} else {
+   echo '<div class="center"><br><br>'.
+        '<img src="'.$CFG_GLPI['root_doc'].'/pics/warning.png" alt="warning"><br><br>';
+   echo '<b>'.$LANG['login'][5].'</b></div>'; // Displays 'Access denied'
 }
 ?>

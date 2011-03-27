@@ -32,30 +32,35 @@
 // Original Author of file: Ryan Foster
 // Contact: Matt Hoover <dev@opensourcegov.net>
 // Project Website: http://www.opensourcegov.net
-// Purpose of file: Remove the custom field data
+// Purpose of file: Perform update, activate, and delete actions
 // ----------------------------------------------------------------------
 
 define('GLPI_ROOT', '../../..');
 
 include (GLPI_ROOT.'/inc/includes.php');
 
-include_once ('../inc/plugin_customfields.function.php');
-
-if (haveRight('config','w'))
-{
-	if(TableExists('glpi_plugin_customfields'))
-	{
-		plugin_customfields_remove_data();
-	}
-	glpi_header($_SERVER['HTTP_REFERER']);
-
+logDebug("form ",$_POST);
+if (!isset($_GET['ID'])) {
+   $_GET['ID'] = '';
 }
-else
-{
-	commonHeader($LANG['login'][5],$_SERVER['PHP_SELF'],'plugins','customfields');
-	echo '<div align="center"><br><br><img src="'.$CFG_GLPI['root_doc'].'/pics/warning.png" alt="warning"><br><br>';
-	echo '<b>'.$LANG['login'][5].'</b></div>'; // Access denied
-	commonFooter();
+if (!isset($_GET['withtemplate'])) {
+   $_GET['withtemplate'] = '';
 }
 
+$PluginItem = new PluginCustomfields_Itemtype($_POST['itemtype']);
+if (isset($_POST['delete'])) {
+   $customfields->check($_POST['id'],'w');
+   $customfields->delete($_POST);
+   glpi_header($_SERVER['HTTP_REFERER']);
+
+} else if (isset($_POST['update'])) {
+      $PluginItem->update($_POST);
+   glpi_header($_SERVER['HTTP_REFERER']);
+
+} else if (isset($_GET['add']) && isset($_GET['itemtype']) && isset($_GET['ID'])) {
+   if ($right->HaveRight($_GET['itemtype'],'w')) {
+      plugin_customfields_activate($_GET['itemtype'], $_GET['ID']);
+   }
+   glpi_header($_SERVER['HTTP_REFERER']);
+}
 ?>
