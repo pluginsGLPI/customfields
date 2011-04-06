@@ -55,20 +55,8 @@ include_once ('inc/profile.class.php');
 function plugin_init_customfields() {
    global $PLUGIN_HOOKS, $CFG_GLPI, $DB, $ACTIVE_CUSTOMFIELDS_TYPES, $ALL_CUSTOMFIELDS_TYPES;
 
-   $PLUGIN_HOOKS['change_profile']['customfields'] = array('PluginCustomfieldsProfile','select');
+   $PLUGIN_HOOKS['change_profile']['customfields'] = array('PluginCustomfieldsProfile','changeprofile');
 
-   // customfields uses the range 5200-5799
-   // Params : plugin name - string type - number - attributes
-/*   Plugin::registerClass('PlugincustomfieldsItemype',
-                         array('classname'               => 'pluginCustomfieldsItemtype',
-                               'tablename'               => 'glpi_plugin_customfieldsitemtypes',
-                               'formpage'                => 'front/customfieldsitemtype.form.php',
-                               'searchpage'              => 'index.php',
-                               'typename'                => 'Customfields Type',
-                               'deleted_tables'          => false,
-                               'specif_entities_tables'  => false,
-                               'recursive_type'          => false));
-*/
    Plugin::registerClass('PluginCustomfieldsDropdowns');
    Plugin::registerClass('PluginCustomfieldsFields');
 
@@ -118,7 +106,7 @@ function plugin_init_customfields() {
 
          // Define how to import data into custom fields with the Data_Injection plugin
          $PLUGIN_HOOKS['data_injection']['customfields'] = 'plugin_customfields_data_injection_variables';
-//      }
+ //     }
 
       // Indicate where the configuration page can be found
       if (haveRight('config','w')) {

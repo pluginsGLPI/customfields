@@ -60,7 +60,6 @@ if ($plugin->isActivated("customfields")) {
    $result = $DB->query($query);
    while ($data=$DB->fetch_assoc($result)) {
       $item = new $data['itemtype']();
-
       if ($item->canCreate()) {
          echo "<tr class='tab_bg_1'>";
          echo "<td><a href='./manage.php?itemtype=".$data['itemtype']."'>".
@@ -78,7 +77,7 @@ if ($plugin->isActivated("customfields")) {
    echo "<table class='tab_cadre' cellpadding='5'>";
    echo "<tr><th>".$LANG['plugin_customfields']['setup'][3]."</th></tr>"; // Setup of Custom Fields Plugin
    echo "<tr class='tab_bg_1'><td class='center'>";
-   echo "<a href='./dropdowns.php'>".
+   echo "<a href='./dropdown.php'>".
          $LANG['plugin_customfields']['Manage_Custom_Dropdowns']."</a>";
    echo "</td></tr>";
    echo "</table></div>";

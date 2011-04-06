@@ -45,7 +45,7 @@ class PluginCustomfieldsProfile extends CommonDBTM {
 
    //if profile deleted
    function cleanProfiles($ID) {
-      $this->delete(array('id'=>$ID));
+      $this->delete(array('id' => $ID));
    }
 
 
@@ -56,7 +56,7 @@ class PluginCustomfieldsProfile extends CommonDBTM {
    }
 
 
-   function changeprofile() {
+   static function changeprofile() {
 
       $prof = new self();
       if ($prof->getFromDB($_SESSION['glpiactiveprofile']['id'])) {
@@ -116,10 +116,9 @@ class PluginCustomfieldsProfile extends CommonDBTM {
 
 
    //profiles modification
-   function showFormEdit($profID){
+   function showForm($ID, $options=array()){
       global $LANG, $DB;
 
-;
       $target = $this->getFormURL();
       if (isset($options['target'])) {
         $target = $options['target'];
@@ -128,10 +127,15 @@ class PluginCustomfieldsProfile extends CommonDBTM {
       if (!haveRight("profile","w")) {
         return false;
       }
-logDebug("show2");
-      $canedit = haveRight("profile","w");
 
-      $prof = $this->getFromDBForProfile($profID);
+      $canedit = haveRight("profile","w");
+      $prof = new Profile();
+      if ($ID) {
+         $this->getFromDB($ID);
+         $prof->getFromDB($ID);
+      }
+
+//      $prof = $this->getFromDBForProfile($profID);
 /*
       $prof    = new Profile();
 
@@ -164,7 +168,7 @@ logDebug("show2");
             if ($data['data_type']=='sectionhead') {
                Dropdown::showYesNo($profile_field,$this->fields[$profile_field],1,1,1);
             } else {
-            Profile::dropdownNoneReadWrite($profile_field, $this->fields[$profile_field], 1, 1, 1);
+            Profile::dropdownNoneReadWrite($profile_field, $this->fields[$profile_field], 1, 0, 1);
             }
             echo "</td></tr>";
          }
@@ -172,14 +176,14 @@ logDebug("show2");
           if ($canedit) {
              echo "<tr class='tab_bg_1'>";
              echo "<td class='center' colspan='2'>";
-             echo "<input type='hidden' name='id' value=$profID>";
+             echo "<input type='hidden' name='id' value=$ID>";
              echo "<input type='submit' name='update_user_profile' value=\"".
                    $LANG['buttons'][7]."\" class='submit'>";
              echo "</td></tr>";
           }
           echo "</table></form>";
       } else {
-        echo " pas de champs restreints";
+        echo $LANG['plugin_customfields']['setup'][1];
       }
 
    }

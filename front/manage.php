@@ -225,7 +225,7 @@ if (isset($_GET['itemtype'])) {
 
          if ($data_type!='sectionhead') {// add the field to the data table if it isn't a section header
             $table = plugin_customfields_table($itemtype);
-logDebug("activ", CUSTOMFIELDS_AUTOACTIVATE);
+
             if (CUSTOMFIELDS_AUTOACTIVATE) {
                plugin_customfields_activate_all($itemtype); // creates table and activates IF necessary
             } else {
@@ -324,7 +324,7 @@ logDebug("activ", CUSTOMFIELDS_AUTOACTIVATE);
    echo '<form action="?itemtype='.$itemtype.'" method="post">';
    echo '<table class="tab_cadre" cellpadding="5">';
    echo '<tr><th colspan="8">'.$LANG['plugin_customfields']['title'].
-         ' ('.$LANG['plugin_customfields']['Device_Type'][$itemtype].')</th></tr>';
+         ' ('.$LANG['plugin_customfields']['device_type'][$itemtype].')</th></tr>';
    echo '<tr>';
    echo '<th>'.$LANG['plugin_customfields']['Label'].'</th>';
    echo '<th>'.$LANG['plugin_customfields']['System_Name'].'</th>';

@@ -344,13 +344,13 @@ function plugin_headings_customfields($item) {
 
    if ($type == 'Profile') {
       $prof = new PluginCustomfieldsProfile();
-      if (!$prof->GetfromDBForProfile($ID)) {
-         $prof->createUserAccess($item);
+      if ($prof->GetfromDB($ID) || $prof->createUserAccess($item)) {
+         $prof->showForm($ID,
+                         array('target' => $CFG_GLPI["root_doc"]."/plugins/customfields/front/profile.form.php"));
       }
-      $prof->showFormEdit($ID);
 
    } else {
-      if ($ID > 1) {
+      if ($ID > 0) {
          echo '<div class="center">';
          echo plugin_customfields_showAssociated($item);
          echo '</div>';
@@ -419,22 +419,57 @@ function plugin_customfields_install() {
    //Upgrade process if needed
    if (TableExists("glpi_plugin_customfields")) {
 
-      if (haveRight('config', 'w') && $plugin->isActivated("customfields")) {
+      if (TableExists("glpi_plugin_customfields_fields")) {
+         if (!FieldExists('glpi_plugin_customfields_fields','deleted')) { // <1.0.1
+            plugin_customfields_upgradeto101();
+         }
+      }
+
+//      plugin_customfields_upgradeto110();
+
+      if (TableExists("glpi_plugin_customfields_fields")) {
+         if (!FieldExists('glpi_plugin_customfields_fields','required')) { // <1.1.2
+            plugin_customfields_upgradeto112();
+         }
+      }
+
+      if (TableExists("glpi_plugin_customfields_fields")) {
+         if (!FieldExists('glpi_plugin_customfields_fields','entities')) { // <1.1.3
+            plugin_customfields_upgradeto113();
+         }
+      }
+
+      plugin_customfields_upgradeto116();
+
+      if (TableExists("glpi_plugin_customfields_fields")) {
+         if (!FieldExists('glpi_plugin_customfields_fields','unique')) { // <1.1.7
+            plugin_customfields_upgradeto117();
+         }
+      }
+
+      if (!TableExists("glpi_plugin_customfields_itemtypes")) { // <1.2
+         plugin_customfields_upgradeto12();
+      }
+
+plugin_customfields_upgradeto110(); // must be at the end : itemtype
+
+/*
+      if (haveRight('config', 'w')) {
          // Check the version of the database tables.
-         $query = "SELECT `enabled`
-                   FROM `glpi_plugin_customfields`
-                   WHERE `device_type` = 'version'";
+         $query = "SELECT `version`
+                   FROM `glpi_plugins`
+                   WHERE `directory` = 'customfields'";
          $result    = $DB->query($query);
          $data      = $DB->fetch_array($result);
-         $dbversion = $data['enabled']; // Version of the last modification to the plugin tables' structure
-
+         $dbversion = $data['version']; // Version of the last modification to the plugin tables' structure
+logdebug("vsersion", $dbversion);
          if ($dbversion < CUSTOMFIELDS_DB_VERSION_REQUIRED) {
             plugin_customfields_upgrade($dbversion);
          }
          if (CUSTOMFIELDS_AUTOACTIVATE) {
             plugin_customfields_activate_all_types();
          }
-      }
+      }*/
       return true;
 
    } else { //not installed
@@ -507,7 +542,7 @@ function plugin_customfields_upgrade($oldversion) {
 
    // Upgrade logging feature
    if ($oldversion < 101) {
-      plugin_customfields_upgradeto101;
+      plugin_customfields_upgradeto101();
    }
 
    // Save settings
@@ -522,36 +557,41 @@ function plugin_customfields_upgrade($oldversion) {
 
    // Upgrade date fields to be compatible with GLPI 0.72+
    if ($oldversion < 110) {
-      plugin_customfields_upgradeto110;
+      plugin_customfields_upgradeto110();
    }
 
    // Add a column to indicate if a field is required
    if ($oldversion < 112) {
-      plugin_customfields_upgradeto112;
+      plugin_customfields_upgradeto112();
    }
 
    // Add a column to indicate which entities to show the field with
    // Remove column for hidden field, use blank in entites field to replace this functionality
    // Add restricted field to allow field-based permissions
    if ($oldversion < 113) {
-      plugin_customfields_upgradeto113;
+      plugin_customfields_upgradeto113();
    }
 
    // Upgrade fields to be compatable with mysql strict mode
    if ($oldversion < 116) {
-      plugin_customfields_upgradeto116;
+      plugin_customfields_upgradeto116();
 
       echo 'finished.';
       glpi_flush();
    }
 
    if ($oldversion < 117) {
-      plugin_customfields_upgradeto117;
+      plugin_customfields_upgradeto117();
    }
 
    if ($oldversion < 12) {
-      plugin_customfields_upgradeto12;
+      plugin_customfields_upgradeto12();
    }
+
+            if (CUSTOMFIELDS_AUTOACTIVATE) {
+            plugin_customfields_activate_all_types();
+         }
+
 }
 
 
@@ -572,13 +612,13 @@ function plugin_customfields_upgradeto101() {
 function plugin_customfields_upgradeto110() {
    global $DB;
 
-   $sql = "SELECT `device_type`, `system_name`
+   $sql = "SELECT `itemtype`, `system_name`
            FROM `glpi_plugin_customfields_fields`
            WHERE `data_type` = 'date'";
    $result = $DB->query($sql) or die($DB->error());
 
    while ($data=$DB->fetch_array($result)) {
-      $table = plugin_customfields_table($data['device_type']);
+      $table = plugin_customfields_table($data['itemtype']);
       $field = $data['system_name'];
       $sql = "ALTER TABLE `$table`
               CHANGE `$field` `$field` DATE NULL DEFAULT NULL";
@@ -640,8 +680,10 @@ function plugin_customfields_upgradeto116() {
    global $DB;
 
    // Upgrade
-   $query= "DROP TABLE IF EXISTS `glpi_plugin_customfields`
-            CREATE TABLE `glpi_plugin_customfields` (
+   $query= "DROP TABLE IF EXISTS `glpi_plugin_customfields`";
+   $DB->query($query) or die($DB->error());
+
+   $query= "CREATE TABLE `glpi_plugin_customfields` (
                `ID` int(11) NOT NULL auto_increment,
                `device_type` int(11) NOT NULL default '0',
                `enabled` smallint(6) NOT NULL default '0',
@@ -656,8 +698,8 @@ function plugin_customfields_upgradeto116() {
 
    $query= "INSERT INTO `glpi_plugin_customfields`
                    (`device_type`)
-            VALUES ('1', '41', '4', '6', '39', '20', '2', '42', '5', '3', '11', '17', '23', '16',
-                    '7', '8', '10', '13', '15', '27','28')";
+            VALUES ('1'), ('41'), ('4'), ('6'), ('39'), ('20'), ('2'), ('42'), ('5'), ('3'), ('11'),
+                   ('17'), ('23'), ('16'), ('7'), ('8'), ('10'), ('13'), ('15'), ('27'), ('28')";
    $DB->query($query) or die($DB->error());
 
    $transform = array();
@@ -682,7 +724,7 @@ function plugin_customfields_upgradeto116() {
    while ($data=$DB->fetch_array($result)) {
       echo '.';
       glpi_flush();
-      $table   = plugin_customfields_table($data['device_type']);
+      $table   = plugin_customfields_table($data['itemtype']);
       $field   = $data['system_name'];
       $newtype = $transform[$data['data_type']];
       $sql = "ALTER TABLE `$table`
@@ -796,6 +838,8 @@ function plugin_customfields_upgradeto12() {
                 CHANGE `device_type` `itemtype` VARCHAR(100) NOT NULL default ''";
       $DB->query($query) or die($DB->error());
 
+      $tables = array('glpi_plugin_customfields_itemtypes');
+      Plugin::migrateItemType(array(-1 => 'Version'), array(), $tables);
 
       $query = "SELECT `itemtype`
                 FROM `glpi_plugin_customfields_itemtypes`
@@ -806,9 +850,11 @@ function plugin_customfields_upgradeto12() {
       while ($data=$DB->fetch_array($result)) {
          $enabled[] = $data['itemtype'];
          $table = plugin_customfields_table($data['itemtype']);
-         $query = "ALTER TABLE `$table`
-                   CHANGE `ID` `id` int(11) NOT NULL auto_increment";
-         $DB->query($query) or die($DB->error());
+         if (TableExists($table)) {
+             $query = "ALTER TABLE `$table`
+                       CHANGE `ID` `id` int(11) NOT NULL auto_increment";
+             $DB->query($query) or die($DB->error());
+         }
       }
 
        foreach($enabled as $itemtype) {
@@ -831,15 +877,14 @@ function plugin_customfields_upgradeto12() {
                 CHANGE `device_type` `itemtype` VARCHAR(100) NOT NULL default ''";
       $DB->query($query) or die($DB->error());
 
-      $tables = array('glpi_plugin_customfields_itemtypes',
-                      'glpi_plugin_customfields_fields');
+      $tables = array('glpi_plugin_customfields_fields');
       Plugin::migrateItemType(array(-1 => 'Version'), array(), $tables);
    }
 
    if (TableExists("glpi_plugin_customfields_profiledata")) {
       $query = "RENAME TABLE `glpi_plugin_customfields_profiledata` TO `glpi_plugin_customfields_profiles`";
       $DB->query($query) or die($DB->error());
-      $query = "ALTER TABLE `glpi_plugin_customfields_dropdowns`
+      $query = "ALTER TABLE `glpi_plugin_customfields_profiles`
                 CHANGE `ID` `id` int(11) NOT NULL auto_increment";
       $DB->query($query) or die($DB->error());
    }

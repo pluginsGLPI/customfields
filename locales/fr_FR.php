@@ -100,8 +100,8 @@ $LANG['plugin_customfields']['device_type']['Monitor']         = $LANG['Menu'][3
 $LANG['plugin_customfields']['device_type']['Peripheral']      = $LANG['Menu'][16];
 $LANG['plugin_customfields']['device_type']['Software']        = $LANG['Menu'][4];
 $LANG['plugin_customfields']['device_type']['Phone']           = $LANG['Menu'][34];
-$LANG['plugin_customfields']['device_type']['Cartridge']       = $LANG['Menu'][21];
-$LANG['plugin_customfields']['device_type']['Consumable']      = $LANG['Menu'][32];
+$LANG['plugin_customfields']['device_type']['CartridgeItem']       = $LANG['Menu'][21];
+$LANG['plugin_customfields']['device_type']['ConsumableItem']      = $LANG['Menu'][32];
 $LANG['plugin_customfields']['device_type']['Contact']         = $LANG['Menu'][22];
 $LANG['plugin_customfields']['device_type']['Supplier']        = $LANG['Menu'][23];
 $LANG['plugin_customfields']['device_type']['Contract']        = $LANG['Menu'][25];
@@ -130,6 +130,7 @@ $LANG['plugin_customfields']['component_type']['DeviceCase']         = $LANG['de
 $LANG['plugin_customfields']['component_type']['DevicePowerSupply']  = $LANG['devices'][23];
 
 // Setup
+$LANG['plugin_customfields']['setup'][1] = 'Aucun champ restreint';
 $LANG['plugin_customfields']['setup'][2] = 'This plugin requires GLPI version 0.72 or higher';
 $LANG['plugin_customfields']['setup'][3] = 'Setup of '.$title.' Plugin';
 $LANG['plugin_customfields']['setup'][4] = 'Existing custom field data was found on your system. This data has been restored.';

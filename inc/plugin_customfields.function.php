@@ -66,9 +66,7 @@ function plugin_customfields_make_system_name($str) {
 
 // Names of tables uses to store the custom field data
 function plugin_customfields_table($itemtype) {
-
    return 'glpi_plugin_customfields_'.strtolower(getPlural($itemtype));
-
 }
 
 
@@ -191,7 +189,7 @@ function plugin_customfields_showValue($value, $size='') {
 
 // Show the custom fields form below the main device
 function plugin_customfields_showAssociated($item, $withtemplate='') {
-   GLOBAL $DB,$CFG_GLPI,$LANG;
+   global $DB,$CFG_GLPI,$LANG;
 
    $ID = $item->getField('id');
    $type = get_class($item);
@@ -235,7 +233,7 @@ function plugin_customfields_showAssociated($item, $withtemplate='') {
    if ($number != 1) {// No data found, so make a link to activate custom fields for this device
       if ($item->canCreate() && $withtemplate != 2) {
          echo '<div class="center b">';
-         echo '<a href="'.GLPI_ROOT.'/plugins/customfields/front/customfieldsitemtype.form.php?itemtype='.
+         echo '<a href="'.GLPI_ROOT.'/plugins/customfields/front/customfields_itemtype.form.php?itemtype='.
                 $type.'&amp;id='.$ID.'&amp;add=add">'.
                 $LANG['plugin_customfields']['Activate_Custom_Fields'].'</a>';
          echo '</div><br>';
@@ -251,7 +249,7 @@ function plugin_customfields_showAssociated($item, $withtemplate='') {
                 ORDER BY sort_order";
       $result = $DB->query($query);
 
-      echo '<form action="'.GLPI_ROOT.'/plugins/customfields/front/customfieldsitemtype.form.php" '.
+      echo '<form action="'.GLPI_ROOT.'/plugins/customfields/front/customfields_itemtype.form.php" '.
             'method="post" name="form_cf">';
       echo '<table class="tab_cadre_fixe">';
       $count = 0;
@@ -266,6 +264,7 @@ function plugin_customfields_showAssociated($item, $withtemplate='') {
          $readonly = false;
          if ($fields['restricted']) {
             $checkfield = $fields['itemtype'].'_'.$fields['system_name'];
+            $prof = new pluginCustomfieldsProfile();
             if (!$prof->fieldHaveRight($checkfield, 'w')) {
                $readonly = true;
                if (!$prof->fieldHaveRight($checkfield, 'r')) {
@@ -400,7 +399,6 @@ function plugin_customfields_showAssociated($item, $withtemplate='') {
       $item = new $type();
       // Show buttons
       if (($count >= 1) && $item->canCreate()) {
-        logDebug("coucou2");
          if (CUSTOMFIELDS_AUTOACTIVATE) {
             echo '<tr><td class="center top tab_bg_2" colspan="4">';
          } else {

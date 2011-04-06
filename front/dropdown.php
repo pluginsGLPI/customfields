@@ -163,7 +163,7 @@ if ($haveright) {
 
 echo '<div class="center">';
 
-echo '<a href="./config.php">'.$LANG['plugin_customfields']['Back_to_Manage'].'</a><br><br>';
+echo '<a href="./config.form.php">'.$LANG['plugin_customfields']['Back_to_Manage'].'</a><br><br>';
 
 echo '<form action="#" method="post">';
 echo '<table class="tab_cadre" cellpadding="5">';
