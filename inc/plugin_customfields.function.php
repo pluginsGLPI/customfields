@@ -87,7 +87,7 @@ function plugin_customfields_activate($itemtype, $ID) {
 // Activates custom fields for all devices of a specific type
 function plugin_customfields_activate_all($itemtype) {
    global $DB;
-
+logdebug("activateall ", $itemtype);
    $query = "SELECT `id`
              FROM `glpi_plugin_customfields_fields`
              WHERE `itemtype` = '$itemtype'";
@@ -96,7 +96,7 @@ function plugin_customfields_activate_all($itemtype) {
    if ($DB->numrows($result) > 0) {
       plugin_customfields_create_data_table($itemtype);
 
-      $table1 = getTableForItemType($itemtype);
+ //     $table1 = getTableForItemType($itemtype);
       $table2 = plugin_customfields_table($itemtype);
       if ($itemtype == 'Entity') {
          $sql = "INSERT INTO `$table2`
@@ -104,7 +104,7 @@ function plugin_customfields_activate_all($itemtype) {
                  VALUES ('0')"; // Add a row for the Root Entity
          $result2 = $DB->query($sql);
       }
-
+/*
       $query = "SELECT a.`id`, b.`id` AS skip
                 FROM $table1 AS a
                 LEFT JOIN $table2 AS b
@@ -119,6 +119,7 @@ function plugin_customfields_activate_all($itemtype) {
             $result2 = $DB->query($sql);
          }
       }
+*/
    }
 }
 
@@ -205,7 +206,10 @@ function plugin_customfields_showAssociated($item, $withtemplate='') {
 
    $entity = 0;
    if (!in_array($type, array('ComputerDisk', 'NetworkPort', 'Entity', 'SoftwareVersion',
-                              'SoftwareLicense'))) {
+                              'SoftwareLicense', 'DeviceMotherboard', 'DeviceProcessor',
+                              'DeviceMemory', 'DeviceHardDrive', 'DeviceNetworkCard', 'DeviceDrive',
+                              'DeviceControl', 'DeviceGraphicCard', 'DeviceSoundCard', 'DevicePci',
+                              'DeviceCase', 'DevicePowerSupply'))) {
       $table = getTableForItemType($type);
       $query = "SELECT `entities_id`
                 FROM `$table`
@@ -233,7 +237,7 @@ function plugin_customfields_showAssociated($item, $withtemplate='') {
    if ($number != 1) {// No data found, so make a link to activate custom fields for this device
       if ($item->canCreate() && $withtemplate != 2) {
          echo '<div class="center b">';
-         echo '<a href="'.GLPI_ROOT.'/plugins/customfields/front/customfields_itemtype.form.php?itemtype='.
+         echo '<a href="'.GLPI_ROOT.'/plugins/customfields/front/itemtype.form.php?itemtype='.
                 $type.'&amp;id='.$ID.'&amp;add=add">'.
                 $LANG['plugin_customfields']['Activate_Custom_Fields'].'</a>';
          echo '</div><br>';
@@ -249,7 +253,7 @@ function plugin_customfields_showAssociated($item, $withtemplate='') {
                 ORDER BY sort_order";
       $result = $DB->query($query);
 
-      echo '<form action="'.GLPI_ROOT.'/plugins/customfields/front/customfields_itemtype.form.php" '.
+      echo '<form action="'.GLPI_ROOT.'/plugins/customfields/front/itemtype.form.php" '.
             'method="post" name="form_cf">';
       echo '<table class="tab_cadre_fixe">';
       $count = 0;

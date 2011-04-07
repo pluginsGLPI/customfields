@@ -42,14 +42,12 @@ define('CUSTOMFIELDS_AUTOACTIVATE', true);
 
 // This is the last version that any tables changed.  This version may be
 // older than the plugin version if there were no changes db changes.
-define('CUSTOMFIELDS_DB_VERSION_REQUIRED', 12); // 1.2
+//define('CUSTOMFIELDS_DB_VERSION_REQUIRED', 12); // 1.2
 
 $ACTIVE_CUSTOMFIELDS_TYPES = array();
 $ALL_CUSTOMFIELDS_TYPES = array();
 
 include_once ('inc/plugin_customfields.function.php');
-include_once ('inc/customfields_itemtype.class.php');
-include_once ('inc/profile.class.php');
 
 // Initialize the plugin's hooks (this function is required)
 function plugin_init_customfields() {
@@ -62,7 +60,7 @@ function plugin_init_customfields() {
 
    if (isset($_SESSION['glpiID'])){
       $plugin = new Plugin();
- //     if ($plugin->isActivated("customfields")) {
+      if ($plugin->isActivated("customfields")) {
          $query = "SELECT `itemtype`, `enabled`
                    FROM `glpi_plugin_customfields_itemtypes`
                    WHERE `itemtype` <> 'Version'";
@@ -106,7 +104,7 @@ function plugin_init_customfields() {
 
          // Define how to import data into custom fields with the Data_Injection plugin
          $PLUGIN_HOOKS['data_injection']['customfields'] = 'plugin_customfields_data_injection_variables';
- //     }
+      }
 
       // Indicate where the configuration page can be found
       if (haveRight('config','w')) {

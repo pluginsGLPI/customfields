@@ -32,35 +32,18 @@
 // Original Author of file: Ryan Foster
 // Contact: Matt Hoover <dev@opensourcegov.net>
 // Project Website: http://www.opensourcegov.net
-// Purpose of file: Perform update, activate, and delete actions
+// Purpose of file: Create a class to take advantage of core features
+// such as update and logging.
 // ----------------------------------------------------------------------
 
-define('GLPI_ROOT', '../../..');
-
-include (GLPI_ROOT.'/inc/includes.php');
-
-logDebug("form ",$_POST);
-if (!isset($_GET['ID'])) {
-   $_GET['ID'] = '';
-}
-if (!isset($_GET['withtemplate'])) {
-   $_GET['withtemplate'] = '';
+if (!defined('GLPI_ROOT')) {
+   die('Sorry. You can\'t access this file directly.');
 }
 
-$PluginItem = new PluginCustomfields_Itemtype($_POST['itemtype']);
-if (isset($_POST['delete'])) {
-   $customfields->check($_POST['id'],'w');
-   $customfields->delete($_POST);
-   glpi_header($_SERVER['HTTP_REFERER']);
+// CLASS customfields
+class PluginCustomfieldsField extends CommonDBTM {
 
-} else if (isset($_POST['update'])) {
-      $PluginItem->update($_POST);
-   glpi_header($_SERVER['HTTP_REFERER']);
 
-} else if (isset($_GET['add']) && isset($_GET['itemtype']) && isset($_GET['ID'])) {
-   if ($right->HaveRight($_GET['itemtype'],'w')) {
-      plugin_customfields_activate($_GET['itemtype'], $_GET['ID']);
-   }
-   glpi_header($_SERVER['HTTP_REFERER']);
 }
+
 ?>

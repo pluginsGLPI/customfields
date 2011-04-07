@@ -120,8 +120,8 @@ function plugin_customfields_getAddSearchOptions($itemtype) {
       foreach($DB->request($query) as $search) {
          $sopt[$i]['table']         = plugin_customfields_table($itemtype);
          $sopt[$i]['field']         = $search['system_name'];
-         $sopt[$i]['linkfield']     = '';
-         $sopt[$i]['name']     = $LANG['plugin_customfields']['title']." - ".$search['label'];
+         $sopt[$i]['linkfield']     = $search['system_name'];
+         $sopt[$i]['name']          = $LANG['plugin_customfields']['title']." - ".$search['label'];
       $i++;
       }
    }
@@ -194,7 +194,7 @@ function plugin_pre_item_update_customfields($item) {
                                                         $item->input['entities_id']);
       }
 
-      $type    = new PluginCustomfields_Itemtype($item->getType());
+      $type    = new PluginCustomfieldsItemtype($item->getType());
       $newdata = array();
       foreach ($item->input as $key=>$val) {
          if (substr($key,0,3) == 'cf_') {
@@ -439,7 +439,7 @@ function plugin_customfields_install() {
          }
       }
 
-      plugin_customfields_upgradeto116();
+//      plugin_customfields_upgradeto116();
 
       if (TableExists("glpi_plugin_customfields_fields")) {
          if (!FieldExists('glpi_plugin_customfields_fields','unique')) { // <1.1.7
@@ -452,7 +452,7 @@ function plugin_customfields_install() {
       }
 
 plugin_customfields_upgradeto110(); // must be at the end : itemtype
-
+plugin_customfields_upgradeto116();
 /*
       if (haveRight('config', 'w')) {
          // Check the version of the database tables.
@@ -492,7 +492,11 @@ logdebug("vsersion", $dbversion);
                 VALUES ('Computer'), ('ComputerDisk'), ('Monitor'), ('Software'), ('SoftwareVersion'),
                        ('SoftwareLicense'), ('NetworkEquipment'), ('NetworkPort'), ('Peripheral'),
                        ('Printer'), ('Cartridge'), ('Consumable'), ('Phone'), ('Ticket'), ('Contact'),
-                       ('Supplier'), ('Contract'), ('Document'), ('User'), ('Group'), ('Entity')";
+                       ('Supplier'), ('Contract'), ('Document'), ('User'), ('Group'), ('Entity'),
+                       ('DeviceMotherboard'), ('DeviceProcessor'), ('DeviceMemory'),
+                       ('DeviceHardDrive'), ('DeviceNetworkCard'), ('DeviceDrive'),
+                       ('DeviceControl'), ('DeviceGraphicCard'), ('DeviceSoundCard'), ('DevicePci'),
+                       ('DeviceCase'), ('DevicePowerSupply')";
       $DB->query($query) or die($DB->error());
 
 
@@ -649,7 +653,8 @@ function plugin_customfields_upgradeto113() {
    global $DB;
 
    $sql = "ALTER TABLE `glpi_plugin_customfields_fields`
-          ADD `entities` VARCHAR(255) NOT NULL DEFAULT '*'";
+           ADD `entities` VARCHAR(255) NOT NULL DEFAULT '*',
+           ADD `restricted` smallint(6) NOT NULL DEFAULT '0'";
    $DB->query($sql) or die($DB->error());
 
    $sql = "UPDATE `glpi_plugin_customfields_fields`
@@ -658,11 +663,7 @@ function plugin_customfields_upgradeto113() {
    $DB->query($sql) or die($DB->error());
 
    $sql = "ALTER TABLE `glpi_plugin_customfields_fields`
-          DROP `hidden`";
-   $DB->query($sql) or die($DB->error());
-
-   $sql = "ALTER TABLE `glpi_plugin_customfields_fields`
-           ADD `restricted` smallint(6) NOT NULL DEFAULT '0'";
+           DROP `hidden`";
    $DB->query($sql) or die($DB->error());
 
    if (!TableExists("glpi_plugin_customfields_profiledata")) {
@@ -679,29 +680,6 @@ function plugin_customfields_upgradeto113() {
 function plugin_customfields_upgradeto116() {
    global $DB;
 
-   // Upgrade
-   $query= "DROP TABLE IF EXISTS `glpi_plugin_customfields`";
-   $DB->query($query) or die($DB->error());
-
-   $query= "CREATE TABLE `glpi_plugin_customfields` (
-               `ID` int(11) NOT NULL auto_increment,
-               `device_type` int(11) NOT NULL default '0',
-               `enabled` smallint(6) NOT NULL default '0',
-               PRIMARY KEY (`ID`)
-            ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3";
-   $DB->query($query) or die($DB->error());
-
-   $query= "INSERT INTO `glpi_plugin_customfields`
-               (`device_type`,`enabled`)
-            VALUES ('-1', '116')";
-   $DB->query($query) or die($DB->error());
-
-   $query= "INSERT INTO `glpi_plugin_customfields`
-                   (`device_type`)
-            VALUES ('1'), ('41'), ('4'), ('6'), ('39'), ('20'), ('2'), ('42'), ('5'), ('3'), ('11'),
-                   ('17'), ('23'), ('16'), ('7'), ('8'), ('10'), ('13'), ('15'), ('27'), ('28')";
-   $DB->query($query) or die($DB->error());
-
    $transform = array();
    $transform['general']  = 'VARCHAR(255) collate utf8_unicode_ci default NULL';
    $transform['dropdown'] = 'INT(11) NOT NULL default \'0\'';
@@ -711,13 +689,13 @@ function plugin_customfields_upgradeto116() {
    $transform['number']   = 'INT(11) NOT NULL default \'0\'';
    $transform['money']    = 'DECIMAL(20,4) NOT NULL default \'0.0000\'';
 
-   $sql = "SELECT `device_type`, `system_name`, `data_type`
+   $sql = "SELECT `itemtype`, `system_name`, `data_type`
            FROM `glpi_plugin_customfields_fields`
            WHERE `deleted` = 0
                  AND `data_type` != 'sectionhead'
                  AND `data_type` != 'date'
-           ORDER BY `device_type`, `sort_order`, `ID`";
-   $result = $DB->query($query) or die($DB->error());
+           ORDER BY `itemtype`, `sort_order`, `id`";
+   $result = $DB->query($sql) or die($DB->error());
    set_time_limit(300);
    echo 'Updating Custom Fields...';
 
@@ -729,7 +707,7 @@ function plugin_customfields_upgradeto116() {
       $newtype = $transform[$data['data_type']];
       $sql = "ALTER TABLE `$table`
               CHANGE `$field` `$field` $newtype";
-      $DB->query($query) or die($DB->error());
+      $DB->query($sql) or die($DB->error());
 
       if (in_array($data['data_type'], array('general', 'text', 'notes'))) {
          $sql = "UPDATE `$table`
@@ -769,16 +747,7 @@ function plugin_customfields_upgradeto117() {
            ADD `unique` smallint(6) NOT NULL DEFAULT '0'";
    $DB->query($sql) or die($DB->error());
 
-   // Upgrade
-   $query= "DROP TABLE IF EXISTS `glpi_plugin_customfields`
-            CREATE TABLE `glpi_plugin_customfields` (
-               `ID` int(11) NOT NULL auto_increment,
-               `device_type` int(11) NOT NULL default '0',
-               `enabled` smallint(6) NOT NULL default '0',
-               PRIMARY KEY  (`ID`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3";
-      $DB->query($query) or die($DB->error());
-
+/*
    $query= "INSERT INTO `glpi_plugin_customfields`
                (`device_type`,`enabled`)
             VALUES ('-1', '117'),
@@ -802,12 +771,13 @@ function plugin_customfields_upgradeto117() {
       $enabled[] = $data['device_type'];
    }
 
-   foreach($enabled as $device_type) {
+   foreach ($enabled as $device_type) {
       $sql = "UPDATE `glpi_plugin_customfields`
               SET `enabled` = 1
               WHERE `device_type` = '$device_type';";
       $DB->query($sql) or die($DB->error());
    }
+   */
 }
 
 
@@ -831,6 +801,18 @@ function plugin_customfields_upgradeto12() {
 
    if (TableExists("glpi_plugin_customfields")) {
       $query = "RENAME TABLE `glpi_plugin_customfields` TO `glpi_plugin_customfields_itemtypes`";
+      $DB->query($query) or die($DB->error());
+
+      $query = "DELETE
+                FROM `glpi_plugin_customfields_itemtypes`
+                WHERE `device_type` IN ('501', '502', '503', '504', '505', '506', '507', '508',
+                                        '509', '510', '511', '512')";
+      $DB->query($query) or die($DB->error());
+
+      $query = "DELETE
+                FROM `glpi_plugin_customfields_fields`
+                WHERE `device_type` IN ('501', '502', '503', '504', '505', '506', '507', '508',
+                                        '509', '510', '511', '512')";
       $DB->query($query) or die($DB->error());
 
       $query = "ALTER TABLE `glpi_plugin_customfields_itemtypes`
@@ -857,12 +839,19 @@ function plugin_customfields_upgradeto12() {
          }
       }
 
-       foreach($enabled as $itemtype) {
-          $sql = "UPDATE `glpi_plugin_customfields_itemtypes`
-                  SET `enabled` = 1
-                  WHERE `itemtype` = '$itemtype';";
-          $DB->query($sql) or die($DB->error());
-       }
+      $query = "DELETE
+                FROM `glpi_plugin_customfields_itemtypes`
+                WHERE `itemtype` = 'Device'";
+      $DB->query($query) or die($DB->error());
+
+      $query = "INSERT INTO `glpi_plugin_customfields_itemtypes`
+                       (`itemtype`)
+                VALUES ('DeviceMotherboard'), ('DeviceProcessor'), ('DeviceMemory'),
+                       ('DeviceHardDrive'), ('DeviceNetworkCard'), ('DeviceDrive'),
+                       ('DeviceControl'), ('DeviceGraphicCard'), ('DeviceSoundCard'),
+                       ('DevicePci'), ('DeviceCase'), ('DevicePowerSupply')";
+      $DB->query($query) or die($DB->error());
+
    }
 
    if (TableExists("glpi_plugin_customfields_dropdowns")) {

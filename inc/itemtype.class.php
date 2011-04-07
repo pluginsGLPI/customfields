@@ -41,7 +41,7 @@ if (!defined('GLPI_ROOT')) {
 }
 
 // CLASS customfields
-class PluginCustomfields_Itemtype extends CommonDBTM {
+class PluginCustomfieldsItemtype extends CommonDBTM {
 
    function __construct($itemtype = PLUGIN_CUSTOMFIELDS_TYPE) {
 

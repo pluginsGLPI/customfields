@@ -115,19 +115,20 @@ $LANG['plugin_customfields']['device_type']['ComputerDisk']    = $LANG['computer
 $LANG['plugin_customfields']['device_type']['SoftwareVersion'] = 'Software Versions';
 $LANG['plugin_customfields']['device_type']['SoftwareLicense'] = 'Software License';
 $LANG['plugin_customfields']['device_type']['Device']          = $LANG['title'][30];
+$LANG['plugin_customfields']['device_type']['Infocom']          = 'Information financières';
+$LANG['plugin_customfields']['device_type']['DeviceMotherboard']  = $LANG['devices'][5];
+$LANG['plugin_customfields']['device_type']['DeviceProcessor']  = $LANG['devices'][4];
+$LANG['plugin_customfields']['device_type']['DeviceMemory']  = $LANG['devices'][6];
+$LANG['plugin_customfields']['device_type']['DeviceHardDrive']  = $LANG['devices'][1];
+$LANG['plugin_customfields']['device_type']['DeviceNetworkCard']  = $LANG['devices'][3];
+$LANG['plugin_customfields']['device_type']['DeviceDrive']  = $LANG['devices'][19];
+$LANG['plugin_customfields']['device_type']['DeviceControl']  = $LANG['devices'][20];
+$LANG['plugin_customfields']['device_type']['DeviceGraphicCard']  = $LANG['devices'][2];
+$LANG['plugin_customfields']['device_type']['DeviceSoundCard']  = $LANG['devices'][7];
+$LANG['plugin_customfields']['device_type']['DevicePci']  = $LANG['devices'][21];
+$LANG['plugin_customfields']['device_type']['DeviceCase']  = $LANG['devices'][22];
+$LANG['plugin_customfields']['device_type']['DevicePowerSupply']  = $LANG['devices'][23];
 
-$LANG['plugin_customfields']['component_type']['DeviceMotherboard']  = $LANG['devices'][5];
-$LANG['plugin_customfields']['component_type']['DeviceProcessor']    = $LANG['devices'][4];
-$LANG['plugin_customfields']['component_type']['DeviceMemory']       = $LANG['devices'][6];
-$LANG['plugin_customfields']['component_type']['DeviceHardDrive']    = $LANG['devices'][1];
-$LANG['plugin_customfields']['component_type']['DeviceNetworkCard']  = $LANG['devices'][3];
-$LANG['plugin_customfields']['component_type']['DeviceDrive']        = $LANG['devices'][19];
-$LANG['plugin_customfields']['component_type']['DeviceControl']      = $LANG['devices'][20];
-$LANG['plugin_customfields']['component_type']['DeviceGraphicCard']  = $LANG['devices'][2];
-$LANG['plugin_customfields']['component_type']['DeviceSoundCard']    = $LANG['devices'][7];
-$LANG['plugin_customfields']['component_type']['DevicePci']          = $LANG['devices'][21];
-$LANG['plugin_customfields']['component_type']['DeviceCase']         = $LANG['devices'][22];
-$LANG['plugin_customfields']['component_type']['DevicePowerSupply']  = $LANG['devices'][23];
 
 // Setup
 $LANG['plugin_customfields']['setup'][1] = 'Aucun champ restreint';
