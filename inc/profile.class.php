@@ -83,7 +83,7 @@ class PluginCustomfieldsProfile extends CommonDBTM {
 
    function fieldHaveRight($field, $right) {
 
-      $matches = array("r" => array("r", "w", "1"),
+      $matches = array("r" => array("r", "w"),
                        "w" => array("w"));
 
       if (isset($_SESSION["glpi_plugin_customfields_profiles"][$field])
@@ -168,7 +168,7 @@ class PluginCustomfieldsProfile extends CommonDBTM {
             if ($data['data_type']=='sectionhead') {
                Dropdown::showYesNo($profile_field,$this->fields[$profile_field],1,1,1);
             } else {
-            Profile::dropdownNoneReadWrite($profile_field, $this->fields[$profile_field], 1, 0, 1);
+            Profile::dropdownNoneReadWrite($profile_field, $this->fields[$profile_field], 1, 1, 1);
             }
             echo "</td></tr>";
          }
