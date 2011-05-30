@@ -210,18 +210,19 @@ function plugin_pre_item_update_customfields($item) {
 
 // Hook done on add item case
 // If in Auto Activate mode, add a record for the custom fields when a device is added
-function plugin_item_add_customfields($parm) {
+function plugin_item_add_customfields($obj) {
    global $DB,$ACTIVE_CUSTOMFIELDS_TYPES;
+   $type=get_class($obj);
+   $id=$obj->fields['id'];
 
    if (CUSTOMFIELDS_AUTOACTIVATE
-       && isset($parm['type'])
        && !empty($ACTIVE_CUSTOMFIELDS_TYPES)) {
 
-      if (in_array($parm['type'], $ACTIVE_CUSTOMFIELDS_TYPES)) {
-         $table = plugin_customfields_table($parm['type']);
+      if (in_array($type, $ACTIVE_CUSTOMFIELDS_TYPES)) {
+         $table = plugin_customfields_table($type);
          $sql = "INSERT INTO `$table`
                         (`id`)
-                 VALUES ('".intval($parm['id'])."')";
+                 VALUES ('".intval($id)."')";
          $result = $DB->query($sql);
          return ($result ? true : false);
       }

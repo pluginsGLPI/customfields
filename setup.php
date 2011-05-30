@@ -96,9 +96,13 @@ function plugin_init_customfields() {
          $PLUGIN_HOOKS['headings_action']['customfields'] = 'plugin_headings_actions_customfields';
 
          // Functions to run when data changes
-         $PLUGIN_HOOKS['item_add']['customfields'] = 'plugin_item_add_customfields';
-         $PLUGIN_HOOKS['item_purge']['customfields'] = 'plugin_item_purge_customfields';
-         $PLUGIN_HOOKS['pre_item_update']['customfields'] = 'plugin_pre_item_update_customfields';
+         foreach($ACTIVE_CUSTOMFIELDS_TYPES as $type) {
+            $PLUGIN_HOOKS['item_add']['customfields'][$type]='plugin_item_add_customfields';
+            $PLUGIN_HOOKS['pre_item_update']['customfields'][$type] = 'plugin_pre_item_update_customfields';
+         }
+         foreach($ALL_CUSTOMFIELDS_TYPES as $type) {
+            $PLUGIN_HOOKS['item_purge']['customfields'][$type] = 'plugin_item_purge_customfields';
+         }
 
          // Define how to import data into custom fields with the Data_Injection plugin
          $PLUGIN_HOOKS['data_injection']['customfields'] = 'plugin_customfields_data_injection_variables';
