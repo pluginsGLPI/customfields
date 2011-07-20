@@ -56,34 +56,30 @@ include_once ('inc/plugin_customfields.class.php');
 include_once ('inc/plugin_customfields.profile_class.php');
 
 // Initialize the plugin's hooks (this function is required)
-function plugin_init_customfields()
-{
+function plugin_init_customfields() {
    global $PLUGIN_HOOKS,$CFG_GLPI,$DB,$ACTIVE_CUSTOMFIELDS_TYPES,$ALL_CUSTOMFIELDS_TYPES;
 
    // customfields uses the range 5200-5799
    // Params : plugin name - string type - number - attributes
    registerPluginType('customfields', 'PLUGIN_CUSTOMFIELDS_TYPE', 5200, array(
-           'classname'  => 'plugin_customfields',
-           'tablename'  => 'glpi_plugin_customfields',
-           'formpage'   => 'front/plugin_customfields.form.php',
-           'searchpage' => 'index.php',
+      'classname'  => 'plugin_customfields',
+      'tablename'  => 'glpi_plugin_customfields',
+      'formpage'   => 'front/plugin_customfields.form.php',
+      'searchpage' => 'index.php',
       'typename'   => 'Customfields Type',
-           'deleted_tables' => false,
-           'specif_entities_tables' => false,
+      'deleted_tables' => false,
+      'specif_entities_tables' => false,
       'recursive_type' => false
-           ));
+   ));
 
    $PLUGIN_HOOKS['change_profile']['customfields'] = 'plugin_customfields_changeprofile';
 
-   if (isset($_SESSION['glpiID']))
-   {
+   if (isset($_SESSION['glpiID'])) {
       $plugin = new Plugin();
-      if ($plugin->isActivated("customfields"))
-      {
+      if ($plugin->isActivated("customfields")) {
          $query='SELECT device_type, enabled FROM glpi_plugin_customfields WHERE device_type > 0;';
          $result=$DB->query($query);
-         while ($data=$DB->fetch_assoc($result))
-         {
+         while ($data=$DB->fetch_assoc($result)) {
             $ALL_CUSTOMFIELDS_TYPES[]=$data['device_type'];
             if($data['enabled'])
                $ACTIVE_CUSTOMFIELDS_TYPES[]=$data['device_type'];
@@ -91,8 +87,7 @@ function plugin_init_customfields()
 
          $query='SELECT * FROM glpi_plugin_customfields_dropdowns WHERE has_entities=1 OR is_tree=1';
          $result=$DB->query($query);
-         while ($data=$DB->fetch_assoc($result))
-         {
+         while ($data=$DB->fetch_assoc($result)) {
             if($data['has_entities']==1)
                array_push($CFG_GLPI['specif_entities_tables'],$data['dropdown_table']);
             if($data['is_tree']==1)
@@ -100,8 +95,9 @@ function plugin_init_customfields()
          }
 
          // Display a menu entry in the main menu if the user has configuration rights 
-         if(haveRight('config','w'))
+         if(haveRight('config','w')) {
             $PLUGIN_HOOKS['menu_entry']['customfields'] = true;
+         }
 
          // Menus for each device type
          $PLUGIN_HOOKS['headings']['customfields'] = 'plugin_get_headings_customfields';
@@ -119,8 +115,9 @@ function plugin_init_customfields()
       }
 
       // Indicate where the configuration page can be found
-      if (haveRight('config','w'))
+      if (haveRight('config','w')) {
          $PLUGIN_HOOKS['config_page']['customfields'] = 'front/plugin_customfields.config.php';         
+      }
    }
 }
 
@@ -137,17 +134,14 @@ function plugin_version_customfields()
       'version' => '1.1.8');
 }
 // Checks prerequisites before install. May print errors or add message after redirect
-function plugin_customfields_check_prerequisites()
-{
+function plugin_customfields_check_prerequisites() {
    global $LANG;
 
-   if (GLPI_VERSION>=0.72)
-   {
-                $plugin = new Plugin();
+   if (GLPI_VERSION>=0.72) {
+      $plugin = new Plugin();
 
       // Automatically upgrade db (if necessary) when plugin is activated
-      if (haveRight('config','w') && $plugin->isActivated("customfields"))
-      {
+      if (haveRight('config','w') && $plugin->isActivated("customfields")) {
          global $DB;
          // Check the version of the database tables. 
          $query="SELECT enabled FROM glpi_plugin_customfields WHERE device_type='-1';";
@@ -155,22 +149,23 @@ function plugin_customfields_check_prerequisites()
          $data=$DB->fetch_array($result);
          $dbversion=$data['enabled']; // Version of the last modification to the plugin tables' structure
    
-                   if($dbversion < CUSTOMFIELDS_DB_VERSION_REQUIRED)
+         if($dbversion < CUSTOMFIELDS_DB_VERSION_REQUIRED) {
             plugin_customfields_upgrade($dbversion);
-                   if(CUSTOMFIELDS_AUTOACTIVATE)
+         }
+         if(CUSTOMFIELDS_AUTOACTIVATE) {
             plugin_customfields_activate_all_types();
+         }
       }
       return true;
    }
-   else
+   else {
       echo $LANG['plugin_customfields']['setup'][2]; // This plugin requires GLPI version 0.72 or higher
-
+   }
 }
 
 // Check configuration process for plugin : need to return true if succeeded
 // Can display a message only if failure and $verbose is true
-function plugin_customfields_check_config($verbose=false)
-{
+function plugin_customfields_check_config($verbose=false) {
    return true;
 }
 

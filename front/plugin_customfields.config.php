@@ -34,7 +34,7 @@
 // Purpose of file: Main configuration page
 // ----------------------------------------------------------------------
 
-if(!defined('GLPI_ROOT')){
+if(!defined('GLPI_ROOT')) {
    define('GLPI_ROOT', '../../..'); 
    $NEEDED_ITEMS=array('setup');
    include (GLPI_ROOT.'/inc/includes.php');
@@ -44,8 +44,7 @@ checkRight('config','w');
 
 $plugin = new Plugin();
 // Check if plugin is installed and enabled
-if ($plugin->isActivated("customfields"))
-{
+if ($plugin->isActivated("customfields")) {
    commonHeader($LANG['common'][12],$_SERVER['PHP_SELF'],'plugins','customfields');
    echo '<div align="center">';
 
@@ -56,16 +55,13 @@ if ($plugin->isActivated("customfields"))
    $query='SELECT * FROM glpi_plugin_customfields WHERE device_type > 0 ORDER BY ID';
    $result=$DB->query($query);
 
-   while ($data=$DB->fetch_assoc($result))
-   {
+   while ($data=$DB->fetch_assoc($result)) {
       $all[plugin_customfields_device_type_label($data['device_type'])]= $data;
    }
    ksort($all);
 
-   foreach($all as $label=>$data) 
-   {
-      if(plugin_customfields_haveRight($data['device_type'],'w'))
-      {
+   foreach($all as $label=>$data) {
+      if(plugin_customfields_haveRight($data['device_type'],'w')) {
          echo '<tr class="tab_bg_1">';
          echo '<td><a href="./plugin_customfields.manage.php?device_type='.$data['device_type'].'">'.
             $label.'</a></td>';
@@ -91,16 +87,17 @@ if ($plugin->isActivated("customfields"))
    echo '</td></tr>';
    echo '</table></div>';
 }
-else
-{
+else {
    commonHeader($LANG['common'][12],$_SERVER['PHP_SELF'],"config","plugins");
    echo "<div align='center'><br><br><img src=\"".$CFG_GLPI["root_doc"]."/pics/warning.png\" alt=\"warning\"><br><br>";
    echo "<b>Please activate the plugin</b></div>"; // text is hard coded because language setting are not accessible
 }
 
-if (strstr($_SERVER['PHP_SELF'],"popup"))
+if (strstr($_SERVER['PHP_SELF'],"popup")) {
    popFooter();
-else 
+}
+else { 
    commonFooter();
+}
 
 ?>

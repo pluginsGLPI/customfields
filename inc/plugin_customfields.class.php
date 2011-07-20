@@ -40,10 +40,8 @@
 if (!defined('GLPI_ROOT')) die('Sorry. You can\'t access this file directly.');
 
 // CLASS customfields
-class plugin_customfields extends CommonDBTM 
-{
-   function plugin_customfields ($device_type = PLUGIN_CUSTOMFIELDS_TYPE) 
-   {
+class plugin_customfields extends CommonDBTM {
+   function plugin_customfields ($device_type = PLUGIN_CUSTOMFIELDS_TYPE) {
       $this->table=plugin_customfields_table($device_type);
       $this->type=$device_type;
       $this->dohistory=true;

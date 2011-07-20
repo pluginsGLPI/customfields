@@ -42,21 +42,17 @@ include (GLPI_ROOT.'/inc/includes.php');
 if(!isset($_GET['ID'])) $_GET['ID'] = '';
 if(!isset($_GET['withtemplate'])) $_GET['withtemplate'] = '';
 
-if (isset($_POST['delete']))
-{
+if (isset($_POST['delete'])) {
    $plugin_customfields = new plugin_customfields($_POST['device_type']);
-   if(plugin_customfields_HaveRight($_POST['device_type'],'w'))
-   {
+   if(plugin_customfields_HaveRight($_POST['device_type'],'w')) {
       unset($_POST['device_type']);
       $plugin_customfields->delete($_POST);
    }
    glpi_header($_SERVER['HTTP_REFERER']);
 }
-else if (isset($_POST['update']))
-{
+else if (isset($_POST['update'])) {
    $plugin_customfields = new plugin_customfields($_POST['device_type']);
-   if(plugin_customfields_HaveRight($_POST['device_type'],'w'))
-   {
+   if(plugin_customfields_HaveRight($_POST['device_type'],'w')) {
       $device_type=$_POST['device_type'];
       unset($_POST['device_type']);
       $post=plugin_customfields_transformPost($_POST);
@@ -67,10 +63,10 @@ else if (isset($_POST['update']))
    }
    glpi_header($_SERVER['HTTP_REFERER']);
 }
-else if (isset($_GET['add']) && isset($_GET['device_type']) && isset($_GET['ID']))
-{
-   if(plugin_customfields_HaveRight($_GET['device_type'],'w'))
+else if (isset($_GET['add']) && isset($_GET['device_type']) && isset($_GET['ID'])) {
+   if(plugin_customfields_HaveRight($_GET['device_type'],'w')) {
       plugin_customfields_activate($_GET['device_type'],$_GET['ID']);
+   }
    glpi_header($_SERVER['HTTP_REFERER']);
 }
 ?>

@@ -48,10 +48,8 @@ $haveright = haveRight('config','w');
 
 ///////// First process any actions //////////
 
-if(isset($_POST['delete']) && $haveright)
-{
-   foreach($_POST['delete'] as $ID => $garbage)
-   {
+if(isset($_POST['delete']) && $haveright) {
+   foreach($_POST['delete'] as $ID => $garbage) {
       $sql="SELECT * FROM glpi_plugin_customfields_dropdowns WHERE ID='".intval($ID)."';";
       $result = $DB->query($sql);
       $data=$DB->fetch_assoc($result);
@@ -66,8 +64,7 @@ if(isset($_POST['delete']) && $haveright)
    }
    glpi_header($_SERVER['HTTP_REFERER']); // Reload so clicking refresh on browser will not re-post old data
 }
-elseif(isset($_POST['add']) && $haveright)
-{
+elseif(isset($_POST['add']) && $haveright) {
    $has_entities=isset($_POST['has_entities']) ? 1 : 0;
    $is_tree=isset($_POST['is_tree']) ? 1 : 0;
 
@@ -89,8 +86,7 @@ elseif(isset($_POST['add']) && $haveright)
    if($extra > 1)
       $system_name=$system_name.($extra - 1); // If the field name wasn't unique, append a number to make it unique
 
-   if ($extra<51)
-   {
+   if ($extra<51) {
       $table="glpi_dropdown_plugin_customfields_$system_name";
 
       // Save the meta data
@@ -98,16 +94,16 @@ elseif(isset($_POST['add']) && $haveright)
          " VALUES ('$system_name','$label','$has_entities','$is_tree','$table');";
       $result = $DB->query($sql);
 
-      if($has_entities)
+      if($has_entities) {
          $entities='`FK_entities` int(11) NOT NULL default \'0\',';
-      else
+      }
+      else {
          $entities='';
+      }
 
       // Create a table for the new dropdown menu
-      if(!TableExists($table))
-      {
-         if($is_tree) 
-         {
+      if(!TableExists($table)) {
+         if($is_tree) {
             $sql="CREATE TABLE `$table` (`ID` int(11) NOT NULL auto_increment, ".$entities.
                " `parentID` int(11) NOT NULL default '0',".
                " `name` varchar(255) collate utf8_unicode_ci default NULL,".
@@ -117,8 +113,7 @@ elseif(isset($_POST['add']) && $haveright)
                " PRIMARY KEY (`ID`))".
                " ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3;";
          }
-         else
-         {
+         else {
             $sql="CREATE TABLE `$table` (`ID` int(11) NOT NULL auto_increment, ".$entities.
                " `name` varchar(255) collate utf8_unicode_ci default NULL,".
                " `comments` text collate utf8_unicode_ci,".
@@ -130,13 +125,11 @@ elseif(isset($_POST['add']) && $haveright)
    }
    glpi_header($_SERVER['HTTP_REFERER']);
 }
-elseif(isset($_POST['update']) && $haveright)
-{
+elseif(isset($_POST['update']) && $haveright) {
    // Change the default label for the dropdown
    $query="SELECT * FROM glpi_plugin_customfields_dropdowns";
    $result=$DB->query($query);
-   while ($data=$DB->fetch_assoc($result))
-   {
+   while ($data=$DB->fetch_assoc($result)) {
       $ID=$data['ID'];
       $label=$_POST['label'][$ID];
       $sql="UPDATE glpi_plugin_customfields_dropdowns SET label='$label' WHERE ID='$ID';";
@@ -167,37 +160,49 @@ $query="SELECT dd.*, COUNT(linked.ID) AS num_links FROM glpi_plugin_customfields
    " GROUP BY dd.ID ORDER BY label;";
 $result=$DB->query($query);
 
-while ($data=$DB->fetch_assoc($result)){
+while ($data=$DB->fetch_assoc($result)) {
    $ID = $data['ID'];
    echo '<tr class="tab_bg_1">';
    echo '<td><input name="label['.$ID.']" value="'.htmlspecialchars($data['label']).'" size="20"></td>';
    echo '<td>'.$data['system_name'].'</td>';
    echo '<td align="center">';
-   if($data['has_entities']) echo $LANG['choice'][1]; else echo $LANG['choice'][0]; // Yes or No
+   if($data['has_entities']) { // Yes or No
+      echo $LANG['choice'][1]; 
+   }
+   else {
+      echo $LANG['choice'][0];
+   }
    echo '</td>';
    echo '<td align="center">';
-   if($data['is_tree']) echo $LANG['choice'][1]; else echo $LANG['choice'][0];
+   if($data['is_tree']) {
+      echo $LANG['choice'][1]; 
+   }
+   else {
+      echo $LANG['choice'][0];
+   }
    echo '</td><td>';
-   if($data['num_links']==0 && $haveright)
+   if($data['num_links']==0 && $haveright) {
       echo '<input name="delete['.$ID.']" class="submit" type="submit" value="'.$LANG['buttons'][6].'">';
-   else
+   }
+   else {
       echo str_replace('NNN',$data['num_links'],$LANG['plugin_customfields']['Used_by_NNN_devices']);
+   }
    echo '</td></tr>';
 }
-if($haveright)
-{
+if($haveright) {
    echo '<tr><td align="center" valign="top" class="tab_bg_2" colspan="6">';
-   if($DB->numrows($result)>0)
+   if($DB->numrows($result)>0) {
       echo '<input type="submit" name="update" value="'.$LANG['buttons'][7].'" class="submit"/>';
-   else
+   }
+   else {
       echo $LANG['plugin_customfields']['no_dd_yet'];
+   }
    echo '</td></tr>';
 }
 echo '</table>';
 echo '</form>';
    
-if($haveright)
-{
+if($haveright) {
    echo '<br><form action="#" method="post">';
    echo '<table class="tab_cadre" cellpadding="4">';
    echo '<tr><th colspan="5">'.$LANG['plugin_customfields']['Add_New_Dropdown'].'</th></tr>';

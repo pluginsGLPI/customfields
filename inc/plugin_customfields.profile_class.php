@@ -48,7 +48,6 @@ class plugin_customfields_Profile extends CommonDBTM {
    
    //if profile deleted
    function cleanProfiles($ID) {
-   
       global $DB;
       $query = "DELETE 
                FROM glpi_plugin_customfields_profiledata 
@@ -73,7 +72,7 @@ class plugin_customfields_Profile extends CommonDBTM {
       if (!haveRight("profile","r")) return false;
       $canedit=haveRight("profile","w");
       $prof = new Profile();
-      if ($ID){
+      if ($ID) {
          $this->getFromDB($ID);
          $prof->getFromDB($ID);
       }
@@ -83,10 +82,8 @@ class plugin_customfields_Profile extends CommonDBTM {
       $device_type = 0;
    
       $query="SELECT * FROM `glpi_plugin_customfields_fields` WHERE `restricted`=1 ORDER BY `device_type`, `sort_order`;";
-      if ($result=$DB->query($query))
-      {
-         while($data=$DB->fetch_array($result))
-         {
+      if ($result=$DB->query($query)) {
+         while($data=$DB->fetch_array($result)) {
             if ($data['device_type'] != $device_type) {
                $device_type = $data['device_type'];
                echo "<tr><th colspan='2' align='center'><strong>".
@@ -96,18 +93,21 @@ class plugin_customfields_Profile extends CommonDBTM {
             echo "<tr class='tab_bg_2'><td>".$data['label'].
                " (".$data['system_name'].', '.$LANG['plugin_customfields'][$data['data_type']]."):</td><td>";
             if ($prof->fields['interface']!='helpdesk') {
-               if ($data['data_type']=='sectionhead') 
+               if ($data['data_type']=='sectionhead') { 
                   dropdownYesNo($profile_field,$this->fields[$profile_field],1,1,1);
-               else
+               }
+               else {
                   $this->dropdownNoneReadWriteRequired($profile_field,$this->fields[$profile_field]);
-            } else {
+               }
+            } 
+            else {
                echo $LANG['choice'][0]; // No
             }
             echo "</td></tr>";
          }
       }
 
-      if ($canedit){
+      if ($canedit) {
          echo "<tr class='tab_bg_1'>";
          echo "<td align='center' colspan='2'>";
          echo "<input type='hidden' name='ID' value=$ID>";

@@ -41,17 +41,14 @@ include (GLPI_ROOT.'/inc/includes.php');
 
 include_once ('../inc/plugin_customfields.function.php');
 
-if (haveRight('config','w'))
-{
-   if(TableExists('glpi_plugin_customfields'))
-   {
+if (haveRight('config','w')) {
+   if(TableExists('glpi_plugin_customfields')) {
       plugin_customfields_remove_data();
    }
    glpi_header($_SERVER['HTTP_REFERER']);
 
 }
-else
-{
+else {
    commonHeader($LANG['login'][5],$_SERVER['PHP_SELF'],'plugins','customfields');
    echo '<div align="center"><br><br><img src="'.$CFG_GLPI['root_doc'].'/pics/warning.png" alt="warning"><br><br>';
    echo '<b>'.$LANG['login'][5].'</b></div>'; // Access denied
