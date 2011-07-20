@@ -1,8 +1,8 @@
 <?php
 /*
  * @version $Id$
- ---------------------------------------------------------------------- 
- GLPI - Gestionnaire Libre de Parc Informatique 
+ ----------------------------------------------------------------------
+ GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2009 by the INDEPNET Development Team.
 
  http://indepnet.net/   http://glpi-project.org
@@ -34,7 +34,7 @@
 // ----------------------------------------------------------------------
 
 $NEEDED_ITEMS=array("profile");
-define('GLPI_ROOT', '../../..'); 
+define('GLPI_ROOT', '../../..');
 include (GLPI_ROOT."/inc/includes.php");
 
 checkRight("profile","r");

@@ -35,7 +35,7 @@
 // ----------------------------------------------------------------------
 
 if(!defined('GLPI_ROOT')) {
-   define('GLPI_ROOT', '../../..'); 
+   define('GLPI_ROOT', '../../..');
    $NEEDED_ITEMS=array('setup');
    include (GLPI_ROOT.'/inc/includes.php');
 }
@@ -96,7 +96,7 @@ else {
 if (strstr($_SERVER['PHP_SELF'],"popup")) {
    popFooter();
 }
-else { 
+else {
    commonFooter();
 }
 

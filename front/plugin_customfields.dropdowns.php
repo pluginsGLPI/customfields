@@ -1,27 +1,27 @@
 <?php
 /*
  * @version $Id$
- ---------------------------------------------------------------------- 
- GLPI - Gestionnaire Libre de Parc Informatique 
+ ----------------------------------------------------------------------
+ GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2009 by the INDEPNET Development Team.
- 
+
  http://indepnet.net/   http://glpi-project.org
  ----------------------------------------------------------------------
- 
+
  LICENSE
- 
+
  This file is part of GLPI.
- 
+
  GLPI is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2 of the License, or
  (at your option) any later version.
- 
+
  GLPI is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
- 
+
  You should have received a copy of the GNU General Public License
  along with GLPI; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -40,7 +40,7 @@ define('GLPI_ROOT', '../../..');
 
 
 include (GLPI_ROOT.'/inc/includes.php');
-checkRight('config','r'); 
+checkRight('config','r');
 
 commonHeader($LANG['plugin_customfields']['Manage_Custom_Dropdowns'],$_SERVER['PHP_SELF'],'plugins','customfields');
 
@@ -76,7 +76,7 @@ elseif(isset($_POST['add']) && $haveright) {
 
    $extra='';
    do {
-      $sql="SELECT system_name FROM glpi_plugin_customfields_fields WHERE system_name='$system_name$extra' 
+      $sql="SELECT system_name FROM glpi_plugin_customfields_fields WHERE system_name='$system_name$extra'
          UNION SELECT system_name FROM glpi_plugin_customfields_dropdowns WHERE system_name='$system_name$extra';";
       $result = $DB->query($sql);
       $extra=$extra+1;
@@ -167,7 +167,7 @@ while ($data=$DB->fetch_assoc($result)) {
    echo '<td>'.$data['system_name'].'</td>';
    echo '<td align="center">';
    if($data['has_entities']) { // Yes or No
-      echo $LANG['choice'][1]; 
+      echo $LANG['choice'][1];
    }
    else {
       echo $LANG['choice'][0];
@@ -175,7 +175,7 @@ while ($data=$DB->fetch_assoc($result)) {
    echo '</td>';
    echo '<td align="center">';
    if($data['is_tree']) {
-      echo $LANG['choice'][1]; 
+      echo $LANG['choice'][1];
    }
    else {
       echo $LANG['choice'][0];
@@ -201,7 +201,7 @@ if($haveright) {
 }
 echo '</table>';
 echo '</form>';
-   
+
 if($haveright) {
    echo '<br><form action="#" method="post">';
    echo '<table class="tab_cadre" cellpadding="4">';

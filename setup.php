@@ -1,7 +1,7 @@
 <?php
 /*
- ---------------------------------------------------------------------- 
- GLPI - Gestionnaire Libre de Parc Informatique 
+ ----------------------------------------------------------------------
+ GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2009 by the INDEPNET Development Team.
 
  http://indepnet.net/   http://glpi-project.org/
@@ -35,16 +35,16 @@
 // Purpose of file: Used to initialize the plugin and define its actions.
 // ----------------------------------------------------------------------
 
-// This will be set to true when applying the glpi patch. 
+// This will be set to true when applying the glpi patch.
 // See instructions in the patch directory
 define('CUSTOMFIELDS_GLPI_PATCH_APPLIED', true);
 
 // If auto activate set to true, custom fields will be automatically
 // added when a new record is inserted. If set to false, users must
 // click 'Activate custom fields' to add additional information.
-define('CUSTOMFIELDS_AUTOACTIVATE', true); 
+define('CUSTOMFIELDS_AUTOACTIVATE', true);
 
-// This is the last version that any tables changed.  This version may be 
+// This is the last version that any tables changed.  This version may be
 // older than the plugin version if there were no changes db changes.
 define('CUSTOMFIELDS_DB_VERSION_REQUIRED', 118); // 1.1.8
 
@@ -94,7 +94,7 @@ function plugin_init_customfields() {
                array_push($CFG_GLPI['dropdowntree_tables'],$data['dropdown_table']);
          }
 
-         // Display a menu entry in the main menu if the user has configuration rights 
+         // Display a menu entry in the main menu if the user has configuration rights
          if(haveRight('config','w')) {
             $PLUGIN_HOOKS['menu_entry']['customfields'] = true;
          }
@@ -107,7 +107,7 @@ function plugin_init_customfields() {
          $PLUGIN_HOOKS['item_add']['customfields'] = 'plugin_item_add_customfields';
          $PLUGIN_HOOKS['item_purge']['customfields'] = 'plugin_item_purge_customfields';
          $PLUGIN_HOOKS['pre_item_update']['customfields'] = 'plugin_pre_item_update_customfields';
-      
+
          // Define how to import data into custom fields with the Data_Injection plugin
          $PLUGIN_HOOKS['datainjection']['customfields'] = 'plugin_customfields_datainjection_variables';
 
@@ -116,7 +116,7 @@ function plugin_init_customfields() {
 
       // Indicate where the configuration page can be found
       if (haveRight('config','w')) {
-         $PLUGIN_HOOKS['config_page']['customfields'] = 'front/plugin_customfields.config.php';         
+         $PLUGIN_HOOKS['config_page']['customfields'] = 'front/plugin_customfields.config.php';
       }
    }
 }
@@ -126,7 +126,7 @@ function plugin_version_customfields()
 {
    global $LANG;
 
-   return array( 
+   return array(
       'name' => $LANG['plugin_customfields']['title'],
       'author' => 'Oregon State Data Center',
       'homepage' => 'http://www.opensourcegov.net/projects/glpi-cf',
@@ -143,12 +143,12 @@ function plugin_customfields_check_prerequisites() {
       // Automatically upgrade db (if necessary) when plugin is activated
       if (haveRight('config','w') && $plugin->isActivated("customfields")) {
          global $DB;
-         // Check the version of the database tables. 
+         // Check the version of the database tables.
          $query="SELECT enabled FROM glpi_plugin_customfields WHERE device_type='-1';";
          $result = $DB->query($query);
          $data=$DB->fetch_array($result);
          $dbversion=$data['enabled']; // Version of the last modification to the plugin tables' structure
-   
+
          if($dbversion < CUSTOMFIELDS_DB_VERSION_REQUIRED) {
             plugin_customfields_upgrade($dbversion);
          }

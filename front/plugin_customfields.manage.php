@@ -1,27 +1,27 @@
 <?php
 /*
  * @version $Id$
- ---------------------------------------------------------------------- 
- GLPI - Gestionnaire Libre de Parc Informatique 
+ ----------------------------------------------------------------------
+ GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2009 by the INDEPNET Development Team.
- 
+
  http://indepnet.net/   http://glpi-project.org
  ----------------------------------------------------------------------
- 
+
  LICENSE
- 
+
  This file is part of GLPI.
- 
+
  GLPI is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2 of the License, or
  (at your option) any later version.
- 
+
  GLPI is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
- 
+
  You should have received a copy of the GNU General Public License
  along with GLPI; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -40,7 +40,7 @@ define('GLPI_ROOT', '../../..');
 
 
 include (GLPI_ROOT.'/inc/includes.php');
-checkRight('config','r'); 
+checkRight('config','r');
 
 commonHeader($LANG['plugin_customfields']['Manage_Custom_Fields'],$_SERVER['PHP_SELF'],'plugins','customfields');
 
@@ -97,7 +97,7 @@ if(isset($_GET['device_type'])) {
          }
          $result = $DB->query($sql);
          $table=plugin_customfields_table($device_type);
-         
+
          $sql="SELECT COUNT(ID) AS num_left FROM glpi_plugin_customfields_fields ".
             " WHERE device_type='$device_type' AND data_type<>'sectionhead' AND deleted=0;";
          $result = $DB->query($sql);
@@ -165,7 +165,7 @@ if(isset($_GET['device_type'])) {
 
          $maintable=plugin_customfields_link_id_table($device_type);
 
-         do { 
+         do {
             // Make sure the field name is not already used
             $sql="SELECT system_name FROM glpi_plugin_customfields_fields ".
                " WHERE device_type='$device_type' AND deleted=0 AND system_name='$system_name$extra' ".
@@ -188,7 +188,7 @@ if(isset($_GET['device_type'])) {
       }
 
       if ($data_ok) {
-         // Get next search option position 
+         // Get next search option position
          $sql="SELECT MAX(`sopt_pos`)+1 AS next_sopt_pos FROM `glpi_plugin_customfields_fields` WHERE `device_type`='$device_type';";
          $result = $DB->query($sql);
          $data=$DB->fetch_assoc($result);
@@ -202,7 +202,7 @@ if(isset($_GET['device_type'])) {
             " VALUES ('$device_type','$system_name','$label','$data_type',".
             " 0, '$sort','$dd_table',0,'$sopt_pos',0,'$defaultvalue');";
          $result = $DB->query($sql);
-         
+
          if($data_type!='sectionhead' && $data_type!='multiselect') { // add the field to the data table if it isn't a section header or multiselect
             $table=plugin_customfields_table($device_type);
 
@@ -298,7 +298,7 @@ if(isset($_GET['device_type'])) {
       echo '<td><input name="location['.$ID.']" value="'.$data['location'].'" size="2"></td>';
       echo '<td><input name="sort['.$ID.']" value="'.$data['sort_order'].'" size="2"></td>';
       if($data['restricted']) {
-         if($data['required']) 
+         if($data['required'])
             echo '<td><input type="hidden" name="required['.$ID.']" value="1" /></td>';
          else
             echo '<td></td>';
@@ -324,7 +324,7 @@ if(isset($_GET['device_type'])) {
       echo '<td><input name="entities['.$ID.']" value="'.$data['entities'].'" size="7"></td>';
       echo '<td><input name="delete['.$ID.']" class="submit" type="submit" value="'.$LANG['buttons'][6].'"></td>';
       echo '</tr>';
-      if ($data['data_type']!='sectionhead') { 
+      if ($data['data_type']!='sectionhead') {
          $numdatafields++;
       }
    }

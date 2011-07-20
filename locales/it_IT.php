@@ -26,7 +26,7 @@
 // Original Author of file: Ryan Foster
 // Contact: Matt Hoover <dev@opensourcegov.net>
 // Project Website: http://www.opensourcegov.net
-// Purpose of file: Italian translation of plugin customfields 
+// Purpose of file: Italian translation of plugin customfields
 // by Passero 25.07.2009
 ----------------------------------------------------------------------
  */
@@ -117,8 +117,8 @@ $LANG['plugin_customfields']['device_type'][GROUP_TYPE]     = $LANG['Menu'][36];
 $LANG['plugin_customfields']['device_type'][ENTITY_TYPE]    = $LANG['Menu'][37];
 $LANG['plugin_customfields']['device_type'][NETWORKING_PORT_TYPE] = $LANG['networking'][6];
 $LANG['plugin_customfields']['device_type'][COMPUTERDISK_TYPE] = $LANG['computers'][8];
-$LANG['plugin_customfields']['device_type'][SOFTWAREVERSION_TYPE] = 'Software Versions'; 
-$LANG['plugin_customfields']['device_type'][SOFTWARELICENSE_TYPE] = 'Software License'; 
+$LANG['plugin_customfields']['device_type'][SOFTWAREVERSION_TYPE] = 'Software Versions';
+$LANG['plugin_customfields']['device_type'][SOFTWARELICENSE_TYPE] = 'Software License';
 $LANG['plugin_customfields']['device_type'][DEVICE_TYPE]    = $LANG['title'][30];
 
 $LANG['plugin_customfields']['component_type'][MOBOARD_DEVICE]   = $LANG['devices'][5];

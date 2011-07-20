@@ -45,12 +45,12 @@ class plugin_customfields_Profile extends CommonDBTM {
       $this->table="glpi_plugin_customfields_profiledata";
       $this->type=-1;
    }
-   
+
    //if profile deleted
    function cleanProfiles($ID) {
       global $DB;
-      $query = "DELETE 
-               FROM glpi_plugin_customfields_profiledata 
+      $query = "DELETE
+               FROM glpi_plugin_customfields_profiledata
                WHERE ID='$ID' ";
       $DB->query($query);
    }
@@ -62,9 +62,9 @@ class plugin_customfields_Profile extends CommonDBTM {
       echo "<option value='r' ".($value=='r'?" selected ":"").">".$LANG['profiles'][10]."</option>\n";
       echo "<option value='w' ".($value=='w'?" selected ":"").">".$LANG['profiles'][11]."</option>\n";
       echo "<option value='q' ".($value=='q'?" selected ":"").">".$LANG['plugin_customfields']['Required']."</option>\n";
-      echo "</select>\n";   
-   }   
-   
+      echo "</select>\n";
+   }
+
    //profiles modification
    function showForm($target,$ID){
       global $LANG, $DB;
@@ -80,7 +80,7 @@ class plugin_customfields_Profile extends CommonDBTM {
       echo "<table class='tab_cadre_fixe'>";
 
       $device_type = 0;
-   
+
       $query="SELECT * FROM `glpi_plugin_customfields_fields` WHERE `restricted`=1 ORDER BY `device_type`, `sort_order`;";
       if ($result=$DB->query($query)) {
          while($data=$DB->fetch_array($result)) {
@@ -93,13 +93,13 @@ class plugin_customfields_Profile extends CommonDBTM {
             echo "<tr class='tab_bg_2'><td>".$data['label'].
                " (".$data['system_name'].', '.$LANG['plugin_customfields'][$data['data_type']]."):</td><td>";
             if ($prof->fields['interface']!='helpdesk') {
-               if ($data['data_type']=='sectionhead') { 
+               if ($data['data_type']=='sectionhead') {
                   dropdownYesNo($profile_field,$this->fields[$profile_field],1,1,1);
                }
                else {
                   $this->dropdownNoneReadWriteRequired($profile_field,$this->fields[$profile_field]);
                }
-            } 
+            }
             else {
                echo $LANG['choice'][0]; // No
             }

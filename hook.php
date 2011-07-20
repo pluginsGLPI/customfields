@@ -1,7 +1,7 @@
 <?php
 /*
- ---------------------------------------------------------------------- 
- GLPI - Gestionnaire Libre de Parc Informatique 
+ ----------------------------------------------------------------------
+ GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2009 by the INDEPNET Development Team.
 
  http://indepnet.net/   http://glpi-project.org/
@@ -56,7 +56,7 @@ function plugin_customfields_getDatabaseRelations() {
       $query="SELECT dropdown_table FROM glpi_plugin_customfields_dropdowns WHERE has_entities=1;";
       $result=$DB->query($query);
       while ($data=$DB->fetch_assoc($result)) {
-         $entities[$data['dropdown_table']]='FK_entities'; 
+         $entities[$data['dropdown_table']]='FK_entities';
       }
       if(!empty($entities)) {
          $relations['glpi_entities']=$entities;
@@ -205,10 +205,10 @@ function plugin_customfields_getSearchOption() {
          }
       }
       else {
-         // Note: Yes/No fields are included in search, logging, and mass update functionality. 
+         // Note: Yes/No fields are included in search, logging, and mass update functionality.
          // In the GLPI core they are not usually included.
 
-         // For fields that aren't dropdowns, it is necessary to apply a patch 
+         // For fields that aren't dropdowns, it is necessary to apply a patch
          // to enable logging and mass update functionality
          if(CUSTOMFIELDS_GLPI_PATCH_APPLIED) {
             // for logging (these might need to be the first set of options)
@@ -240,7 +240,7 @@ function plugin_customfields_getSearchOption() {
                $sopt[$type][$xspos]['forcegroupby']=true;
                $sopt[$type][$xspos]['purpose']='search';
 /*
-               // REMOVED. THis is handled separately for financial cf. No Mass Update for Nework port cf (does not make sense with the one-many rel.) 
+               // REMOVED. THis is handled separately for financial cf. No Mass Update for Nework port cf (does not make sense with the one-many rel.)
                // for mass update
                $mpos[$type]++;
                $mupos=$mpos[$type];
@@ -265,14 +265,14 @@ function plugin_customfields_getSearchOption() {
    return $sopt;
 }
 
-// Clean Search Options: Necessary for search to work properly if GLPI patch applied. 
+// Clean Search Options: Necessary for search to work properly if GLPI patch applied.
 // Removes the search options that are used for different purposes.
 // This function requires the glpi patch in order to be called. See the patch directory for instructions.
 function plugin_customfields_cleanSearchOption($options, $action) {
    if(!empty($options)) {
       foreach($options as $ID => $value) {
          if(is_array($value) && isset($value['purpose'])) {
-            // If action is 'r' we are cleaning before a search. 
+            // If action is 'r' we are cleaning before a search.
             // If action is 'w', we are cleaning before an update.
             if ($value['purpose']=='log') {
                unset($options[$ID]);
@@ -310,7 +310,7 @@ function plugin_customfields_addLeftJoin($type,$ref_table,$new_table,$linkfield,
    }
    elseif ($new_table=='glpi_plugin_customfields_networking_ports') {
       $out=addLeftJoin($type,$ref_table,$already_link_tables,"glpi_networking_ports",'');
-//      $out.=addLeftJoin(NETWORKING_PORT_TYPE,'glpi_networking_ports',$already_link_tables,"glpi_plugin_customfields_networking_ports",'ID'); 
+//      $out.=addLeftJoin(NETWORKING_PORT_TYPE,'glpi_networking_ports',$already_link_tables,"glpi_plugin_customfields_networking_ports",'ID');
       // addLeftJoinThis doesn't work here for some reason, so we hard code the second join
       $out.=" LEFT JOIN glpi_plugin_customfields_networking_ports ON (glpi_networking_ports.ID = glpi_plugin_customfields_networking_ports.ID) ";
       return $out;
@@ -328,7 +328,7 @@ function plugin_customfields_addLeftJoin($type,$ref_table,$new_table,$linkfield,
          $out.= " LEFT JOIN $new_table ON ($new_table.ID = $type_table.$linkfield) ";
       }
       else { // a dropdown in network ports
-         $query="SELECT * FROM `glpi_plugin_customfields_fields` WHERE `dropdown_table`='$new_table' AND `deleted`=0 AND `entities`!='' 
+         $query="SELECT * FROM `glpi_plugin_customfields_fields` WHERE `dropdown_table`='$new_table' AND `deleted`=0 AND `entities`!=''
             AND `device_type` IN (".NETWORKING_PORT_TYPE.",".INFOCOM_TYPE.");";
          $result=$DB->query($query);
          if($DB->numrows($result)) { // (this fails if the same dd is used in networking ports and financial cf)
@@ -352,7 +352,7 @@ function plugin_customfields_addLeftJoin($type,$ref_table,$new_table,$linkfield,
 function plugin_pre_item_update_customfields($data) {
    global $ACTIVE_CUSTOMFIELDS_TYPES;
 
-   if (empty($ACTIVE_CUSTOMFIELDS_TYPES)) { 
+   if (empty($ACTIVE_CUSTOMFIELDS_TYPES)) {
       return $data;
    }
 
@@ -360,7 +360,7 @@ function plugin_pre_item_update_customfields($data) {
    if(in_array($data['_item_type_'],$ACTIVE_CUSTOMFIELDS_TYPES) && !isset($data['_already_called_'])) {
       if(!isset($data['update'])) {
          // mass update or tranfer, possibly affecting one of our custom fields
-         $updates=array();      
+         $updates=array();
          if(isset($data['FK_entities'])) { // the item is being transfered to another entity
             $updates=plugin_customfields_transferAllDropdowns($data['ID'],$data['_item_type_'],$data['FK_entities']);
          }
@@ -445,11 +445,11 @@ function plugin_customfields_MassiveActionsFieldsDisplay($type,$table,$field,$li
          case 'date':
             showDateFormItem($linkfield,'',true,true);
             break;
-         case 'money':         
+         case 'money':
             echo '<input type="text" size="16" value="'.formatNumber(0,true).'" name="'.$linkfield.'"/>';
             break;
          default:
-            autocompletionTextField($linkfield,$table,$field); 
+            autocompletionTextField($linkfield,$table,$field);
             break;
       }
       return true;
@@ -485,7 +485,7 @@ function plugin_customfields_MassiveActionsDisplay($type,$action) {
             $newgroup="";
             if (!$first_group) $newgroup.="</optgroup>";
             $newgroup.="<optgroup label=\"$val\">";
-         } 
+         }
          elseif(!isset($val['purpose']) || $val['purpose']=='update') {
             $newgroup.= "<option value='".$key."'>".$val['name']."</option>";
             $items_in_group++;
@@ -497,12 +497,12 @@ function plugin_customfields_MassiveActionsDisplay($type,$action) {
       }
 
       echo "</select>";
-   
+
       $paramsmassaction=array('id_field'=>'__VALUE__',
          'device_type'=>INFOCOM_TYPE,
          );
       ajaxUpdateItemOnSelectEvent("massiveaction_field","show_massiveaction_field",$CFG_GLPI["root_doc"]."/ajax/dropdownMassiveActionField.php",$paramsmassaction);
-   
+
       echo "<span id='show_massiveaction_field'>&nbsp;</span>\n";
    }
    return "";
@@ -524,13 +524,13 @@ function plugin_customfields_MassiveActionsProcess($data) {
 
       foreach($items as $item_id => $checked) {
          if($checked==1) {
-            $sql="SELECT `ID` FROM `glpi_infocoms` 
+            $sql="SELECT `ID` FROM `glpi_infocoms`
                WHERE `FK_device`='$item_id' AND `device_type`='$device_type';";
             $result=$DB->query($sql);
             if($DB->numrows($result)>0) {
                $row=$DB->fetch_assoc($result);
                $infocom_id=$row['ID'];
-               $sql="UPDATE glpi_plugin_customfields_infocoms SET `$field`='$value' 
+               $sql="UPDATE glpi_plugin_customfields_infocoms SET `$field`='$value'
                   WHERE `ID`='$infocom_id';";
                $result=$DB->query($sql);
             }
@@ -579,7 +579,7 @@ function plugin_headings_customfields($type,$ID,$withtemplate=0) {
          plugin_customfields_createaccess($ID);
       }
       $prof->showForm($CFG_GLPI["root_doc"]."/plugins/customfields/front/plugin_customfields.profile.php",$ID);
-   } 
+   }
    elseif ($ID > -1) {
       echo '<div align="center">';
       echo plugin_customfields_showAssociated($type,$ID);
@@ -588,7 +588,7 @@ function plugin_headings_customfields($type,$ID,$withtemplate=0) {
 }
 
 // Define fields that can be updated with the data_injection plugin
-function plugin_customfields_datainjection_variables() {   
+function plugin_customfields_datainjection_variables() {
    global $IMPORT_PRIMARY_TYPES, $DATA_INJECTION_MAPPING, $LANG, $IMPORT_TYPES,$DATA_INJECTION_INFOS,$DB;
    $plugin = new Plugin();
 
@@ -612,7 +612,7 @@ function plugin_customfields_datainjection_variables() {
          }
          $DATA_INJECTION_MAPPING[$type][$field]['name'] = $data['label'];
          switch($data['data_type']) {
-            case 'number': 
+            case 'number':
             case 'yesno': $DATA_INJECTION_MAPPING[$type][$field]['type'] = 'integer'; break;
             case 'date': $DATA_INJECTION_MAPPING[$type][$field]['type'] = 'date'; break;
             case 'money': $DATA_INJECTION_MAPPING[$type][$field]['type'] = 'float'; break;
@@ -620,11 +620,11 @@ function plugin_customfields_datainjection_variables() {
             case 'notes':
                $DATA_INJECTION_MAPPING[$type][$field]['table_type'] = 'multitext';
                $DATA_INJECTION_INFOS[$type][$field]['table_type'] = 'multitext';
-               $DATA_INJECTION_MAPPING[$type][$field]['type'] = 'text'; 
+               $DATA_INJECTION_MAPPING[$type][$field]['type'] = 'text';
                break;
-            default: $DATA_INJECTION_MAPPING[$type][$field]['type'] = 'text'; 
+            default: $DATA_INJECTION_MAPPING[$type][$field]['type'] = 'text';
          }
-         $DATA_INJECTION_INFOS[$type][$field]['table'] = $DATA_INJECTION_MAPPING[$type][$field]['table']; 
+         $DATA_INJECTION_INFOS[$type][$field]['table'] = $DATA_INJECTION_MAPPING[$type][$field]['table'];
          $DATA_INJECTION_INFOS[$type][$field]['field'] = $DATA_INJECTION_MAPPING[$type][$field]['field'];
          $DATA_INJECTION_INFOS[$type][$field]['name'] = $DATA_INJECTION_MAPPING[$type][$field]['name'];
          $DATA_INJECTION_INFOS[$type][$field]['type'] = $DATA_INJECTION_MAPPING[$type][$field]['type'];

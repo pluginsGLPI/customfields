@@ -1,7 +1,7 @@
 <?php
 /*
- ---------------------------------------------------------------------- 
- GLPI - Gestionnaire Libre de Parc Informatique 
+ ----------------------------------------------------------------------
+ GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2009 by the INDEPNET Development Team.
 
  http://indepnet.net/   http://glpi-project.org
@@ -62,7 +62,7 @@ function plugin_customfields_haveRight($device_type,$right) {
       return haveRight('device',$right);
    }
    if ($device_type >= 1000) {
-      // This is a plugin. There is no standard way to check rights for plugins, 
+      // This is a plugin. There is no standard way to check rights for plugins,
       // so if customfield are added on a plugin everyone who can see the plugin
       // will have write access to the custom fields.
       return true;
@@ -118,7 +118,7 @@ function plugin_customfields_remove_accents($str) {
    return str_replace($from, $to, html_entity_decode($str));
 }
 
-// Replace punctuation and spaces with underscore, letters to lowercase. 
+// Replace punctuation and spaces with underscore, letters to lowercase.
 // Removes most accents, but does not replace foreign scripts, chinese characters, etc.
 function plugin_customfields_make_system_name($str, $allowdot=false) {
    $str = plugin_customfields_remove_accents(trim($str));
@@ -128,7 +128,7 @@ function plugin_customfields_make_system_name($str, $allowdot=false) {
       '_abcdefghijklmnopqrstuvwxyz_____________________________'.$dot);
 }
 
-// Get the name of the device type OR the non-localized 'name' of the plugin 
+// Get the name of the device type OR the non-localized 'name' of the plugin
 function plugin_customfields_device_type_label($device_type) {
    global $LANG, $PLUGIN_HOOKS;
    if($device_type >= 1000) {
@@ -194,7 +194,7 @@ function plugin_customfields_activate_all($device_type) {
       $table2=plugin_customfields_table($device_type);
       if($device_type==ENTITY_TYPE) {
          $sql="INSERT INTO `$table2` (ID) VALUES ('0');"; // Add a row for the Root Entity
-         $result2 = $DB->query($sql); 
+         $result2 = $DB->query($sql);
       }
 
       $query="SELECT a.ID, b.ID AS skip FROM $table1 AS a LEFT JOIN $table2 AS b ON a.ID=b.ID;";
@@ -202,7 +202,7 @@ function plugin_customfields_activate_all($device_type) {
       while ($data=$DB->fetch_assoc($result)) {
          if(is_null($data['skip'])) {
             $sql="INSERT INTO `$table2` (ID) VALUES ('".intval($data['ID'])."');";
-            $result2 = $DB->query($sql); 
+            $result2 = $DB->query($sql);
          }
       }
    }
@@ -242,7 +242,7 @@ function plugin_customfields_disable_device($device_type) {
    addMessageAfterRedirect($LANG['plugin_customfields']['cf_disabled']);
 }
 
-// Copies value in a drop down to a new entity if it does not alreay exist in the new entity. 
+// Copies value in a drop down to a new entity if it does not alreay exist in the new entity.
 // If the menu has a tree stucture, it will also copy any parents that didn't exist in the new entity.
 function plugin_customfields_transferDropdown($ddID,$dd_table,$newentity) {
    global $DB;
@@ -267,7 +267,7 @@ function plugin_customfields_transferDropdown($ddID,$dd_table,$newentity) {
                return $newID;
             }
          }
-         // No match was found, so copy the data to the new entity 
+         // No match was found, so copy the data to the new entity
          $input=array();
          $input['tablename']=$dd_table;
          $input['FK_entities']=$newentity;
@@ -332,7 +332,7 @@ function plugin_customfields_getDataCache($device_type,$ID) {
          $query="SELECT * FROM `$table` WHERE ID='$ID'";
          $result = $DB->query($query);
          $number = $DB->numrows($result);
-         if($number==1) {  
+         if($number==1) {
             $CFDATACACHE[$device_type][$ID]=$DB->fetch_array($result);
          }
       }
@@ -431,8 +431,8 @@ function plugin_customfields_showMultiselect($field_name,$ID,$fields,$readonly,$
    }
    $sql="SELECT `$ddtable`.ID, `$ddtable`.`$ddfield`, `$ddtable`.`$titlefield` AS `titlefield`, linktable.device
       FROM `$ddtable`
-      LEFT JOIN glpi_plugin_customfields_multiselect linktable ON linktable.item=`$ddtable`.ID 
-         AND linktable.device='$ID' 
+      LEFT JOIN glpi_plugin_customfields_multiselect linktable ON linktable.item=`$ddtable`.ID
+         AND linktable.device='$ID'
          AND linktable.field='$fieldnum'
       ORDER BY `$ddtable`.`$ddfield`;";
    $result=$DB->query($sql);
@@ -490,7 +490,7 @@ function plugin_customfields_showAssociated($device_type,$ID,$withtemplate='') {
    if($info['enabled']!=1) {
       return;
    }
-   
+
    $entity=0;
    if($device_type <= 500 && !in_array($device_type,array(COMPUTERDISK_TYPE,NETWORKING_PORT_TYPE,ENTITY_TYPE,
                SOFTWAREVERSION_TYPE,SOFTWARELICENSE_TYPE,INFOCOM_TYPE))) {
@@ -503,7 +503,7 @@ function plugin_customfields_showAssociated($device_type,$ID,$withtemplate='') {
          $entity=$data['FK_entities'];
       }
    }
-      
+
    $data=plugin_customfields_getDataCache($device_type,$ID);
    if (!$data) { // No data found, so make a link to activate custom fields for this device
       if (plugin_customfields_haveRight($device_type,'w')&&$withtemplate!=2) {
@@ -511,7 +511,7 @@ function plugin_customfields_showAssociated($device_type,$ID,$withtemplate='') {
          echo '<strong><a href="'.GLPI_ROOT.'/plugins/customfields/front/plugin_customfields.form.php?device_type='.$device_type.'&amp;ID='.$ID.'&amp;add=add">'.$LANG['plugin_customfields']['Activate_Custom_Fields'].'</a></strong>';
          echo '</div><br>';
       }
-   } 
+   }
    else { // Data was found, so display it
       $meta=plugin_customfields_getMetaCache($device_type,$entity);
 
@@ -523,7 +523,7 @@ function plugin_customfields_showAssociated($device_type,$ID,$withtemplate='') {
 
          $output=plugin_customfields_displayField($device_type,$ID,$fields['system_name'],$entity,$withtemplate);
          if($output===false) continue;
-         
+
          if(in_array($fields['data_type'],array('notes','text','sectionhead'))) {
             if($count % 2) {
                echo '<td colspan="2"></td></tr>';
@@ -550,7 +550,7 @@ function plugin_customfields_showAssociated($device_type,$ID,$withtemplate='') {
 
       // Show buttons
       if(($count >= 1) && plugin_customfields_haveRight($device_type,'w')) {
-         if(CUSTOMFIELDS_AUTOACTIVATE) { 
+         if(CUSTOMFIELDS_AUTOACTIVATE) {
             echo '<tr><td align="center" valign="top" colspan="4" class="tab_bg_2">';
          }
          else {
@@ -640,7 +640,7 @@ function plugin_customfields_displayField($device_type,$ID,$system_name,$entity=
       echo '<td'.$classes.'>'.$fields['label'].': </td>';
       echo '<td'.$classes.$title.'>';
    }
-   
+
    switch($fields['data_type']) {
       case 'general':
          if(!$readonly) {
@@ -746,7 +746,7 @@ function plugin_customfields_install() {
    else {
       global $LANG;
 
-      // Check the compatability of the plugin files and database tables. 
+      // Check the compatability of the plugin files and database tables.
       $query="SELECT enabled FROM glpi_plugin_customfields WHERE device_type='-1';";
       $result = $DB->query($query);
       $data=$DB->fetch_array($result);
@@ -806,7 +806,7 @@ function plugin_customfields_upgrade($oldversion) {
          $DB->query($sql);
       }
    }
-    
+
    // Add a column to indicate if a field is required
    if($oldversion < 112) {
       $sql = "ALTER TABLE `glpi_plugin_customfields_fields` ADD `required` smallint(6) NOT NULL DEFAULT '0';";
@@ -817,7 +817,7 @@ function plugin_customfields_upgrade($oldversion) {
 
    // Add a column to indicate which entities to show the field with
    // Remove column for hidden field, use blank in entites field to replace this functionality
-   // Add restricted field to allow field-based permissions 
+   // Add restricted field to allow field-based permissions
    if($oldversion < 113) {
       $sql = "ALTER TABLE `glpi_plugin_customfields_fields` ADD `entities` VARCHAR(255) NOT NULL DEFAULT '*';";
       $result=$DB->query($sql);
@@ -841,7 +841,7 @@ function plugin_customfields_upgrade($oldversion) {
       $transform['number']  = 'INT(11) NOT NULL default \'0\'';
       $transform['money']   = 'DECIMAL(20,4) NOT NULL default \'0.0000\'';
 
-      $sql="SELECT `device_type`,`system_name`,`data_type` FROM `glpi_plugin_customfields_fields` 
+      $sql="SELECT `device_type`,`system_name`,`data_type` FROM `glpi_plugin_customfields_fields`
          WHERE `deleted`='0' AND data_type!='sectionhead' AND data_type!='date'
          ORDER BY `device_type`, `sort_order`, `ID`;";
       $result=$DB->query($sql);
@@ -887,7 +887,7 @@ function plugin_customfields_uninstall() {
    global $LANG;
 
    if(TableExists('glpi_plugin_customfields')) {
-      $message = $LANG['plugin_customfields']['setup'][8] . '<br>'. 
+      $message = $LANG['plugin_customfields']['setup'][8] . '<br>'.
          '<a href="../plugins/customfields/front/plugin_customfields.removedata.php" '.
          'onclick="return confirm(\''.$LANG['plugin_customfields']['setup'][10].'\');">'.
          $LANG['plugin_customfields']['setup'][9].'</a>';
@@ -936,7 +936,7 @@ function plugin_customfields_remove_data() {
 function plugin_customfields_createaccess($ID) {
    GLOBAL $DB;
    include_once (GLPI_ROOT."/inc/profile.class.php");
-   
+
    $Profile=new Profile();
    $Profile->GetfromDB($ID);
    $name=$Profile->fields["name"];
