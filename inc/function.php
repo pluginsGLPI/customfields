@@ -338,10 +338,11 @@ function plugin_customfields_showAssociated($item, $withtemplate='') {
 
                case 'dropdown' :
                   if (!$readonly) {
-                     dropdownValue($fields['dropdown_table'], $field_name, $value);
+//                     dropdownValue($fields['dropdown_table'], $field_name, $value);
+                     Dropdown::show('Location', array('value'  => $value));
                   } else {
-                     plugin_customfields_showValue(Dropdown::getDropdownName($fields['dropdown_table'],
-                                                                             $value));
+//                     plugin_customfields_showValue(Dropdown::getDropdownName($fields['dropdown_table'],
+//                                                                             $value));
                   }
                   break;
 

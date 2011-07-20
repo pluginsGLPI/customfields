@@ -40,6 +40,10 @@
 // click 'Activate custom fields' to add additional information.
 define('CUSTOMFIELDS_AUTOACTIVATE', true);
 
+// This is the last version that any tables changed.  This version may be
+// older than the plugin version if there were no changes db changes.
+define('CUSTOMFIELDS_DB_VERSION_REQUIRED', 118); // 1.1.8 TODO: Update this 
+
 $ACTIVE_CUSTOMFIELDS_TYPES = array();
 $ALL_CUSTOMFIELDS_TYPES = array();
 
@@ -57,56 +61,57 @@ function plugin_init_customfields() {
    Plugin::registerClass('PluginCustomfieldsFields');
 
    if (isset($_SESSION['glpiID'])){
-      $plugin = new Plugin();
- //     if ($plugin->isActivated("customfields")) {
-         $query = "SELECT `itemtype`, `enabled`
-                   FROM `glpi_plugin_customfields_itemtypes`
-                   WHERE `itemtype` <> 'Version'";
-         $result = $DB->query($query);
+      $query = "SELECT `itemtype`, `enabled`
+                FROM `glpi_plugin_customfields_itemtypes`
+                WHERE `itemtype` <> 'Version'";
+      $result = $DB->query($query);
 
-         while ($data=$DB->fetch_assoc($result)) {
-            $ALL_CUSTOMFIELDS_TYPES[] = $data['itemtype'];
-            if ($data['enabled']) {
-               $ACTIVE_CUSTOMFIELDS_TYPES[] = $data['itemtype'];
-            }
+      while ($data=$DB->fetch_assoc($result)) {
+         $ALL_CUSTOMFIELDS_TYPES[] = $data['itemtype'];
+         if ($data['enabled']) {
+            $ACTIVE_CUSTOMFIELDS_TYPES[] = $data['itemtype'];
          }
+      }
 
-         $query = "SELECT *
-                   FROM `glpi_plugin_customfields_dropdowns`
-                   WHERE `has_entities` = 1
-                         OR `is_tree` = 1";
-         $result=$DB->query($query);
+      $query = "SELECT *
+                FROM `glpi_plugin_customfields_dropdowns`
+                WHERE `has_entities` = 1
+                      OR `is_tree` = 1";
+      $result=$DB->query($query);
 
-         while ($data=$DB->fetch_assoc($result)) {
-            if ($data['has_entities']==1) {
-               array_push($CFG_GLPI['specif_entities_tables'], $data['dropdown_table']);
-            }
-            if ($data['is_tree']==1) {
-               array_push($CFG_GLPI['dropdowntree_tables'], $data['dropdown_table']);
-            }
+      while ($data=$DB->fetch_assoc($result)) {
+         if ($data['has_entities']==1) {
+            array_push($CFG_GLPI['specif_entities_tables'], $data['dropdown_table']);
          }
-
-         // Display a menu entry in the main menu if the user has configuration rights
-         if (haveRight('config','w')) {
-            $PLUGIN_HOOKS['menu_entry']['customfields'] = true;
+         if ($data['is_tree']==1) {
+            array_push($CFG_GLPI['dropdowntree_tables'], $data['dropdown_table']);
          }
+      }
 
-         // Menus for each device type
-         $PLUGIN_HOOKS['headings']['customfields'] = 'plugin_get_headings_customfields';
-         $PLUGIN_HOOKS['headings_action']['customfields'] = 'plugin_headings_actions_customfields';
+      // Display a menu entry in the main menu if the user has configuration rights
+      if (haveRight('config','w')) {
+         $PLUGIN_HOOKS['menu_entry']['customfields'] = true;
+      }
 
-         // Functions to run when data changes
-         foreach($ACTIVE_CUSTOMFIELDS_TYPES as $type) {
-            $PLUGIN_HOOKS['item_add']['customfields'][$type]='plugin_item_add_customfields';
-            $PLUGIN_HOOKS['pre_item_update']['customfields'][$type] = 'plugin_pre_item_update_customfields';
-         }
-         foreach($ALL_CUSTOMFIELDS_TYPES as $type) {
-            $PLUGIN_HOOKS['item_purge']['customfields'][$type] = 'plugin_item_purge_customfields';
-         }
+      // Menus for each device type
+      $PLUGIN_HOOKS['headings']['customfields'] = 'plugin_get_headings_customfields';
+      $PLUGIN_HOOKS['headings_action']['customfields'] = 'plugin_headings_actions_customfields';
 
-         // Define how to import data into custom fields with the Data_Injection plugin
-         $PLUGIN_HOOKS['data_injection']['customfields'] = 'plugin_customfields_data_injection_variables';
- //     }
+      // Functions to run when data changes
+      //TODO: may need to filter out component types )after addidng components)
+      foreach($ACTIVE_CUSTOMFIELDS_TYPES as $type) {
+         $PLUGIN_HOOKS['item_add']['customfields'][$type]='plugin_item_add_customfields';
+         $PLUGIN_HOOKS['pre_item_update']['customfields'][$type] = 'plugin_pre_item_update_customfields';
+      }
+      foreach($ALL_CUSTOMFIELDS_TYPES as $type) {
+         $PLUGIN_HOOKS['item_purge']['customfields'][$type] = 'plugin_item_purge_customfields';
+      }
+
+      // Define how to import data into custom fields with the Data_Injection plugin
+      $PLUGIN_HOOKS['data_injection']['customfields'] = 'plugin_customfields_data_injection_variables';
+
+      // added back - is it used?
+      $PLUGIN_HOOKS['use_massive_action']['customfields']=1; // for custom massive action category
 
       // Indicate where the configuration page can be found
       if (haveRight('config','w')) {
@@ -129,31 +134,34 @@ function plugin_version_customfields() {
 
 // Checks prerequisites before install. May print errors or add message after redirect
 function plugin_customfields_check_prerequisites() {
+   if (GLPI_VERSION>=0.78) {
+      $plugin = new Plugin();
 
-   if (GLPI_VERSION < 0.78) {
-      echo "GLPI version not compatible need 0.78";
-   } else {
+      // Automatically upgrade db (if necessary) when plugin is activated
+      if (haveRight('config','w') && $plugin->isActivated('customfields')) {
+         global $DB;
+         // Check the version of the database tables.
+         $query =  "SELECT `enabled` 
+                    FROM `glpi_plugin_customfields_itemtypes` 
+                    WHERE itemtype='Version';";
+         $result = $DB->query($query);
+         $data = $DB->fetch_array($result);
+         $dbversion = $data['enabled']; // Version of the last modification to the plugin tables' structure
+
+         if($dbversion < CUSTOMFIELDS_DB_VERSION_REQUIRED) {
+//TODO: enable this
+//            plugin_customfields_upgrade($dbversion);
+         }
+         if(CUSTOMFIELDS_AUTOACTIVATE) {
+//TODO: enable this
+//            plugin_customfields_activate_all_types();
+         }
+      }
       return true;
    }
-/*
-                $plugin = new Plugin();
-
-		// Automatically upgrade db (if necessary) when plugin is activated
-		if (haveRight('config','w') && $plugin->isActivated("customfields"))
-		{
-			global $DB;
-			// Check the version of the database tables.
-			$query="SELECT enabled FROM glpi_plugin_customfields WHERE device_type='-1';";
-			$result = $DB->query($query);
-			$data=$DB->fetch_array($result);
-			$dbversion=$data['enabled']; // Version of the last modification to the plugin tables' structure
-
-                	if(CUSTOMFIELDS_AUTOACTIVATE)
-				plugin_customfields_activate_all_types();
-		}
-		return true;
-	}
-*/
+   else {
+      echo "This plugin requires GLPI version 0.78 or higher";
+   }
 }
 
 // Check configuration process for plugin : need to return true if succeeded
