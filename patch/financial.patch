@@ -1,0 +1,12 @@
+Index: inc/infocom.function.php
+===================================================================
+--- inc/infocom.function.php	(revision 197)
++++ inc/infocom.function.php	(working copy)
+@@ -245,6 +245,7 @@
+ 			else {
+ 				echo "</table></div>";
+ 			}
++			plugin_customfields_showAssociated(INFOCOM_TYPE,$ic->fields['ID']);
+ 
+ 		}
+ 	}

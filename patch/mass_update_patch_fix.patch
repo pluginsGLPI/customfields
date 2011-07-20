@@ -1,0 +1,13 @@
+Index: dropdownMassiveActionField.php
+===================================================================
+--- dropdownMassiveActionField.php	(revision 347)
++++ dropdownMassiveActionField.php	(working copy)
+@@ -201,7 +201,7 @@
+ 					} 
+ 				} 
+  				////////// begin modification for custom fields plugin /////////
+- 				elseif (substr($search["table"],0,25)=='glpi_plugin_customfields_')
++ 				elseif (substr($search["table"],0,34)=='glpi_dropdown_plugin_customfields_' || substr($search["table"],0,25)=='glpi_plugin_customfields_')
+  				{
+  					$function='plugin_customfields_MassiveActionsFieldsDisplay';
+  					if (function_exists($function)){

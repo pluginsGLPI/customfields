@@ -1,0 +1,68 @@
+Index: config/define.php
+===================================================================
+--- config/define.php	(revision 157)
++++ config/define.php	(working copy)
+@@ -280,6 +280,7 @@
+ //			STATE_TYPE => "??",
+ 			PHONE_TYPE => "front/phone.form.php",
+ //			DEVICE_TYPE => "???",
++			DEVICE_TYPE => "front/device.form.php",
+ 			REMINDER_TYPE => "front/reminder.form.php",
+ //			STAT_TYPE => "???",
+ 			GROUP_TYPE => "front/group.form.php",
+Index: inc/device.class.php
+===================================================================
+--- inc/device.class.php	(revision 197)
++++ inc/device.class.php	(working copy)
+@@ -43,10 +43,16 @@
+ 	 * @param $dev_type device type
+ 	**/
+ 	function __construct($dev_type) {
++		$this->type=DEVICE_TYPE;
+ 		$this->devtype=$dev_type;
+ 		$this->table=getDeviceTable($dev_type);
+ 	}
+ 
++	function defineTabs($ID,$withtemplate){
++		global $LANG;
++		$ong[1]=$LANG['title'][26];
++		return $ong;
++	}
+ 
+ 	function prepareInputForAdd($input) {
+ 		if (isset($input['device_type'])){
+Index: inc/plugin.function.php
+===================================================================
+--- inc/plugin.function.php	(revision 197)
++++ inc/plugin.function.php	(working copy)
+@@ -290,7 +290,7 @@
+  * @param $withtemplate is the item display like a template ? 
+  * @return Array of tabs (sorted)
+  */
+-function getPluginTabs($target,$type,$ID,$withtemplate){
++function getPluginTabs($target,$type,$ID,$withtemplate,$extraparam=''){
+ 	global $PLUGIN_HOOKS,$LANG,$INFOFORM_PAGES,$CFG_GLPI;
+ 	$template="";
+ 	if(!empty($withtemplate)){
+@@ -338,7 +338,7 @@
+ 
+ 						$tabs[$key]=array('title'=>$val,
+ 						'url'=>$CFG_GLPI['root_doc']."/$tabpage",
+-						'params'=>"target=$target&type=".$type."&glpi_tab=$key&ID=$ID$template");
++						'params'=>"target=$target&type=".$type."&glpi_tab=$key&ID=$ID$template$extraparam");
+ 						$order[$key]=$val;
+ 					}
+ 				}
+Index: inc/commondbtm.class.php
+===================================================================
+--- inc/commondbtm.class.php	(revision 197)
++++ inc/commondbtm.class.php	(working copy)
+@@ -1122,7 +1122,7 @@
+ 						'url'=>$CFG_GLPI['root_doc']."/$tabpage",
+ 						'params'=>"target=$target&type=".$this->type."&glpi_tab=$key&ID=$ID$template$extraparam");
+ 			}			
+-			$plug_tabs=getPluginTabs($target,$this->type,$ID,$withtemplate);
++			$plug_tabs=getPluginTabs($target,$this->type,$ID,$withtemplate,$extraparam);
+ 			$tabs+=$plug_tabs;
+ 			// Not all tab for templates and if only 1 tab
+ 			if($display_all && empty($withtemplate) && count($tabs)>1){
