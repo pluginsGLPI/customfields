@@ -42,9 +42,9 @@ $prof=new plugin_customfields_Profile();
 
 //Save profile
 if (isset ($_POST['update_user_profile'])) {
-	$prof->update($_POST);
-	plugin_customfields_changeprofile();
-	glpi_header($_SERVER['HTTP_REFERER']);
+   $prof->update($_POST);
+   plugin_customfields_changeprofile();
+   glpi_header($_SERVER['HTTP_REFERER']);
 }
 
 ?>

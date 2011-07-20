@@ -41,81 +41,81 @@ if (!defined('GLPI_ROOT')) die('Sorry. You can\'t access this file directly.');
 
 class plugin_customfields_Profile extends CommonDBTM {
 
-	function __construct () {
-		$this->table="glpi_plugin_customfields_profiledata";
-		$this->type=-1;
-	}
-	
-	//if profile deleted
-	function cleanProfiles($ID) {
-	
-		global $DB;
-		$query = "DELETE 
-					FROM glpi_plugin_customfields_profiledata 
-					WHERE ID='$ID' ";
-		$DB->query($query);
-	}
+   function __construct () {
+      $this->table="glpi_plugin_customfields_profiledata";
+      $this->type=-1;
+   }
+   
+   //if profile deleted
+   function cleanProfiles($ID) {
+   
+      global $DB;
+      $query = "DELETE 
+               FROM glpi_plugin_customfields_profiledata 
+               WHERE ID='$ID' ";
+      $DB->query($query);
+   }
 
-	function dropdownNoneReadWriteRequired($name,$value){
-		global $LANG;
-		echo "<select name='$name'>\n";
-		echo "<option value='' ".(empty($value)?" selected ":"").">".$LANG['profiles'][12]."</option>\n";
-		echo "<option value='r' ".($value=='r'?" selected ":"").">".$LANG['profiles'][10]."</option>\n";
-		echo "<option value='w' ".($value=='w'?" selected ":"").">".$LANG['profiles'][11]."</option>\n";
-		echo "<option value='q' ".($value=='q'?" selected ":"").">".$LANG['plugin_customfields']['Required']."</option>\n";
-		echo "</select>\n";	
-	}	
-	
-	//profiles modification
-	function showForm($target,$ID){
-		global $LANG, $DB;
+   function dropdownNoneReadWriteRequired($name,$value){
+      global $LANG;
+      echo "<select name='$name'>\n";
+      echo "<option value='' ".(empty($value)?" selected ":"").">".$LANG['profiles'][12]."</option>\n";
+      echo "<option value='r' ".($value=='r'?" selected ":"").">".$LANG['profiles'][10]."</option>\n";
+      echo "<option value='w' ".($value=='w'?" selected ":"").">".$LANG['profiles'][11]."</option>\n";
+      echo "<option value='q' ".($value=='q'?" selected ":"").">".$LANG['plugin_customfields']['Required']."</option>\n";
+      echo "</select>\n";   
+   }   
+   
+   //profiles modification
+   function showForm($target,$ID){
+      global $LANG, $DB;
 
-		if (!haveRight("profile","r")) return false;
-		$canedit=haveRight("profile","w");
-		$prof = new Profile();
-		if ($ID){
-			$this->getFromDB($ID);
-			$prof->getFromDB($ID);
-		}
-		echo "<form action='".$target."' method='post'>";
-		echo "<table class='tab_cadre_fixe'>";
+      if (!haveRight("profile","r")) return false;
+      $canedit=haveRight("profile","w");
+      $prof = new Profile();
+      if ($ID){
+         $this->getFromDB($ID);
+         $prof->getFromDB($ID);
+      }
+      echo "<form action='".$target."' method='post'>";
+      echo "<table class='tab_cadre_fixe'>";
 
-		$device_type = 0;
-	
-		$query="SELECT * FROM `glpi_plugin_customfields_fields` WHERE `restricted`=1 ORDER BY `device_type`, `sort_order`;";
-		if ($result=$DB->query($query))
-		{
-			while($data=$DB->fetch_array($result))
-			{
-				if ($data['device_type'] != $device_type) {
-					$device_type = $data['device_type'];
-					echo "<tr><th colspan='2' align='center'><strong>".
-						plugin_customfields_device_type_label($device_type)."</strong></th></tr>";
-				}
-				$profile_field = $data['device_type'] . '_' . $data['system_name'];
-				echo "<tr class='tab_bg_2'><td>".$data['label'].
-					" (".$data['system_name'].', '.$LANG['plugin_customfields'][$data['data_type']]."):</td><td>";
-				if ($prof->fields['interface']!='helpdesk') {
-					if ($data['data_type']=='sectionhead') 
-						dropdownYesNo($profile_field,$this->fields[$profile_field],1,1,1);
-					else
-						$this->dropdownNoneReadWriteRequired($profile_field,$this->fields[$profile_field]);
-				} else {
-					echo $LANG['choice'][0]; // No
-				}
-				echo "</td></tr>";
-			}
-		}
+      $device_type = 0;
+   
+      $query="SELECT * FROM `glpi_plugin_customfields_fields` WHERE `restricted`=1 ORDER BY `device_type`, `sort_order`;";
+      if ($result=$DB->query($query))
+      {
+         while($data=$DB->fetch_array($result))
+         {
+            if ($data['device_type'] != $device_type) {
+               $device_type = $data['device_type'];
+               echo "<tr><th colspan='2' align='center'><strong>".
+                  plugin_customfields_device_type_label($device_type)."</strong></th></tr>";
+            }
+            $profile_field = $data['device_type'] . '_' . $data['system_name'];
+            echo "<tr class='tab_bg_2'><td>".$data['label'].
+               " (".$data['system_name'].', '.$LANG['plugin_customfields'][$data['data_type']]."):</td><td>";
+            if ($prof->fields['interface']!='helpdesk') {
+               if ($data['data_type']=='sectionhead') 
+                  dropdownYesNo($profile_field,$this->fields[$profile_field],1,1,1);
+               else
+                  $this->dropdownNoneReadWriteRequired($profile_field,$this->fields[$profile_field]);
+            } else {
+               echo $LANG['choice'][0]; // No
+            }
+            echo "</td></tr>";
+         }
+      }
 
-		if ($canedit){
-			echo "<tr class='tab_bg_1'>";
-			echo "<td align='center' colspan='2'>";
-			echo "<input type='hidden' name='ID' value=$ID>";
-			echo "<input type='submit' name='update_user_profile' value=\"".$LANG['buttons'][7]."\" class='submit'>";
-			echo "</td></tr>";
-		}
-		echo "</table></form>";
+      if ($canedit){
+         echo "<tr class='tab_bg_1'>";
+         echo "<td align='center' colspan='2'>";
+         echo "<input type='hidden' name='ID' value=$ID>";
+         echo "<input type='submit' name='update_user_profile' value=\"".$LANG['buttons'][7]."\" class='submit'>";
+         echo "</td></tr>";
+      }
+      echo "</table></form>";
 
-	}
+   }
 }
 ?>
