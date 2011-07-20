@@ -117,8 +117,8 @@ $LANG['plugin_customfields']['device_type'][GROUP_TYPE]     = $LANG['Menu'][36];
 $LANG['plugin_customfields']['device_type'][ENTITY_TYPE]    = $LANG['Menu'][37];
 $LANG['plugin_customfields']['device_type'][NETWORKING_PORT_TYPE] = $LANG['networking'][6];
 $LANG['plugin_customfields']['device_type'][COMPUTERDISK_TYPE] = $LANG['computers'][8];
-$LANG['plugin_customfields']['device_type'][SOFTWAREVERSION_TYPE] = 'Software Versions';
-$LANG['plugin_customfields']['device_type'][SOFTWARELICENSE_TYPE] = 'Software License';
+$LANG['plugin_customfields']['device_type'][SOFTWAREVERSION_TYPE] = 'Versions du logiciel';
+$LANG['plugin_customfields']['device_type'][SOFTWARELICENSE_TYPE] = 'Licence du logiciel';
 $LANG['plugin_customfields']['device_type'][DEVICE_TYPE]    = $LANG['title'][30];
 
 $LANG['plugin_customfields']['component_type'][MOBOARD_DEVICE]   = $LANG['devices'][5];
@@ -136,20 +136,20 @@ $LANG['plugin_customfields']['component_type'][POWER_DEVICE]     = $LANG['device
 
 // Setup
 $LANG['plugin_customfields']['setup'][1] = 'Aucun champ restreint';
-$LANG['plugin_customfields']['setup'][2] = 'This plugin requires GLPI version 0.72 or higher';
-$LANG['plugin_customfields']['setup'][3] = 'Setup of '.$title.' Plugin';
-$LANG['plugin_customfields']['setup'][4] = 'Existing custom field data was found on your system. This data has been restored.';
-$LANG['plugin_customfields']['setup'][5] = 'Data from an older version of '.$title.' was found. This data will be upgraded when you activate this plugin.';
-$LANG['plugin_customfields']['setup'][7] = 'The plugin files are not compatable with the existing data. Please upgrade your plugin files.';
-$LANG['plugin_customfields']['setup'][8] = 'Custom Fields has been uninstalled, but your custom field data has not been removed.';
-$LANG['plugin_customfields']['setup'][9] = 'Click here to delete all custom field data.';
-$LANG['plugin_customfields']['setup'][10] = 'Are you sure you want to delete all custom field data?';
+$LANG['plugin_customfields']['setup'][2] = 'Ce plugin a besoin d une version de GLPI supérieure ou égale à 0.72';
+$LANG['plugin_customfields']['setup'][3] = 'Installation du plugin '.$title.'';
+$LANG['plugin_customfields']['setup'][4] = 'Des données du plugin custom field déjà existantes sont détectées. Ces données ont étés restaurées.';
+$LANG['plugin_customfields']['setup'][5] = 'Des données d une précédente version de '.$title.' sont détectées. Ces données seront mise à jour lors de l activation de ce plugin.'; 
+$LANG['plugin_customfields']['setup'][7] = 'Les fichiers du plugins ne sont pas compatibles avec les données existantes. Veuillez mettre à jour les fichiers plugin.';
+$LANG['plugin_customfields']['setup'][8] = 'Custom Fields a été désinstallé, mais les données n ont pas été supprimées.';
+$LANG['plugin_customfields']['setup'][9] = 'Cliquez ici pour supprimer toute les données custom field.';
+$LANG['plugin_customfields']['setup'][10] = 'Êtes vous certain de vouloir supprimer toutes les données de custom field.';
 $LANG['plugin_customfields']['setup'][11] = 'Instructions';
 //$LANG['plugin_customfields']['setup'][12] = 'FAQ';
 //$LANG['plugin_customfields']['setup'][14] = 'Please change to "Root Entity (Show all)" before installing this plugin';
 
 // Device Types
-$LANG['plugin_customfields']['device_type']['SoftwareVersion'] = 'Software Versions';
-$LANG['plugin_customfields']['device_type']['SoftwareLicense'] = 'Software License';
+$LANG['plugin_customfields']['device_type']['SoftwareVersion'] = 'Versions du logiciel';
+$LANG['plugin_customfields']['device_type']['SoftwareLicense'] = 'Licence du logiciel';
 include('devices.php');
 ?>
