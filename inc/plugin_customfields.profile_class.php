@@ -55,6 +55,16 @@ class plugin_customfields_Profile extends CommonDBTM {
 					WHERE ID='$ID' ";
 		$DB->query($query);
 	}
+
+	function dropdownNoneReadWriteRequired($name,$value){
+		global $LANG;
+		echo "<select name='$name'>\n";
+		echo "<option value='' ".(empty($value)?" selected ":"").">".$LANG['profiles'][12]."</option>\n";
+		echo "<option value='r' ".($value=='r'?" selected ":"").">".$LANG['profiles'][10]."</option>\n";
+		echo "<option value='w' ".($value=='w'?" selected ":"").">".$LANG['profiles'][11]."</option>\n";
+		echo "<option value='q' ".($value=='q'?" selected ":"").">".$LANG['plugin_customfields']['Required']."</option>\n";
+		echo "</select>\n";	
+	}	
 	
 	//profiles modification
 	function showForm($target,$ID){
@@ -80,16 +90,16 @@ class plugin_customfields_Profile extends CommonDBTM {
 				if ($data['device_type'] != $device_type) {
 					$device_type = $data['device_type'];
 					echo "<tr><th colspan='2' align='center'><strong>".
-						$LANG['plugin_customfields']['device_type'][$device_type]."</strong></th></tr>";
+						plugin_customfields_device_type_label($device_type)."</strong></th></tr>";
 				}
 				$profile_field = $data['device_type'] . '_' . $data['system_name'];
 				echo "<tr class='tab_bg_2'><td>".$data['label'].
-					" (".$LANG['plugin_customfields'][$data['data_type']]."):</td><td>";
+					" (".$data['system_name'].', '.$LANG['plugin_customfields'][$data['data_type']]."):</td><td>";
 				if ($prof->fields['interface']!='helpdesk') {
 					if ($data['data_type']=='sectionhead') 
 						dropdownYesNo($profile_field,$this->fields[$profile_field],1,1,1);
 					else
-						dropdownNoneReadWrite($profile_field,$this->fields[$profile_field],1,1,1);
+						$this->dropdownNoneReadWriteRequired($profile_field,$this->fields[$profile_field]);
 				} else {
 					echo $LANG['choice'][0]; // No
 				}

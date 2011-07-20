@@ -126,6 +126,7 @@ if(isset($_GET['device_type']))
 	elseif(isset($_POST['add'])) // Add a field
 	{
 		$data_ok=false;
+		$defaultvalue='';
 		$sort=intval($_POST['sort']);
 
 		if(isset($_POST['dropdown_id'])) // Add a drop down menu
@@ -141,11 +142,27 @@ if(isset($_GET['device_type']))
 				$data_ok=true;
 			}
 		}
+		elseif($_POST['data_type']=='multiselect') 
+		{
+			$label=($_POST['label'] !='') ? $_POST['label'] : $LANG['plugin_customfields']['Custom_Field'];
+			$data_type='multiselect';
+			$system_name=plugin_customfields_make_system_name($_POST['system_name'],true);
+			$parts=explode('.',$system_name);
+			if(!isset($parts[1])) $parts[1]='name';
+			$dd_table=$parts[0].'.'.$parts[1];
+			$system_name=str_replace(array('glpi_','plugin_','customfields_','dropdown_'),array('','p_','cf_','dd_'),$parts[0]).'-'.$parts[1];
+			$sql="SHOW COLUMNS FROM `{$parts[0]}` WHERE `Field`='{$parts[1]}';";
+			$result=$DB->query($sql);
+			if($result && $DB->numrows($result)) {
+				$data_ok=true;
+			}
+			$defaultvalue=6; // How many rows to show
+		}
 		else // Add a normal field
 		{
 			if(isset($_POST['clonedata']))
 			{
- 				list($system_name,$data_type,$label)=explode(',',$_POST['clonedata'],3);
+				list($system_name,$data_type,$label)=explode(',',$_POST['clonedata'],3);
 				$system_name=plugin_customfields_make_system_name($system_name); // clean up in case of tampering
 			}
 			else
@@ -194,12 +211,12 @@ if(isset($_GET['device_type']))
 				$sopt_pos = 1;
 
 			$sql="INSERT INTO glpi_plugin_customfields_fields (device_type, system_name, label, data_type, ".
-				" sort_order, dropdown_table, deleted, sopt_pos, restricted)".
+				" location, sort_order, dropdown_table, deleted, sopt_pos, restricted, default_value)".
 				" VALUES ('$device_type','$system_name','$label','$data_type',".
-				" '$sort','$dd_table',0,'$sopt_pos',0);";
+				" 0, '$sort','$dd_table',0,'$sopt_pos',0,'$defaultvalue');";
 			$result = $DB->query($sql);
 			
-			if($data_type!='sectionhead') // add the field to the data table if it isn't a section header
+			if($data_type!='sectionhead' && $data_type!='multiselect') // add the field to the data table if it isn't a section header or multiselect
 			{
 				$table=plugin_customfields_table($device_type);
 
@@ -236,12 +253,14 @@ if(isset($_GET['device_type']))
 		{
 			$ID=$data['ID'];
 			$label=$_POST['label'][$ID];
+			$location=intval($_POST['location'][$ID]);
 			$sort=intval($_POST['sort'][$ID]);
 			$required=isset($_POST['required'][$ID]) ? 1 : 0;
+			$unique=isset($_POST['unique'][$ID]) ? 1 : 0;
 			$entities=trim($_POST['entities'][$ID]);
 			$restricted=isset($_POST['restricted'][$ID]) ? 1 : 0;
-			$sql="UPDATE `glpi_plugin_customfields_fields` SET `label`='$label',`sort_order`='$sort',".
-				" `required`='$required',`entities`='$entities',`restricted`='$restricted' ".
+			$sql="UPDATE `glpi_plugin_customfields_fields` SET `label`='$label',`location`='$location',`sort_order`='$sort',".
+				" `required`='$required',`entities`='$entities',`restricted`='$restricted',`unique`='$unique' ".
 				" WHERE `device_type`='$device_type' AND `ID`='$ID';";
 			$DB->query($sql);
 			if($restricted==1 && $data['restricted']==0) 
@@ -269,19 +288,21 @@ if(isset($_GET['device_type']))
 
 	echo '<form action="?device_type='.$device_type.'" method="post">';
 	echo '<table class="tab_cadre" cellpadding="5">';
-	echo '<tr><th colspan="8">'.$LANG['plugin_customfields']['title'].' ('.$LANG['plugin_customfields']['device_type'][$device_type].')</th></tr>';
+	echo '<tr><th colspan="10">'.$LANG['plugin_customfields']['title'].' ('.plugin_customfields_device_type_label($device_type).')</th></tr>';
 	echo '<tr>';
 	echo '<th>'.$LANG['plugin_customfields']['Label'].'</th>';
 	echo '<th>'.$LANG['plugin_customfields']['System_Name'].'</th>';
 	echo '<th>'.$LANG['plugin_customfields']['Type'].'</th>';
+	echo '<th>'.$LANG['plugin_customfields']['Location'].'</th>';
 	echo '<th>'.$LANG['plugin_customfields']['Sort'].'</th>';
 	echo '<th>'.$LANG['plugin_customfields']['Required'].'</th>';
 	echo '<th>'.$LANG['plugin_customfields']['Restricted'].'</th>';
+	echo '<th>'.$LANG['plugin_customfields']['Unique'].'</th>';
 	echo '<th>'.$LANG['plugin_customfields']['Entities'].'</th>';
 	echo '<th></th>';
 	echo '</tr>';
 
-	$query="SELECT * FROM glpi_plugin_customfields_fields WHERE device_type='$device_type' AND deleted=0 ORDER BY sort_order";
+	$query="SELECT * FROM glpi_plugin_customfields_fields WHERE device_type='$device_type' AND deleted=0 ORDER BY location, sort_order";
 	$result=$DB->query($query);
 	$numdatafields=0;
 
@@ -292,8 +313,16 @@ if(isset($_GET['device_type']))
 		echo '<td><input name="label['.$ID.']" value="'.htmlspecialchars($data['label']).'" size="20"></td>';
 		echo '<td>'.$data['system_name'].'</td>';
 		echo '<td>'.$LANG['plugin_customfields'][$data['data_type']].'</td>';
+		echo '<td><input name="location['.$ID.']" value="'.$data['location'].'" size="2"></td>';
 		echo '<td><input name="sort['.$ID.']" value="'.$data['sort_order'].'" size="2"></td>';
-		if($data['data_type']!='sectionhead')
+		if($data['restricted'])
+		{
+			if($data['required']) 
+				echo '<td><input type="hidden" name="required['.$ID.']" value="1" /></td>';
+			else
+				echo '<td></td>';
+		}
+		elseif($data['data_type']!='sectionhead')
 		{
 			echo '<td align="center"><input name="required['.$ID.']" type="checkbox"';
 			if($data['required']) echo ' checked="checked"';
@@ -304,13 +333,21 @@ if(isset($_GET['device_type']))
 		echo '<td align="center"><input name="restricted['.$ID.']" type="checkbox"';
 		if($data['restricted']) echo ' checked="checked"';
 		echo '></td>';
+		echo '<td align="center">';
+		if(in_array($data['data_type'], array('general','number'))) 
+		{
+			echo '<input name="unique['.$ID.']" type="checkbox"';
+			if($data['unique']) echo ' checked="checked"';
+			echo '>';
+		}
+		echo '</td>';
 		echo '<td><input name="entities['.$ID.']" value="'.$data['entities'].'" size="7"></td>';
 		echo '<td><input name="delete['.$ID.']" class="submit" type="submit" value="'.$LANG['buttons'][6].'"></td>';
 		echo '</tr>';
 		if ($data['data_type']!='sectionhead') 
 			$numdatafields++;
 	}
-	echo '<tr><td align="center" valign="top" class="tab_bg_2" colspan="8">';
+	echo '<tr><td align="center" valign="top" class="tab_bg_2" colspan="10">';
 	if($DB->numrows($result)>0)
 		echo '<input type="submit" name="update" value="'.$LANG['buttons'][7].'" class="submit"/>';
 	else
@@ -341,6 +378,7 @@ if(isset($_GET['device_type']))
 	echo '<option value="number">'.$LANG['plugin_customfields']['number'].'</option>';
 	echo '<option value="money">'.$LANG['plugin_customfields']['money'].'</option>';
 	echo '<option value="yesno">'.$LANG['plugin_customfields']['yesno'].'</option>';
+	echo '<option value="multiselect">'.$LANG['plugin_customfields']['multiselect'].'*</option>';
 	echo '<option value="sectionhead">'.$LANG['plugin_customfields']['sectionhead'].'</option>';
 	echo '</select></td>';
 	echo '<td><input name="sort" size="2"></td>';
@@ -348,6 +386,7 @@ if(isset($_GET['device_type']))
 	echo '</tr>';
 	echo '</table>';
 	echo '</form>';
+	echo '<small>* '.$LANG['plugin_customfields']['multiselect_note'].'</small><br/>';
 
 	// Show clone field form if there are any fields that can be cloned
 	$query="SELECT DISTINCT system_name, data_type, label FROM glpi_plugin_customfields_fields ".

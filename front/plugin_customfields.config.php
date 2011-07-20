@@ -58,11 +58,17 @@ if ($plugin->isActivated("customfields"))
 
 	while ($data=$DB->fetch_assoc($result))
 	{
+		$all[plugin_customfields_device_type_label($data['device_type'])]= $data;
+	}
+	ksort($all);
+
+	foreach($all as $label=>$data) 
+	{
 		if(plugin_customfields_haveRight($data['device_type'],'w'))
 		{
 			echo '<tr class="tab_bg_1">';
 			echo '<td><a href="./plugin_customfields.manage.php?device_type='.$data['device_type'].'">'.
-				$LANG['plugin_customfields']['device_type'][$data['device_type']].'</a></td>';
+				$label.'</a></td>';
 			if ($data['enabled']==1)
 				echo '<td><b>'.$LANG['plugin_customfields']['Enabled'].'</b></td>';
 			else

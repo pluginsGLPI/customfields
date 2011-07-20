@@ -57,8 +57,13 @@ else if (isset($_POST['update']))
 	$plugin_customfields = new plugin_customfields($_POST['device_type']);
 	if(plugin_customfields_HaveRight($_POST['device_type'],'w'))
 	{
+		$device_type=$_POST['device_type'];
 		unset($_POST['device_type']);
-		$plugin_customfields->update($_POST);
+		$post=plugin_customfields_transformPost($_POST);
+		$plugin_customfields->update($post);
+		if(isset($post['_multiselects'])) {
+			plugin_customfields_updateMultiselects($device_type,$_POST['ID'],$post['_multiselects']);
+		}
 	}
 	glpi_header($_SERVER['HTTP_REFERER']);
 }

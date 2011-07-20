@@ -23,5 +23,25 @@ To enable data injection support for Custom Fields, apply the data injection pat
    plugins/data_injection/inc/plugin_data_injection.mapping.function.php
 3) Go to the plugins folder
 4) Run the command below:
-sudo patch -p0 < customfields/patch/data_injection-1.6.0.patch
+sudo patch -p0 < customfields/patch/datainjection-1.7.2.patch
 
+-------------------------------------------------------------------------------------------------
+
+To enable customfields on financial information, apply the financial info patch:
+1) Backup these files: 
+   inc/infocom.function.php
+2) Go to the main glpi folder
+4) Run the command below:
+sudo patch -p0 < plugins/customfields/patch/financial.patch
+
+-------------------------------------------------------------------------------------------------
+
+To enable customfields on components, apply the components patch:
+1) Backup these files: 
+   config/define.php
+   inc/device.class.php
+   inc/plugin.function.php
+   inc/commondbtm.class.php
+2) Go to the main glpi folder
+4) Run the command below:
+sudo patch -p0 < plugins/customfields/patch/components.patch

@@ -47,14 +47,17 @@ $LANG['plugin_customfields']['Status'] = 'Stato';
 $LANG['plugin_customfields']['Label'] = 'Etichetta';
 $LANG['plugin_customfields']['System_Name'] = 'Nome di sistema (campo del DB)';
 $LANG['plugin_customfields']['Update_Custom_Fields'] = 'Aggiorna '.$title;
+$LANG['plugin_customfields']['Update_Financial_CF'] = 'Update Financial CF';
 $LANG['plugin_customfields']['delete_warning'] = '(Attenzione: non puoi annullarlo!)';
 
 // Manage Custom Fields
 $LANG['plugin_customfields']['Manage_Custom_Fields'] = 'Gestione '.$title;
 $LANG['plugin_customfields']['Type'] = $LANG['common'][17];
+$LANG['plugin_customfields']['Location'] = 'Location';
 $LANG['plugin_customfields']['Sort'] = 'Ordine';
 $LANG['plugin_customfields']['Required'] = 'Required';
 $LANG['plugin_customfields']['Restricted'] = 'Restricted';
+$LANG['plugin_customfields']['Unique'] = 'Unique';
 $LANG['plugin_customfields']['Entities'] = 'Entities';
 $LANG['plugin_customfields']['no_cf_yet'] = 'Non &egrave stato ancora definito nessun campo personalizzato. Aggiungilo qui sotto.';
 $LANG['plugin_customfields']['Add_New_Field'] = 'Aggiungi un nuovo campo';
@@ -68,6 +71,7 @@ $LANG['plugin_customfields']['add_fields_first'] = 'Devi aggiungere i campi data
 $LANG['plugin_customfields']['cf_enabled'] = 'I campi personalizzati sono stati abilitati per questo dispositivo.';
 $LANG['plugin_customfields']['cf_disabled'] = 'I campi personalizzati sono stati disabilitati per questo dispositivo.';
 $LANG['plugin_customfields']['Custom_Field'] = 'Campo personalizzato'; // the default name for a field if left blank
+$LANG['plugin_customfields']['multiselect_note'] = 'If creating a multiselect field, put table_name.field_name in the System Name field.';
 
 // Manage Custom Dropdowns
 $LANG['plugin_customfields']['Manage_Custom_Dropdowns'] = 'Gestisci i men&ugrave personalizzati';
@@ -91,6 +95,7 @@ $LANG['plugin_customfields']['number'] = 'Numero';
 $LANG['plugin_customfields']['money'] = 'Valuta';
 $LANG['plugin_customfields']['yesno'] = 'Si/No';
 $LANG['plugin_customfields']['sectionhead'] = 'Intestazione';
+$LANG['plugin_customfields']['multiselect'] = 'Multiselect';
 
 // Device Types
 $LANG['plugin_customfields']['device_type'][COMPUTER_TYPE]  = $LANG['Menu'][0];

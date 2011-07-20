@@ -37,7 +37,7 @@
 
 // This will be set to true when applying the glpi patch. 
 // See instructions in the patch directory
-define('CUSTOMFIELDS_GLPI_PATCH_APPLIED', false);
+define('CUSTOMFIELDS_GLPI_PATCH_APPLIED', true);
 
 // If auto activate set to true, custom fields will be automatically
 // added when a new record is inserted. If set to false, users must
@@ -46,7 +46,7 @@ define('CUSTOMFIELDS_AUTOACTIVATE', true);
 
 // This is the last version that any tables changed.  This version may be 
 // older than the plugin version if there were no changes db changes.
-define('CUSTOMFIELDS_DB_VERSION_REQUIRED', 116); // 1.1.6
+define('CUSTOMFIELDS_DB_VERSION_REQUIRED', 118); // 1.1.8
 
 $ACTIVE_CUSTOMFIELDS_TYPES = array();
 $ALL_CUSTOMFIELDS_TYPES = array();
@@ -113,7 +113,9 @@ function plugin_init_customfields()
 			$PLUGIN_HOOKS['pre_item_update']['customfields'] = 'plugin_pre_item_update_customfields';
 		
 			// Define how to import data into custom fields with the Data_Injection plugin
-			$PLUGIN_HOOKS['data_injection']['customfields'] = 'plugin_customfields_data_injection_variables';
+			$PLUGIN_HOOKS['datainjection']['customfields'] = 'plugin_customfields_datainjection_variables';
+
+			$PLUGIN_HOOKS['use_massive_action']['customfields']=1; // for custom massive action category
 		}
 
 		// Indicate where the configuration page can be found
@@ -132,7 +134,7 @@ function plugin_version_customfields()
 		'author' => 'Oregon State Data Center',
 		'homepage' => 'http://www.opensourcegov.net/projects/glpi-cf',
 		'minGlpiVersion' => '0.72',
-		'version' => '1.1.6');
+		'version' => '1.1.8');
 }
 // Checks prerequisites before install. May print errors or add message after redirect
 function plugin_customfields_check_prerequisites()
