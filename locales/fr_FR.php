@@ -97,43 +97,6 @@ $LANG['plugin_customfields']['yesno'] = 'Oui/Non';
 $LANG['plugin_customfields']['sectionhead'] = 'Entête de section';
 $LANG['plugin_customfields']['multiselect'] = 'Multi sélection';
 
-// Device Types
-$LANG['plugin_customfields']['device_type'][COMPUTER_TYPE]  = $LANG['Menu'][0];
-$LANG['plugin_customfields']['device_type'][NETWORKING_TYPE]= $LANG['Menu'][1];
-$LANG['plugin_customfields']['device_type'][PRINTER_TYPE]   = $LANG['Menu'][2];
-$LANG['plugin_customfields']['device_type'][MONITOR_TYPE]   = $LANG['Menu'][3];
-$LANG['plugin_customfields']['device_type'][PERIPHERAL_TYPE]= $LANG['Menu'][16];
-$LANG['plugin_customfields']['device_type'][SOFTWARE_TYPE]  = $LANG['Menu'][4];
-$LANG['plugin_customfields']['device_type'][PHONE_TYPE]     = $LANG['Menu'][34];
-$LANG['plugin_customfields']['device_type'][CARTRIDGE_TYPE] = $LANG['Menu'][21];
-$LANG['plugin_customfields']['device_type'][CONSUMABLE_TYPE]= $LANG['Menu'][32];
-$LANG['plugin_customfields']['device_type'][CONTACT_TYPE]   = $LANG['Menu'][22];
-$LANG['plugin_customfields']['device_type'][ENTERPRISE_TYPE]= $LANG['Menu'][23];
-$LANG['plugin_customfields']['device_type'][CONTRACT_TYPE]  = $LANG['Menu'][25];
-$LANG['plugin_customfields']['device_type'][DOCUMENT_TYPE]  = $LANG['Menu'][27];
-$LANG['plugin_customfields']['device_type'][TRACKING_TYPE]  = $LANG['Menu'][5];
-$LANG['plugin_customfields']['device_type'][USER_TYPE]      = $LANG['Menu'][14];
-$LANG['plugin_customfields']['device_type'][GROUP_TYPE]     = $LANG['Menu'][36];
-$LANG['plugin_customfields']['device_type'][ENTITY_TYPE]    = $LANG['Menu'][37];
-$LANG['plugin_customfields']['device_type'][NETWORKING_PORT_TYPE] = $LANG['networking'][6];
-$LANG['plugin_customfields']['device_type'][COMPUTERDISK_TYPE] = $LANG['computers'][8];
-$LANG['plugin_customfields']['device_type'][SOFTWAREVERSION_TYPE] = 'Versions du logiciel';
-$LANG['plugin_customfields']['device_type'][SOFTWARELICENSE_TYPE] = 'Licence du logiciel';
-$LANG['plugin_customfields']['device_type'][DEVICE_TYPE]    = $LANG['title'][30];
-
-$LANG['plugin_customfields']['component_type'][MOBOARD_DEVICE]   = $LANG['devices'][5];
-$LANG['plugin_customfields']['component_type'][PROCESSOR_DEVICE] = $LANG['devices'][4];
-$LANG['plugin_customfields']['component_type'][RAM_DEVICE]       = $LANG['devices'][6];
-$LANG['plugin_customfields']['component_type'][HDD_DEVICE]       = $LANG['devices'][1];
-$LANG['plugin_customfields']['component_type'][NETWORK_DEVICE]   = $LANG['devices'][3];
-$LANG['plugin_customfields']['component_type'][DRIVE_DEVICE]     = $LANG['devices'][19];
-$LANG['plugin_customfields']['component_type'][CONTROL_DEVICE]   = $LANG['devices'][20];
-$LANG['plugin_customfields']['component_type'][GFX_DEVICE]       = $LANG['devices'][2];
-$LANG['plugin_customfields']['component_type'][SND_DEVICE]       = $LANG['devices'][7];
-$LANG['plugin_customfields']['component_type'][PCI_DEVICE]       = $LANG['devices'][21];
-$LANG['plugin_customfields']['component_type'][CASE_DEVICE]      = $LANG['devices'][22];
-$LANG['plugin_customfields']['component_type'][POWER_DEVICE]     = $LANG['devices'][23];
-
 // Setup
 $LANG['plugin_customfields']['setup'][1] = 'Aucun champ restreint';
 $LANG['plugin_customfields']['setup'][2] = 'Ce plugin a besoin d une version de GLPI supérieure ou égale à 0.72';
