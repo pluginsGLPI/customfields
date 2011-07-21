@@ -37,6 +37,7 @@
 
 // Define dropdown relations for use by GLPI
 function plugin_customfields_getDatabaseRelations() {
+   //TODO: add in relations for multiselects?
    global $DB;
 
    $plugin = new Plugin();
@@ -101,6 +102,7 @@ function plugin_customfields_getDropdown() {
 function plugin_customfields_getAddSearchOptions($itemtype) {
    global $LANG, $ACTIVE_CUSTOMFIELDS_TYPES, $DB;
 
+   //TODO: Rewrite this function, based on old code--but note that logging appears to work w/o separate item
    $sopt = array();
    if (in_array($itemtype, $ACTIVE_CUSTOMFIELDS_TYPES)) {
       $query = "SELECT `glpi_plugin_customfields_fields`.*,
@@ -115,16 +117,41 @@ function plugin_customfields_getAddSearchOptions($itemtype) {
 
       $i = 5200;
       foreach($DB->request($query) as $search) {
-         $sopt[$i]['table']         = plugin_customfields_table($itemtype);
-         $sopt[$i]['field']         = $search['system_name'];
-         $sopt[$i]['linkfield']     = '';
-         $sopt[$i]['name']     = $LANG['plugin_customfields']['title']." - ".$search['label'];
-      $i++;
+         $sopt[$i]['table']     = plugin_customfields_table($itemtype);
+         $sopt[$i]['field']     = $search['system_name'];
+         $sopt[$i]['linkfield'] = '';
+         $sopt[$i]['name']      = $LANG['plugin_customfields']['title']." - ".$search['label'];
+         $i++;
       }
    }
    return $sopt;
 }
 
+// Clean Search Options: Necessary for search to work properly if GLPI patch applied.
+// Removes the search options that are used for different purposes.
+// This function requires the glpi patch in order to be called. See the patch directory for instructions.
+function plugin_customfields_cleanSearchOption($options, $action) {
+   //TODO: update this after finishing getAddSearchOptions
+   if(!empty($options)) {
+      foreach($options as $ID => $value) {
+         if(is_array($value) && isset($value['purpose'])) {
+            // If action is 'r' we are cleaning before a search.
+            // If action is 'w', we are cleaning before an update.
+            if ($value['purpose']=='log') {
+               unset($options[$ID]);
+            }
+            elseif ($value['purpose']=='search' && $action=='w') {
+               unset($options[$ID]);
+            }
+            elseif ($value['purpose']=='update' && $action=='r') {
+               unset($options[$ID]);
+            }
+         }
+      }
+   }
+ 
+   return $options;
+}
 
 // Define how to join the tables when doing a search
 function plugin_customfields_addLeftJoin($type, $ref_table, $new_table, $linkfield,
@@ -472,7 +499,7 @@ function plugin_customfields_install() {
                        (`itemtype`)
                 VALUES ('Computer'), ('ComputerDisk'), ('Monitor'), ('Software'), ('SoftwareVersion'),
                        ('SoftwareLicense'), ('NetworkEquipment'), ('NetworkPort'), ('Peripheral'),
-                       ('Printer'), ('Cartridge'), ('Consumable'), ('Phone'), ('Ticket'), ('Contact'),
+                       ('Printer'), ('CartridgeItem'), ('ConsumableItem'), ('Phone'), ('Ticket'), ('Contact'),
                        ('Supplier'), ('Contract'), ('Document'), ('User'), ('Group'), ('Entity')";
       $DB->query($query) or die($DB->error());
 
@@ -873,7 +900,7 @@ function plugin_customfields_upgradeto12() {
 
 
 function plugin_customfields_uninstall() {
-   global $LANG;
+   global $LANG, $DB;
 
    $query = "SELECT `itemtype`
              FROM `glpi_plugin_customfields_itemtypes`

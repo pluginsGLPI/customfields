@@ -44,6 +44,7 @@ define('CUSTOMFIELDS_AUTOACTIVATE', true);
 // older than the plugin version if there were no changes db changes.
 define('CUSTOMFIELDS_DB_VERSION_REQUIRED', 118); // 1.1.8 TODO: Update this 
 
+global $ACTIVE_CUSTOMFIELDS_TYPES, $ALL_CUSTOMFIELDS_TYPES;
 $ACTIVE_CUSTOMFIELDS_TYPES = array();
 $ALL_CUSTOMFIELDS_TYPES = array();
 
@@ -61,57 +62,61 @@ function plugin_init_customfields() {
    Plugin::registerClass('PluginCustomfieldsFields');
 
    if (isset($_SESSION['glpiID'])){
-      $query = "SELECT `itemtype`, `enabled`
-                FROM `glpi_plugin_customfields_itemtypes`
-                WHERE `itemtype` <> 'Version'";
-      $result = $DB->query($query);
+      $plugin = new Plugin();
 
-      while ($data=$DB->fetch_assoc($result)) {
-         $ALL_CUSTOMFIELDS_TYPES[] = $data['itemtype'];
-         if ($data['enabled']) {
-            $ACTIVE_CUSTOMFIELDS_TYPES[] = $data['itemtype'];
+      if ($plugin->isActivated('customfields')) {
+         $query = "SELECT `itemtype`, `enabled`
+                   FROM `glpi_plugin_customfields_itemtypes`
+                   WHERE `itemtype` <> 'Version'";
+         $result = $DB->query($query);
+
+         while ($data=$DB->fetch_assoc($result)) {
+            $ALL_CUSTOMFIELDS_TYPES[] = $data['itemtype'];
+            if ($data['enabled']) {
+               $ACTIVE_CUSTOMFIELDS_TYPES[] = $data['itemtype'];
+            }
          }
-      }
 
-      $query = "SELECT *
-                FROM `glpi_plugin_customfields_dropdowns`
-                WHERE `has_entities` = 1
-                      OR `is_tree` = 1";
-      $result=$DB->query($query);
+         $query = "SELECT *
+                   FROM `glpi_plugin_customfields_dropdowns`
+                   WHERE `has_entities` = 1
+                         OR `is_tree` = 1";
+         $result=$DB->query($query);
 
-      while ($data=$DB->fetch_assoc($result)) {
-         if ($data['has_entities']==1) {
-            array_push($CFG_GLPI['specif_entities_tables'], $data['dropdown_table']);
+         while ($data=$DB->fetch_assoc($result)) {
+            if ($data['has_entities']==1) {
+               array_push($CFG_GLPI['specif_entities_tables'], $data['dropdown_table']);
+            }
+            if ($data['is_tree']==1) {
+               array_push($CFG_GLPI['dropdowntree_tables'], $data['dropdown_table']);
+            }
          }
-         if ($data['is_tree']==1) {
-            array_push($CFG_GLPI['dropdowntree_tables'], $data['dropdown_table']);
+
+         // Display a menu entry in the main menu if the user has configuration rights
+         if (haveRight('config','w')) {
+            $PLUGIN_HOOKS['menu_entry']['customfields'] = true;
          }
+
+         // Menus for each device type
+         $PLUGIN_HOOKS['headings']['customfields'] = 'plugin_get_headings_customfields';
+         $PLUGIN_HOOKS['headings_action']['customfields'] = 'plugin_headings_actions_customfields';
+
+         // Functions to run when data changes
+         //TODO: may need to filter out component types )after addidng components)
+         foreach($ACTIVE_CUSTOMFIELDS_TYPES as $type) {
+            $PLUGIN_HOOKS['item_add']['customfields'][$type]='plugin_item_add_customfields';
+            $PLUGIN_HOOKS['pre_item_update']['customfields'][$type] = 'plugin_pre_item_update_customfields';
+         }
+         foreach($ALL_CUSTOMFIELDS_TYPES as $type) {
+            $PLUGIN_HOOKS['item_purge']['customfields'][$type] = 'plugin_item_purge_customfields';
+         }
+
+         // Define how to import data into custom fields with the Data_Injection plugin
+         $PLUGIN_HOOKS['data_injection']['customfields'] = 'plugin_customfields_data_injection_variables';
+
+         // added back - is it used?
+         $PLUGIN_HOOKS['use_massive_action']['customfields']=1; // for custom massive action category
       }
-
-      // Display a menu entry in the main menu if the user has configuration rights
-      if (haveRight('config','w')) {
-         $PLUGIN_HOOKS['menu_entry']['customfields'] = true;
-      }
-
-      // Menus for each device type
-      $PLUGIN_HOOKS['headings']['customfields'] = 'plugin_get_headings_customfields';
-      $PLUGIN_HOOKS['headings_action']['customfields'] = 'plugin_headings_actions_customfields';
-
-      // Functions to run when data changes
-      //TODO: may need to filter out component types )after addidng components)
-      foreach($ACTIVE_CUSTOMFIELDS_TYPES as $type) {
-         $PLUGIN_HOOKS['item_add']['customfields'][$type]='plugin_item_add_customfields';
-         $PLUGIN_HOOKS['pre_item_update']['customfields'][$type] = 'plugin_pre_item_update_customfields';
-      }
-      foreach($ALL_CUSTOMFIELDS_TYPES as $type) {
-         $PLUGIN_HOOKS['item_purge']['customfields'][$type] = 'plugin_item_purge_customfields';
-      }
-
-      // Define how to import data into custom fields with the Data_Injection plugin
-      $PLUGIN_HOOKS['data_injection']['customfields'] = 'plugin_customfields_data_injection_variables';
-
-      // added back - is it used?
-      $PLUGIN_HOOKS['use_massive_action']['customfields']=1; // for custom massive action category
 
       // Indicate where the configuration page can be found
       if (haveRight('config','w')) {

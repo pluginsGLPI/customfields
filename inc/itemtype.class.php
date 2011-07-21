@@ -53,7 +53,7 @@ class PluginCustomfieldsItemtype extends CommonDBTM {
 
    static function getTypes () {
 
-      static $types = array('Cartridge', 'Computer', 'ComputerDisk', 'Consumable', 'Contact',
+      static $types = array('CartridgeItem', 'Computer', 'ComputerDisk', 'ConsumableItem', 'Contact',
                             'Contract', 'Document', 'Entity', 'Group', 'Monitor', 'NetworkEquipment',
                             'NetworkPort', 'Peripheral', 'Phone', 'Printer', 'Software',
                             'SoftwareLicense', 'SoftwareVersion', 'Supplier', 'Ticket', 'User');
