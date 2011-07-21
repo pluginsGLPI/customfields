@@ -121,6 +121,12 @@ function plugin_customfields_getAddSearchOptions($itemtype) {
          $sopt[$i]['field']     = $search['system_name'];
          $sopt[$i]['linkfield'] = '';
          $sopt[$i]['name']      = $LANG['plugin_customfields']['title']." - ".$search['label'];
+
+         $sopt[$i+2000]['table']     = plugin_customfields_table($itemtype);
+         $sopt[$i+2000]['field']     = $search['system_name'];
+         $sopt[$i+2000]['linkfield'] = $search['system_name'];
+         $sopt[$i+2000]['name']      = $LANG['plugin_customfields']['title']." - ".$search['label'];
+         $sopt[$i+2000]['purpose']   = 'update';
          $i++;
       }
    }
@@ -210,6 +216,13 @@ function plugin_pre_item_update_customfields($item) {
    if (!isset($item->input['_already_called_'])
        && in_array($item->getType(), $ACTIVE_CUSTOMFIELDS_TYPES)) {
 
+      //This function is not working properly. Here is some debug info
+      ob_start();
+      print_r($item);
+      addMessageAfterRedirect(ob_get_contents());
+      ob_end_clean();
+      return '';
+
       // mass update or tranfer, possibly affecting one of our custom fields
       $updates = array();
       $plugdropdown = new PluginCustomfieldsDropdown();
@@ -233,6 +246,7 @@ function plugin_pre_item_update_customfields($item) {
 
 //   return $item; // return the original data, not our additional data
 }
+
 
 
 // Hook done on add item case
@@ -277,51 +291,53 @@ function plugin_item_purge_customfields($parm) {
 }
 
 
+// This function requires the glpi patch in order to be called. See the patch directory for instructions
 function plugin_customfields_MassiveActionsFieldsDisplay($options=array()) {
    global $DB;
 
+   $type      = $options['itemtype'];
    $table     = $options['options']['table'];
    $field     = $options['options']['field'];
    $linkfield = $options['options']['linkfield'];
-   $type      = getItemTypeForTable($table);
-   $plug      = isPluginItemType($type);
 
-   if ($plug['plugin'] == 'Customfields') {
-      $item = new $type;
 
-       $query = "SELECT *
-                 FROM `glpi_plugin_customfields_fields`
-                 WHERE `itemtype` = '$type'
-                       AND `system_name` = '$field'";
-      $result=$DB->query($query);
+   $query = "SELECT *
+             FROM `glpi_plugin_customfields_fields`
+             WHERE `itemtype` = '$type'
+                   AND `system_name` = '$field'";
+   $result=$DB->query($query);
 
-      if ($data=$DB->fetch_assoc($result)) {
-         switch($data['data_type']) {
-            case 'dropdown' :
-               Dropdown::dropdownValue($data['dropdown_table'], $field, 1,
-                                       $_SESSION['glpiactive_entity']);
+   if ($data=$DB->fetch_assoc($result)) {
+      switch($data['data_type']) {
+         case 'dropdown' :
+            Dropdown::dropdownValue($data['dropdown_table'], $field, 1,
+                                    $_SESSION['glpiactive_entity']);
+         break;
+
+         case 'yesno' :
+            dropdownYesNo($field, 0);
             break;
 
-            case 'yesno' :
-               dropdownYesNo($field, 0);
-               break;
+         case 'date' :
+             showDateFormItem($field, '', true, true);
+             break;
 
-             case 'date' :
-                showDateFormItem($field, '', true, true);
-                break;
+          case 'money' :
+             echo '<input type="text" size="16" value="'.formatNumber(0,true).'" name="'.$field.'"/>';
+             break;
 
-             case 'money' :
-                echo '<input type="text" size="16" value="'.formatNumber(0,true).'" name="'.$field.'"/>';
-                break;
-
-             default :
-                autocompletionTextField($item, $field);
-                break;
-         }
+          default :
+             echo 'Not implemented yet';
+             /*
+             $item = new $type;
+             autocompletionTextField($item, $field);
+             */
+             break;
       }
       return true;
+   } else {
+      return false;
    }
-   return false;
 }
 
 

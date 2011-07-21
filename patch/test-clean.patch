@@ -1,0 +1,18 @@
+diff -u3 ../other/78copy/inc//search.class.php inc//search.class.php
+--- ../other/78copy/inc//search.class.php	2011-06-27 18:55:55.000000000 +0700
++++ inc//search.class.php	2011-07-21 10:30:33.000000000 +0700
+@@ -4149,6 +4149,14 @@
+          }
+       }
+ 
++      ////////// begin modification for custom fields plugin /////////
++      $plugin = new Plugin();
++      if ($plugin->isActivated('customfields'))
++      {
++         $options = plugin_customfields_cleanSearchOption($options, $action);
++      }
++      ////////// end modification for custom fields plugin /////////
++
+       return $options;
+    }
+ 
