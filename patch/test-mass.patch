@@ -1,0 +1,28 @@
+diff -u3 ../other/78copy/ajax//dropdownMassiveActionField.php ajax//dropdownMassiveActionField.php
+--- ../other/78copy/ajax//dropdownMassiveActionField.php	2011-06-27 18:55:55.000000000 +0700
++++ ajax//dropdownMassiveActionField.php	2011-07-21 12:59:15.000000000 +0700
+@@ -37,7 +37,6 @@
+ include (GLPI_ROOT."/inc/includes.php");
+ header("Content-Type: text/html; charset=UTF-8");
+ header_nocache();
+-
+ if (!isset($_POST["itemtype"]) || !class_exists($_POST["itemtype"])) {
+    exit();
+ }
+@@ -231,6 +230,16 @@
+          default : // dropdown case
+             $plugdisplay=false;
+             // Specific plugin Type case
++            ////////// begin modification for custom fields plugin /////////
++            if (substr($search["table"],0,34)=='glpi_dropdown_plugin_customfields_' || substr($search["table"],0,25)=='glpi_plugin_customfields_')
++            {
++               $function='plugin_customfields_MassiveActionsFieldsDisplay';
++               if (function_exists($function)){
++                  //$plugdisplay=$function($_POST["device_type"],$search["table"],$search["field"],$search["linkfield"]);
++                  $plugdisplay=$function(array('itemtype'=>$_POST['itemtype'],'options'=>$search));
++               }
++            } else
++            ////////// end modification for custom fields plugin ///////// 
+             if (($plug=isPluginItemType($_POST["itemtype"]))
+                 // Specific for plugin which add link to core object
+                 || ($plug=isPluginItemType(getItemTypeForTable($search['table'])))) {
