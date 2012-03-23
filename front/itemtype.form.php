@@ -47,19 +47,19 @@ if (!isset($_GET['withtemplate'])) {
 }
 
 if (isset($_POST['delete'])) {
-   $PluginItem = new PluginCustomfieldsItemtype($_POST['itemtype']);
+   $PluginItem = new PluginCustomfieldsItemtype($_REQUEST['itemtype']);
    $PluginItem->check($_POST['id'],'w');
    $PluginItem->delete($_POST);
    glpi_header($_SERVER['HTTP_REFERER']);
 
 } elseif (isset($_POST['update'])) {
-   $PluginItem = new PluginCustomfieldsItemtype($_POST['itemtype']);
+   $PluginItem = new PluginCustomfieldsItemtype($_REQUEST['itemtype']);
    $PluginItem->update($_POST);
    glpi_header($_SERVER['HTTP_REFERER']);
 
-} elseif (isset($_GET['add']) && isset($_GET['itemtype']) && isset($_GET['id'])) {
-   $PluginItem = new PluginCustomfieldsItemtype($_GET['itemtype']);
-   $PluginItem->getRestricted($_GET['itemtype']);
+} elseif (isset($_GET['add']) && isset($_REQUEST['itemtype']) && isset($_GET['id'])) {
+   $PluginItem = new PluginCustomfieldsItemtype($_REQUEST['itemtype']);
+   $PluginItem->getRestricted($_REQUEST['itemtype']);
    $newID = $PluginItem->add($_GET, false);
    glpi_header($_SERVER['HTTP_REFERER']);
 }

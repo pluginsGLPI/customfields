@@ -43,8 +43,7 @@ if (!defined('GLPI_ROOT')) {
 // CLASS customfields
 class PluginCustomfieldsItemtype extends CommonDBTM {
 
-   function __construct($itemtype = PLUGIN_CUSTOMFIELDS_TYPE) {
-
+   function __construct($itemtype = "") {
       $this->type       = $itemtype;
       $this->dohistory  = true;
       $this->forceTable(plugin_customfields_table($itemtype));

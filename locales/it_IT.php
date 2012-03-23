@@ -26,7 +26,7 @@
 // Original Author of file: Ryan Foster
 // Contact: Matt Hoover <dev@opensourcegov.net>
 // Project Website: http://www.opensourcegov.net
-// Purpose of file: Italian translation of plugin customfields 
+// Purpose of file: Italian translation of plugin customfields
 // by Passero 25.07.2009
 ----------------------------------------------------------------------
  */
@@ -109,4 +109,7 @@ $LANG['plugin_customfields']['setup'][11] = 'Istruzioni';
 $LANG['plugin_customfields']['device_type']['SoftwareVersion'] = 'Software Versions';
 $LANG['plugin_customfields']['device_type']['SoftwareLicense'] = 'Software License';
 include('devices.php');
+
+// Errors
+$LANG['plugin_customfields']['error'][1]  = "Non hai selezionato combo";
 ?>

@@ -69,6 +69,38 @@ function plugin_customfields_table($itemtype) {
    return 'glpi_plugin_customfields_'.strtolower(getPlural($itemtype));
 }
 
+function plugin_customfields_itemtype($table) {
+   global $CFG_GLPI;
+
+   if (isset($CFG_GLPI['glpiitemtypetables'][$table])) {
+      return $CFG_GLPI['glpiitemtypetables'][$table];
+
+   } else {
+      $inittable = $table;
+      $table     = str_replace("glpi_", "", $table);
+      $prefix    = "";
+
+      if (preg_match('/^plugin_([a-z0-9]+)_/',$table,$matches)) {
+         $table  = preg_replace('/^plugin_[a-z0-9]+_/','',$table);
+         $prefix = "Plugin".ucfirst($matches[1]);
+      }
+
+      if (strstr($table,'_')) {
+         $split = explode('_', $table);
+
+         foreach ($split as $key => $part) {
+            $split[$key] = ucfirst(getSingular($part));
+         }
+         $table = implode('_',$split);
+
+      } else {
+         $table = ucfirst(getSingular($table));
+      }
+
+      return $itemtype=$prefix.$table;
+   }
+}
+
 
 // Active custom fields for a specific device (used if auto activate is turned off)
 function plugin_customfields_activate($itemtype, $ID) {
@@ -320,7 +352,6 @@ function plugin_customfields_showAssociated($item, $withtemplate='') {
             $count++;
 
          } else {// display data that only needs a single column
-         logdebug("general");
             if ($count % 2) {
                echo '<tr class="tab_bg_1">';
             }
@@ -339,7 +370,17 @@ function plugin_customfields_showAssociated($item, $withtemplate='') {
                case 'dropdown' :
                   if (!$readonly) {
 //                     dropdownValue($fields['dropdown_table'], $field_name, $value);
-                     Dropdown::show('Location', array('value'  => $value));
+                     //Dropdown::show('Location', array('value'  => $value));
+                     $dropdown_obj = new PluginCustomfieldsDropdown;
+                     $tmp = $dropdown_obj->find("system_name = '".$fields['system_name']."'");
+                     $dropdown = array_shift($tmp);
+
+                     Dropdown::show('PluginCustomfieldsDropdownsItem', array(
+                              'condition' => $dropdown['id']." = plugin_customfields_dropdowns_id",
+                              'name'      => $field_name,
+                              'value'     => $value,
+                              'entity'    => $_SESSION['glpiactive_entity']
+                              ));
                   } else {
 //                     plugin_customfields_showValue(Dropdown::getDropdownName($fields['dropdown_table'],
 //                                                                             $value));

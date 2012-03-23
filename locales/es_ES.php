@@ -105,6 +105,10 @@ $LANG['plugin_customfields']['setup'][11] = 'Instrucciones';
 // Device Types
 $LANG['plugin_customfields']['device_type']['SoftwareVersion'] = 'Software Versions';
 $LANG['plugin_customfields']['device_type']['SoftwareLicense'] = 'Software License';
-include('devices.php');
 $LANG['plugin_customfields']['device_type']['Infocom']            = 'Information financières';
+include('devices.php');
+
+// Errors
+$LANG['plugin_customfields']['error'][1]  = "No ha seleccionado combo";
+
 ?>

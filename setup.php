@@ -42,7 +42,7 @@ define('CUSTOMFIELDS_AUTOACTIVATE', true);
 
 // This is the last version that any tables changed.  This version may be
 // older than the plugin version if there were no changes db changes.
-define('CUSTOMFIELDS_DB_VERSION_REQUIRED', 118); // 1.1.8 TODO: Update this 
+define('CUSTOMFIELDS_DB_VERSION_REQUIRED', 118); // 1.1.8 TODO: Update this
 
 global $ACTIVE_CUSTOMFIELDS_TYPES, $ALL_CUSTOMFIELDS_TYPES;
 $ACTIVE_CUSTOMFIELDS_TYPES = array();
@@ -51,6 +51,7 @@ $ALL_CUSTOMFIELDS_TYPES = array();
 include_once ('inc/function.php');
 include_once ('inc/itemtype.class.php');
 include_once ('inc/profile.class.php');
+include_once ('inc/dropdown.class.php');
 
 // Initialize the plugin's hooks (this function is required)
 function plugin_init_customfields() {
@@ -65,6 +66,8 @@ function plugin_init_customfields() {
       $plugin = new Plugin();
 
       if ($plugin->isActivated('customfields')) {
+         include_once ('inc/virtual_classes.php');
+
          $query = "SELECT `itemtype`, `enabled`
                    FROM `glpi_plugin_customfields_itemtypes`
                    WHERE `itemtype` <> 'Version'";
@@ -77,20 +80,21 @@ function plugin_init_customfields() {
             }
          }
 
+
          $query = "SELECT *
                    FROM `glpi_plugin_customfields_dropdowns`
                    WHERE `has_entities` = 1
                          OR `is_tree` = 1";
          $result=$DB->query($query);
 
-         while ($data=$DB->fetch_assoc($result)) {
+         /*while ($data=$DB->fetch_assoc($result)) {
             if ($data['has_entities']==1) {
                array_push($CFG_GLPI['specif_entities_tables'], $data['dropdown_table']);
             }
             if ($data['is_tree']==1) {
                array_push($CFG_GLPI['dropdowntree_tables'], $data['dropdown_table']);
             }
-         }
+         }*/
 
          // Display a menu entry in the main menu if the user has configuration rights
          if (haveRight('config','w')) {
@@ -116,6 +120,9 @@ function plugin_init_customfields() {
 
          // added back - is it used?
          $PLUGIN_HOOKS['use_massive_action']['customfields']=1; // for custom massive action category
+
+         // initiate empty dropdowns
+         $PLUGIN_HOOKS['item_empty']['customfields']= array('PluginCustomfieldsDropdownsItem' => 'PluginCustomfieldsDropdownsItem::item_empty');
       }
 
       // Indicate where the configuration page can be found
@@ -133,8 +140,8 @@ function plugin_version_customfields() {
    return array('name'           => $LANG['plugin_customfields']['title'],
                 'author'         => 'Oregon State Data Center, Nelly Mahu Lasson',
                 'homepage'       => 'https://forge.indepnet.net/projects/show/customfields',
-                'minGlpiVersion' => '0.78',
-                'version'        => '1.2');
+                'minGlpiVersion' => '0.80',
+                'version'        => '1.3');
 }
 
 // Checks prerequisites before install. May print errors or add message after redirect
@@ -146,8 +153,8 @@ function plugin_customfields_check_prerequisites() {
       if (haveRight('config','w') && $plugin->isActivated('customfields')) {
          global $DB;
          // Check the version of the database tables.
-         $query =  "SELECT `enabled` 
-                    FROM `glpi_plugin_customfields_itemtypes` 
+         $query =  "SELECT `enabled`
+                    FROM `glpi_plugin_customfields_itemtypes`
                     WHERE itemtype='Version';";
          $result = $DB->query($query);
          $data = $DB->fetch_array($result);

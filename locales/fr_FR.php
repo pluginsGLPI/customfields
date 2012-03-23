@@ -102,7 +102,7 @@ $LANG['plugin_customfields']['setup'][1] = 'Aucun champ restreint';
 $LANG['plugin_customfields']['setup'][2] = 'Ce plugin a besoin d une version de GLPI supérieure ou égale à 0.72';
 $LANG['plugin_customfields']['setup'][3] = 'Installation du plugin '.$title.'';
 $LANG['plugin_customfields']['setup'][4] = 'Des données du plugin custom field déjà existantes sont détectées. Ces données ont étés restaurées.';
-$LANG['plugin_customfields']['setup'][5] = 'Des données d une précédente version de '.$title.' sont détectées. Ces données seront mise à jour lors de l activation de ce plugin.'; 
+$LANG['plugin_customfields']['setup'][5] = 'Des données d une précédente version de '.$title.' sont détectées. Ces données seront mise à jour lors de l activation de ce plugin.';
 $LANG['plugin_customfields']['setup'][7] = 'Les fichiers du plugins ne sont pas compatibles avec les données existantes. Veuillez mettre à jour les fichiers plugin.';
 $LANG['plugin_customfields']['setup'][8] = 'Custom Fields a été désinstallé, mais les données n ont pas été supprimées.';
 $LANG['plugin_customfields']['setup'][9] = 'Cliquez ici pour supprimer toute les données custom field.';
@@ -115,4 +115,7 @@ $LANG['plugin_customfields']['setup'][11] = 'Instructions';
 $LANG['plugin_customfields']['device_type']['SoftwareVersion'] = 'Versions du logiciel';
 $LANG['plugin_customfields']['device_type']['SoftwareLicense'] = 'Licence du logiciel';
 include('devices.php');
+
+// Errors
+$LANG['plugin_customfields']['error'][1]  = "Vous n'avez pas selectionné de liste déroulante";
 ?>

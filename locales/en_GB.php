@@ -113,4 +113,9 @@ $LANG['plugin_customfields']['setup'][11] = 'Instructions';
 $LANG['plugin_customfields']['device_type']['SoftwareVersion'] = 'Software Versions';
 $LANG['plugin_customfields']['device_type']['SoftwareLicense'] = 'Software License';
 include('devices.php');
+
+// Errors
+$LANG['plugin_customfields']['error'][1]  = "You have not selected Dropdown";
 ?>
+
+

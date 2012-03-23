@@ -53,7 +53,7 @@ if ($haveright) {
        foreach($_POST['delete'] as $ID => $garbage) {
           $sql = "SELECT *
                   FROM `glpi_plugin_customfields_dropdowns`
-                  WHERE `id` = '".intval($id)."'";
+                  WHERE `id` = '".intval($ID)."'";
           $result = $DB->query($sql);
           $data        = $DB->fetch_assoc($result);
           $system_name = $data['system_name'];
@@ -61,7 +61,7 @@ if ($haveright) {
 
           $sql = "DELETE
                   FROM `glpi_plugin_customfields_dropdowns`
-                  WHERE `id` = '".intval($id)."'
+                  WHERE `id` = '".intval($ID)."'
                         AND `system_name` = '$system_name'";
           $DB->query($sql);
 
@@ -74,7 +74,7 @@ if ($haveright) {
        $has_entities = isset($_POST['has_entities']) ? 1 : 0;
        $is_tree      = isset($_POST['is_tree']) ? 1 : 0;
 
-       $label        = ($_POST['label'] !='') ? $_POST['label']
+       $name        = ($_POST['name'] !='') ? $_POST['name']
                                               : $LANG['plugin_customfields']['Custom_Dropdown'];
 
        if ($_POST['system_name']=='') {// use label for system name if no system name was provided
@@ -104,8 +104,8 @@ if ($haveright) {
 
           // Save the meta data
           $sql = "INSERT INTO `glpi_plugin_customfields_dropdowns`
-                         (`system_name`, `label`, `has_entities`, `is_tree`, `dropdown_table`)
-                  VALUES ('$system_name', '$label', '$has_entities', '$is_tree', '$table')";
+                         (`system_name`, `name`, `has_entities`, `is_tree`, `dropdown_table`)
+                  VALUES ('$system_name', '$name', '$has_entities', '$is_tree', '$table')";
           $DB->query($sql);
 
           $entities = '';
@@ -114,7 +114,7 @@ if ($haveright) {
           }
 
           // Create a table for the new dropdown menu
-          if (!TableExists($table)) {
+          /*if (!TableExists($table)) {
              if ($is_tree) {
                 $sql = "CREATE TABLE `$table` (
                          `id` int(11) NOT NULL auto_increment,
@@ -137,7 +137,7 @@ if ($haveright) {
                         )ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3;";
              }
              $DB->query($sql);
-         }
+         }*/
        }
        glpi_header($_SERVER['HTTP_REFERER']);
 
@@ -149,9 +149,9 @@ if ($haveright) {
 
       while ($data=$DB->fetch_assoc($result)) {
          $ID    = $data['id'];
-         $label = $_POST['label'][$ID];
+         $name = $_POST['name'][$ID];
          $sql = "UPDATE `glpi_plugin_customfields_dropdowns`
-                 SET `label` = '$label'
+                 SET `name` = '$name'
                  WHERE `id` = '$ID'";
          $DB->query($sql);
       }
@@ -167,12 +167,13 @@ echo '<a href="./config.form.php">'.$LANG['plugin_customfields']['Back_to_Manage
 
 echo '<form action="#" method="post">';
 echo '<table class="tab_cadre" cellpadding="5">';
-echo '<tr><th colspan="5">'.$LANG['plugin_customfields']['Manage_Custom_Dropdowns'].'</th></tr>';
+echo '<tr><th colspan="6">'.$LANG['plugin_customfields']['Manage_Custom_Dropdowns'].'</th></tr>';
 echo '<tr>';
 echo '<th>'.$LANG['plugin_customfields']['Label'].'</th>';
 echo '<th>'.$LANG['plugin_customfields']['System_Name'].'</th>';
-echo '<th>'.$LANG['plugin_customfields']['Uses_Entities'].'</th>';
-echo '<th>'.$LANG['plugin_customfields']['Tree_Structure'].'</th>';
+//echo '<th>'.$LANG['plugin_customfields']['Uses_Entities'].'</th>';
+//echo '<th>'.$LANG['plugin_customfields']['Tree_Structure'].'</th>';
+echo '<th></th>';
 echo '<th></th>';
 echo '</tr>';
 
@@ -182,17 +183,17 @@ $query = "SELECT dd.*,
           LEFT JOIN `glpi_plugin_customfields_fields` AS linked
                ON (linked.`dropdown_table` = dd.`dropdown_table`)
           GROUP BY dd.`id`
-          ORDER BY `label`";
+          ORDER BY `name`";
 $result = $DB->query($query);
 
 while ($data=$DB->fetch_assoc($result)) {
    $ID = $data['id'];
    echo '<tr class="tab_bg_1">';
-   echo '<td><input name="label['.$ID.']" value="'.htmlspecialchars($data['label']).'" size="20"></td>';
+   echo '<td><input name="name['.$ID.']" value="'.htmlspecialchars($data['name']).'" size="20"></td>';
    echo '<td>'.$data['system_name'].'</td>';
    echo '<td class="center">';
 
-   if ($data['has_entities']) {
+   /*if ($data['has_entities']) {
       echo $LANG['choice'][1];
    } else {
       echo $LANG['choice'][0]; // Yes or No
@@ -205,13 +206,40 @@ while ($data=$DB->fetch_assoc($result)) {
    } else {
       echo $LANG['choice'][0];
    }
-   echo '</td><td>';
+   echo '</td><td>';*/
 
    if ($data['num_links']==0 && $haveright) {
       echo '<input name="delete['.$ID.']" class="submit" type="submit" value=\''.$LANG['buttons'][6].'\'>';
    } else {
       echo str_replace('NNN',$data['num_links'],$LANG['plugin_customfields']['Used_by_NNN_devices']);
    }
+   echo '</td>';
+
+
+   //show dropdown links
+   echo '<td>';
+
+   $item = new PluginCustomfieldsDropdown();
+   $table = $item->getTable();
+   $rand          = mt_rand();
+   $name          = DROPDOWN_EMPTY_VALUE;
+   $comment       = "";
+   $tmpname = Dropdown::getDropdownName($table,'',1);
+   if ($tmpname["name"]!="&nbsp;") {
+      $name    = $tmpname["name"];
+      $comment = $tmpname["comment"];
+   }
+
+   $options_tooltip['link']         = GLPI_ROOT.'/plugins/customfields/front/dropdownsitem.php';
+   $options_tooltip['linktarget']   = '_blank';
+   showToolTip($comment,$options_tooltip);
+
+   echo "<img alt='' title=\"".$LANG['buttons'][8]."\" src='".$CFG_GLPI["root_doc"].
+                     "/pics/add_dropdown.png' style='cursor:pointer; margin-left:2px;'
+                     onClick=\"var w = window.open('"
+                     .GLPI_ROOT.'/plugins/customfields/front/dropdownsitem.form.php'
+                     ."?popup=1&amp;rand=".$rand."' ,'glpipopup', 'height=400, ".
+                     "width=1000, top=100, left=100, scrollbars=yes' );w.focus();\">";
    echo '</td></tr>';
 }
 
@@ -234,16 +262,16 @@ if ($haveright) {
    echo '<tr>';
    echo '<th>'.$LANG['plugin_customfields']['Label'].'</th>';
    echo '<th>'.$LANG['plugin_customfields']['System_Name'].'</th>';
-   echo '<th>'.$LANG['plugin_customfields']['Uses_Entities'].'</th>';
-   echo '<th>'.$LANG['plugin_customfields']['Tree_Structure'].'</th>';
+   //echo '<th>'.$LANG['plugin_customfields']['Uses_Entities'].'</th>';
+   //echo '<th>'.$LANG['plugin_customfields']['Tree_Structure'].'</th>';
    echo '<th></th>';
    echo '</tr>';
 
    echo '<tr class="tab_bg_1">';
-   echo '<td><input name="label" size="20"></td>';
+   echo '<td><input name="name" size="20"></td>';
    echo '<td><input name="system_name"></td>';
-   echo '<td class="center"><input name="has_entities" type="checkbox"></td>';
-   echo '<td class="center"><input name="is_tree" type="checkbox"></td>';
+   //echo '<td class="center"><input name="has_entities" type="checkbox"></td>';
+   //echo '<td class="center"><input name="is_tree" type="checkbox"></td>';
    echo '<td><input name="add" class="submit" type="submit" value=\''.$LANG['buttons'][8].'\'></td>';
    echo '</tr>';
    echo '</table>';

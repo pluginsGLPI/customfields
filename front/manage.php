@@ -89,7 +89,7 @@ if (isset($_GET['itemtype'])) {
 
          // Check if the field is in the history log
          $sql = "SELECT COUNT(`id`) AS history_found
-                 FROM `glpi_history`
+                 FROM `glpi_logs`
                  WHERE `itemtype` = '$itemtype'
                        AND `id_search_option` = '$sopt_pos'";
          $result = $DB->query($sql);
@@ -147,7 +147,7 @@ if (isset($_GET['itemtype'])) {
          if ($result = $DB->query($sql)) {
             $data        = $DB->fetch_assoc($result);
             $system_name = $data['system_name'];
-            $label       = $data['label'];
+            $label       = $data['name'];
             $dd_table    = $data['dropdown_table'];
             $data_type   = 'dropdown';
             $data_ok     = true;
@@ -456,7 +456,7 @@ if (isset($_GET['itemtype'])) {
                    AND more.`itemtype` = '$itemtype'
                    AND more.`deleted` = 0)
              WHERE more.`id` IS NULL
-             ORDER BY dd.`label`";
+             ORDER BY dd.`name`";
    $result = $DB->query($query);
 
    if ($DB->numrows($result) > 0) {
@@ -472,7 +472,7 @@ if (isset($_GET['itemtype'])) {
       echo '<tr class="tab_bg_1">';
       echo '<td><select name="dropdown_id">';
       while ($data=$DB->fetch_assoc($result)) {
-         echo '<option value="'.$data['id'].'">'.$data['label'].'</option>';
+         echo '<option value="'.$data['id'].'">'.$data['name'].'</option>';
       }
       echo '</select></td>';
       echo '<td><input name="sort" value="'.$data['sort_order'].'" size="2"></td>';
