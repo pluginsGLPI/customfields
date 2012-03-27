@@ -429,9 +429,11 @@ function plugin_customfields_upgradeto117() {
            ADD `unique` smallint(6) NOT NULL DEFAULT '0'";
    $DB->query($sql) or die($DB->error());
 
-   // Upgrade
-   $query= "DROP TABLE IF EXISTS `glpi_plugin_customfields`
-            CREATE TABLE `glpi_plugin_customfields` (
+    // Upgrade
+   $query= "DROP TABLE IF EXISTS `glpi_plugin_customfields`";
+   $DB->query($query) or die($DB->error());
+
+   $query= "CREATE TABLE `glpi_plugin_customfields` (
                `ID` int(11) NOT NULL auto_increment,
                `device_type` int(11) NOT NULL default '0',
                `enabled` smallint(6) NOT NULL default '0',
