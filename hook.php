@@ -328,7 +328,7 @@ function plugin_customfields_MassiveActionsFieldsDisplay($options=array()) {
             $dropdown = array_shift($tmp);
             Dropdown::show('PluginCustomfieldsDropdownsItem', array(
                               'condition' => $dropdown['id']." = plugin_customfields_dropdowns_id",
-                              'name'      => $data['label'],
+                              'name'      => $data['system_name'],
                               'entity'    => $_SESSION['glpiactive_entity']
                               ));
          break;

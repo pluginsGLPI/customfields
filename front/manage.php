@@ -147,7 +147,7 @@ if (isset($_GET['itemtype'])) {
          if ($result = $DB->query($sql)) {
             $data        = $DB->fetch_assoc($result);
             $system_name = $data['system_name'];
-            $label       = $data['name'];
+            $label       = addslashes_deep($data['name']);
             $dd_table    = $data['dropdown_table'];
             $data_type   = 'dropdown';
             $data_ok     = true;
