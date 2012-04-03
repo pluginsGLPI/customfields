@@ -59,17 +59,19 @@ if ($plugin->isActivated("customfields")) {
 
    $result = $DB->query($query);
    while ($data=$DB->fetch_assoc($result)) {
-      $item = new $data['itemtype']();
-      if ($item->canCreate()) {
-         echo "<tr class='tab_bg_1'>";
-         echo "<td><a href='./manage.php?itemtype=".$data['itemtype']."'>".
-               $LANG['plugin_customfields']['device_type'][$data['itemtype']]."</a></td>";
-         if ($data['enabled'] == 1) {
-            echo "<td class='b'>".$LANG['plugin_customfields']['Enabled']."</td>";
-         } else {
-            echo "<td><i>".$LANG['plugin_customfields']['Disabled']."</i></td>";
+      if (class_exists($data['itemtype'])) {
+         $item = new $data['itemtype']();
+         if ($item->canCreate()) {
+            echo "<tr class='tab_bg_1'>";
+            echo "<td><a href='./manage.php?itemtype=".$data['itemtype']."'>".
+                  call_user_func(array($data['itemtype'], 'getTypeName'))."</a></td>";
+            if ($data['enabled'] == 1) {
+               echo "<td class='b'>".$LANG['plugin_customfields']['Enabled']."</td>";
+            } else {
+               echo "<td><i>".$LANG['plugin_customfields']['Disabled']."</i></td>";
+            }
+            echo "</tr>";
          }
-         echo "</tr>";
       }
    }
    echo "</table><br>";

@@ -324,7 +324,7 @@ if (isset($_GET['itemtype'])) {
    echo '<form action="?itemtype='.$itemtype.'" method="post">';
    echo '<table class="tab_cadre" cellpadding="5">';
    echo '<tr><th colspan="8">'.$LANG['plugin_customfields']['title'].
-         ' ('.$LANG['plugin_customfields']['device_type'][$itemtype].')</th></tr>';
+         ' ('.call_user_func(array($itemtype, 'getTypeName')).')</th></tr>';
    echo '<tr>';
    echo '<th>'.$LANG['plugin_customfields']['Label'].'</th>';
    echo '<th>'.$LANG['plugin_customfields']['System_Name'].'</th>';
