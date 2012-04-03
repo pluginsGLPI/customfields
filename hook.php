@@ -287,17 +287,13 @@ function plugin_item_add_customfields($obj) {
 
 // Hook done on purge item case
 function plugin_item_purge_customfields($parm) {
-   global $DB,$ALL_CUSTOMFIELDS_TYPES;
+   global $ALL_CUSTOMFIELDS_TYPES;
 
    // Must delete custom fields when main item is purged, even if custom fields for this device are currently disabled
-   if (in_array($parm['type'], $ALL_CUSTOMFIELDS_TYPES)
-       && ($table=plugin_customfields_table($parm['type']))) {
+   if (in_array($parm->getType(), $ALL_CUSTOMFIELDS_TYPES)
+       && ($table=plugin_customfields_table($parm->getType()))) {
 
-      $sql = "DELETE
-              FROM `$table`
-              WHERE `id` = '".intval($parm['id'])."'
-              LIMIT 1";
-      $result = $DB->query($sql);
+      $parm->delete(array('id' =>$parm->getID()));
       return true;
    }
    return false;
