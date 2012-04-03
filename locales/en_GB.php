@@ -117,5 +117,3 @@ include('devices.php');
 // Errors
 $LANG['plugin_customfields']['error'][1]  = "You have not selected Dropdown";
 ?>
-
-
