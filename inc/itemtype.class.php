@@ -50,26 +50,6 @@ class PluginCustomfieldsItemtype extends CommonDBTM {
    }
 
 
-   static function getTypes () {
-
-      static $types = array('CartridgeItem', 'Computer', 'ComputerDisk', 'ConsumableItem', 'Contact',
-                            'Contract', 'Document', 'Entity', 'Group', 'Monitor', 'NetworkEquipment',
-                            'NetworkPort', 'Peripheral', 'Phone', 'Printer', 'Software',
-                            'SoftwareLicense', 'SoftwareVersion', 'Supplier', 'Ticket', 'User');
-
-      foreach ($types as $key=>$type) {
-         if (!class_exists($type)) {
-            continue;
-         }
-         $item = new $type();
-         if (!$item->canView()) {
-            unset($types[$key]);
-         }
-      }
-      return $types;
-   }
-
-
    function getRestricted($itemtype) {
       global $DB;
 
@@ -95,7 +75,27 @@ class PluginCustomfieldsItemtype extends CommonDBTM {
 
    }
 
-
+   static function registerItemtype($itemtype) {
+      global $DB, $ALL_CUSTOMFIELDS_TYPES;
+      if (!countElementsInTable('glpi_plugin_customfields_itemtypes',
+                                "`itemtype`='PluginSimcardSimcard'")) {
+         $query = "INSERT INTO `glpi_plugin_customfields_itemtypes`
+                       (`itemtype`) VALUES ('$itemtype')";
+         $DB->query($query) or die ("Cannot add $itemtype to customfields");
+      }
+      array_push($ALL_CUSTOMFIELDS_TYPES, $itemtype);
+   }
+   
+   static function unregisterItemtype($itemtype) {
+      global $DB;
+      $DB->query("DROP TABLE IF EXISTS `plugin_customfields_table($itemtype)`");
+      $query = "DELETE FROM `glpi_plugin_customfields_fields`
+                WHERE `itemtype`='$itemtype'";
+      $DB->query($query);
+      $query = "DELETE FROM `glpi_plugin_customfields_itemtypes`
+                WHERE `itemtype`='$itemtype'";
+      $DB->query($query);
+   }
 }
 
 ?>
