@@ -135,11 +135,15 @@ function pluginCustomfieldsInstall() {
 function pluginCustomfieldsUninstall() {
    global $LANG, $DB;
 
-   
+   //cancel search in session (if search on customfields is in progress before uninstall)
+   Search::resetSaveSearch();
+
+   //get customfields itemtypes
    $query = "SELECT `itemtype`
              FROM `glpi_plugin_customfields_itemtypes`
              WHERE `itemtype` <> 'Version'";
 
+   //remove dynamic tables
    $itemtypes = array();
    if ($result=$DB->query($query)) {
       while ($data=$DB->fetch_assoc($result)) {
@@ -402,16 +406,16 @@ function plugin_customfields_upgradeto116() {
    }
 
    $query = "ALTER TABLE `glpi_plugin_customfields_fields`
-             CHANGE `system_name` `system_name` varchar(40) collate utf8_unicode_ci default NULL,
-             CHANGE `label` `label` varchar(70) collate utf8_unicode_ci default NULL,
-             CHANGE `default_value` `default_value` varchar(255) collate utf8_unicode_ci default NULL,
-             CHANGE `dropdown_table` `dropdown_table` varchar(255) collate utf8_unicode_ci default NULL";
+      CHANGE `system_name` `system_name` varchar(40) collate utf8_unicode_ci default NULL,
+      CHANGE `label` `label` varchar(70) collate utf8_unicode_ci default NULL,
+      CHANGE `default_value` `default_value` varchar(255) collate utf8_unicode_ci default NULL,
+      CHANGE `dropdown_table` `dropdown_table` varchar(255) collate utf8_unicode_ci default NULL";
    $DB->query($query) or die($DB->error());
 
    $query = "ALTER TABLE `glpi_plugin_customfields_dropdowns`
-             CHANGE `system_name` `system_name` varchar(40) collate utf8_unicode_ci default NULL,
-             CHANGE `label` `label` varchar(70) collate utf8_unicode_ci default NULL,
-             CHANGE `dropdown_table` `dropdown_table` varchar(255) collate utf8_unicode_ci default NULL";
+      CHANGE `system_name` `system_name` varchar(40) collate utf8_unicode_ci default NULL,
+      CHANGE `label` `label` varchar(70) collate utf8_unicode_ci default NULL,
+      CHANGE `dropdown_table` `dropdown_table` varchar(255) collate utf8_unicode_ci default NULL";
    $DB->query($query) or die($DB->error());
 
    $query = "UPDATE `glpi_plugin_customfields_fields`
