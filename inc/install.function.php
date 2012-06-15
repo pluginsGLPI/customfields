@@ -58,10 +58,12 @@ function pluginCustomfieldsInstall() {
 
       $query = "INSERT INTO `glpi_plugin_customfields_itemtypes`
                        (`itemtype`)
-                VALUES ('Computer'), ('ComputerDisk'), ('Monitor'), ('Software'), ('SoftwareVersion'),
-                       ('SoftwareLicense'), ('NetworkEquipment'), ('NetworkPort'), ('Peripheral'),
-                       ('Printer'), ('CartridgeItem'), ('ConsumableItem'), ('Phone'), ('Ticket'), ('Contact'),
-                       ('Supplier'), ('Contract'), ('Document'), ('User'), ('Group'), ('Entity')";
+                VALUES ('Computer'), ('ComputerDisk'), ('Monitor'), ('Software'), 
+                       ('SoftwareVersion'),  ('SoftwareLicense'), ('NetworkEquipment'), 
+                       ('NetworkPort'), ('Peripheral'), ('Printer'), ('CartridgeItem'), 
+                       ('ConsumableItem'), ('Phone'), ('Ticket'), ('Contact'),
+                       ('Supplier'), ('Contract'), ('Document'), ('User'), 
+                       ('Group'), ('Entity')";
       $DB->query($query) or die($DB->error());
 
 
@@ -133,6 +135,7 @@ function pluginCustomfieldsInstall() {
 function pluginCustomfieldsUninstall() {
    global $LANG, $DB;
 
+   
    $query = "SELECT `itemtype`
              FROM `glpi_plugin_customfields_itemtypes`
              WHERE `itemtype` <> 'Version'";
@@ -150,7 +153,8 @@ function pluginCustomfieldsUninstall() {
    }
 
    //delete dropdown search option
-   $query = "DELETE FROM glpi_displaypreferences WHERE itemtype = 'PluginCustomfieldsDropdownsItem'";
+   $query = "DELETE FROM glpi_displaypreferences 
+      WHERE itemtype = 'PluginCustomfieldsDropdownsItem'";
    $DB->query($query) or die($DB->error());
 
 
@@ -160,11 +164,9 @@ function pluginCustomfieldsUninstall() {
       $searchoptions = plugin_customfields_getAddSearchOptions($itemtype);
       $searchopts_keys = array_merge(array_keys($searchoptions), $searchopts_keys);
    }
-   $searchopts_keys_str = "'".implode("',' ", $searchopts_keys)."'";
+   $searchopts_keys_str = "'".implode("', '", $searchopts_keys)."'";
    $query = "DELETE FROM glpi_displaypreferences WHERE num IN ($searchopts_keys_str)";
    $DB->query($query) or die($DB->error());
-
-
 
    $query = "SELECT `dropdown_table`
              FROM `glpi_plugin_customfields_dropdowns`";
@@ -248,9 +250,9 @@ function plugin_customfields_upgrade($oldversion) {
       plugin_customfields_upgradeto12();
    }
 
-            if (CUSTOMFIELDS_AUTOACTIVATE) {
-            plugin_customfields_activate_all_types();
-         }
+   if (CUSTOMFIELDS_AUTOACTIVATE) {
+      plugin_customfields_activate_all_types();
+   }
 
 }
 
@@ -476,13 +478,15 @@ function plugin_customfields_upgradeto117() {
 function plugin_customfields_upgradeto12() {
    global $DB;
 
-   $glpi_tables = array('glpi_plugin_customfields_software'          => 'glpi_plugin_customfields_softwares',
-                        'glpi_plugin_customfields_networking'        => 'glpi_plugin_customfields_networkequipments',
-                        'glpi_plugin_customfields_enterprises'       => 'glpi_plugin_customfields_suppliers',
-                        'glpi_plugin_customfields_docs'              => 'glpi_plugin_customfields_documents',
-                        'glpi_plugin_customfields_tracking'          => 'glpi_plugin_customfields_tickets',
-                        'glpi_plugin_customfields_user'              => 'glpi_plugin_customfields_users',
-                        'glpi_plugin_customfields_networking_ports'  => 'glpi_plugin_customfields_networkports');
+   $glpi_tables = array(
+      'glpi_plugin_customfields_software'          => 'glpi_plugin_customfields_softwares',
+      'glpi_plugin_customfields_networking'        => 'glpi_plugin_customfields_networkequipments',
+      'glpi_plugin_customfields_enterprises'       => 'glpi_plugin_customfields_suppliers',
+      'glpi_plugin_customfields_docs'              => 'glpi_plugin_customfields_documents',
+      'glpi_plugin_customfields_tracking'          => 'glpi_plugin_customfields_tickets',
+      'glpi_plugin_customfields_user'              => 'glpi_plugin_customfields_users',
+      'glpi_plugin_customfields_networking_ports'  => 'glpi_plugin_customfields_networkports'
+   );
 
    foreach ($glpi_tables as $oldtable => $newtable) {
       if (!TableExists("$newtable") && TableExists("$oldtable")) {
@@ -519,7 +523,7 @@ function plugin_customfields_upgradeto12() {
          }
       }
 
-       foreach($enabled as $itemtype) {
+      foreach($enabled as $itemtype) {
           $sql = "UPDATE `glpi_plugin_customfields_itemtypes`
                   SET `enabled` = 1
                   WHERE `itemtype` = '$itemtype';";
@@ -544,7 +548,8 @@ function plugin_customfields_upgradeto12() {
    }
 
    if (TableExists("glpi_plugin_customfields_profiledata")) {
-      $query = "RENAME TABLE `glpi_plugin_customfields_profiledata` TO `glpi_plugin_customfields_profiles`";
+      $query = "RENAME TABLE `glpi_plugin_customfields_profiledata` 
+         TO `glpi_plugin_customfields_profiles`";
       $DB->query($query) or die($DB->error());
       $query = "ALTER TABLE `glpi_plugin_customfields_profiles`
                 CHANGE `ID` `id` int(11) NOT NULL auto_increment";

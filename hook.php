@@ -148,13 +148,12 @@ function plugin_customfields_getAddSearchOptions($itemtype) {
 
          if ($search['data_type'] == "dropdown") {         
 
-            $sopt[$i]['table']     = 'glpi_plugin_customfields_dropdownsitems';
-            $sopt[$i]['datatype'] = "itemtypename";
+            $sopt[$i]['table']      = 'glpi_plugin_customfields_dropdownsitems';
+            $sopt[$i]['datatype']   = "itemtypename";
             $sopt[$i]['searchtype'] = "contains";
-            $sopt[$i]['field'] = "name";
-            $sopt[$i]['linkfield'] = $search['system_name'];
+            $sopt[$i]['field']      = "name";
+            $sopt[$i]['linkfield']  = $search['system_name'];
             $sopt[$i]['joinparams'] = array(
-               //'condition' => 'AND NEWTABLE!=REFTABLE',
                'beforejoin' => array(
                   'table' => plugin_customfields_table($itemtype),
                   'joinparams' => array(
@@ -246,27 +245,6 @@ function plugin_customfields_addLeftJoin($itemtype, $ref_table, $new_table, $lin
    }
    return $out;
 }
-
-/*function plugin_customfields_addWhere($link, $nott, $itemtype, $ID, $val) {
-   global $DB;
-
-   $out = "";
-   $sopt = plugin_customfields_getAddSearchOptions($itemtype);
-   $current_opt = $sopt[$ID];
-
-   $query = "SELECT data_type 
-      FROM `glpi_plugin_customfields_fields`
-      WHERE itemtype = '$itemtype'
-         AND system_name = '".$current_opt['field']."'";
-   $res = $DB->query($query);
-   $field = $DB->fetch_assoc($res);
-
-   if ($field['data_type'] == "dropdown") {
-      $out = "1 = 1";
-   }
-
-   return $out;
-}*/
 
 
 
