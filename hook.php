@@ -104,7 +104,8 @@ function plugin_customfields_getDropdown() {
 function plugin_customfields_getAddSearchOptions($itemtype) {
    global $LANG, $ACTIVE_CUSTOMFIELDS_TYPES, $DB;
 
-   //TODO: Rewrite this function, based on old code--but note that logging appears to work w/o separate item
+   //TODO: Rewrite this function, based on old code
+   //--but note that logging appears to work w/o separate item
    $sopt = array();
    if (in_array($itemtype, $ACTIVE_CUSTOMFIELDS_TYPES)) {
       $query = "SELECT `glpi_plugin_customfields_fields`.*,
@@ -126,32 +127,52 @@ function plugin_customfields_getAddSearchOptions($itemtype) {
           * - one for search and displaypreference
           * - second for massive action
           **/
+         
+         $sopt[$i]['table']         = plugin_customfields_table($itemtype);
+         $sopt[$i]['field']         = $search['system_name'];
+         $sopt[$i]['linkfield']     = '';
+         $sopt[$i]['name']          = $LANG['plugin_customfields']['title']." - ".$search['label'];
+         $sopt[$i]['massiveaction'] = false;
 
-         $sopt[$i]['table']            = plugin_customfields_table($itemtype);
-         $sopt[$i]['field']            = $search['system_name'];
-         $sopt[$i]['linkfield']        = '';
-         $sopt[$i]['name']             = $LANG['plugin_customfields']['title']." - ".$search['label'];
-         $sopt[$i]['massiveaction']    = false;
 
          //no option for disable displaypreferences, check page executed
          if (strpos($_SERVER['SCRIPT_NAME'], "displaypreference.tabs.php") === false) {
-            $sopt[$i+2000]['table']       = plugin_customfields_table($itemtype);
-            $sopt[$i+2000]['field']       = $search['system_name'];
-            $sopt[$i+2000]['linkfield']   = $search['system_name'];
-            $sopt[$i+2000]['name']        = $LANG['plugin_customfields']['title']." - ".$search['label'];
-            $sopt[$i+2000]['nosearch']    = true;
-            $sopt[$i+2000]['nosort']      = true;
+            $sopt[$i+2000]['table']     = plugin_customfields_table($itemtype);
+            $sopt[$i+2000]['field']     = $search['system_name'];
+            $sopt[$i+2000]['linkfield'] = $search['system_name'];
+            $sopt[$i+2000]['name']      = $LANG['plugin_customfields']['title']." - ".
+                                             $search['label'];
+            $sopt[$i+2000]['nosearch']  = true;
+            $sopt[$i+2000]['nosort']    = true;
          }
 
+         if ($search['data_type'] == "dropdown") {         
+
+            $sopt[$i]['table']     = 'glpi_plugin_customfields_dropdownsitems';
+            $sopt[$i]['datatype'] = "itemtypename";
+            $sopt[$i]['searchtype'] = "contains";
+            $sopt[$i]['field'] = "name";
+            $sopt[$i]['joinparams'] = array(
+               'beforejoin' => array(
+                  'table'=>plugin_customfields_table($itemtype),
+                  'joinparams'=>array(
+                     'jointype'=>'child'
+                  )
+               )
+            );
+         }
          $i++;
       }
    }
+
    return $sopt;
 }
 
+
 // Clean Search Options: Necessary for search to work properly if GLPI patch applied.
 // Removes the search options that are used for different purposes.
-// This function requires the glpi patch in order to be called. See the patch directory for instructions.
+// This function requires the glpi patch in order to be called. 
+// See the patch directory for instructions.
 function plugin_customfields_cleanSearchOption($options, $action) {
    //TODO: update this after finishing getAddSearchOptions
    if(!empty($options)) {
@@ -176,39 +197,46 @@ function plugin_customfields_cleanSearchOption($options, $action) {
 }
 
 // Define how to join the tables when doing a search
-function plugin_customfields_addLeftJoin($type, $ref_table, $new_table, $linkfield,
+function plugin_customfields_addLeftJoin($itemtype, $ref_table, $new_table, $linkfield,
                                          &$already_link_tables) {
    global $DB;
 
-   $type_table = plugin_customfields_table($type);
+   $out = "";
+   
+   $type_table = plugin_customfields_table($itemtype);
    if ($new_table == $type_table) {
-      return " LEFT JOIN `$new_table`
-                  ON (`$ref_table`.`id` = `$new_table`.`id`) ";
+      $out = " LEFT JOIN `$new_table`
+                  ON (`$ref_table`.`id` = `$new_table`.`id`)";
+      return $out;
    }
 
+
+
    if ($new_table == 'glpi_plugin_customfields_networkports') {
-      $out  = addLeftJoin($type, $ref_table, $already_link_tables, "glpi_networkports", '');
+      $out  = addLeftJoin($itemtype, $ref_table, $already_link_tables, "glpi_networkports", '');
       $out .= " LEFT JOIN `glpi_plugin_customfields_networkports`
                   ON (`glpi_networkports`.`id` = `glpi_plugin_customfields_networkports`.`id`) ";
       return $out;
    }
 
+
    // it is a custom dropdown
    $query = "SELECT *
              FROM `glpi_plugin_customfields_fields`
              WHERE `dropdown_table` = '$new_table'
-                   AND `itemtype` = '$type'
+                   AND `itemtype` = '$itemtype'
                    AND `deleted` = 0
                    AND `entities` != ''";
    $result = $DB->query($query);
    $out = "";
-   if ($DB->numrows($result)) {// A regular dropdown (this fails if the same dd is used in the device AND in networking ports)
-      $out  = addLeftJoin($type, $ref_table, $already_link_tables, $type_table, 'id');
+   // A regular dropdown (this fails if the same dd is used in the device AND in networking ports)
+   if ($DB->numrows($result)) {
+      $out  .= addLeftJoin($itemtype, $ref_table, $already_link_tables, $type_table, 'id');
       $out .= " LEFT JOIN `$new_table` ON (`$new_table`.`id` = `$type_table`.`$linkfield`) ";
 
    } else {// a dropdown in network ports
       // Link to glpi_networking_ports first
-      /*$out  = addLeftJoin($type, $ref_table, $already_link_tables, "glpi_networkports", '');
+      /*$out  = addLeftJoin($itemtype, $ref_table, $already_link_tables, "glpi_networkports", '');
       $out .= addLeftJoin('NetworkPort', 'glpi_networkports', $already_link_tables,
                           "glpi_plugin_customfields_networkports", 'id');
       $out .= " LEFT JOIN `$new_table`
@@ -216,6 +244,28 @@ function plugin_customfields_addLeftJoin($type, $ref_table, $new_table, $linkfie
    }
    return $out;
 }
+
+/*function plugin_customfields_addWhere($link, $nott, $itemtype, $ID, $val) {
+   global $DB;
+
+   $out = "";
+   $sopt = plugin_customfields_getAddSearchOptions($itemtype);
+   $current_opt = $sopt[$ID];
+
+   $query = "SELECT data_type 
+      FROM `glpi_plugin_customfields_fields`
+      WHERE itemtype = '$itemtype'
+         AND system_name = '".$current_opt['field']."'";
+   $res = $DB->query($query);
+   $field = $DB->fetch_assoc($res);
+
+   if ($field['data_type'] == "dropdown") {
+      $out = "1 = 1";
+   }
+
+   return $out;
+}*/
+
 
 
 ///////////// VARIOUS HOOKS /////////////////
@@ -289,7 +339,8 @@ function plugin_item_add_customfields($obj) {
 function plugin_item_purge_customfields($parm) {
    global $ALL_CUSTOMFIELDS_TYPES;
 
-   // Must delete custom fields when main item is purged, even if custom fields for this device are currently disabled
+   // Must delete custom fields when main item is purged, 
+   // even if custom fields for this device are currently disabled
    if (in_array($parm->getType(), $ALL_CUSTOMFIELDS_TYPES)
        && ($table=plugin_customfields_table($parm->getType()))) {
 
@@ -299,7 +350,8 @@ function plugin_item_purge_customfields($parm) {
    return false;
 }
 
-// This function requires the glpi patch in order to be called. See the patch directory for instructions
+// This function requires the glpi patch in order to be called. 
+// See the patch directory for instructions
 function plugin_customfields_MassiveActionsFieldsDisplay($options=array()) {
    global $DB;
 
@@ -337,11 +389,12 @@ function plugin_customfields_MassiveActionsFieldsDisplay($options=array()) {
              showDateFormItem($field, '', true, true);
              break;
 
-          case 'money' :
-             echo '<input type="text" size="16" value="'.formatNumber(0,true).'" name="'.$field.'"/>';
+         case 'money' :
+             echo '<input type="text" size="16" value="'.
+                     formatNumber(0,true).'" name="'.$field.'"/>';
              break;
 
-          default :
+         default :
              $item = new $type;
              autocompletionTextField($item, $field);
              break;
@@ -399,7 +452,8 @@ function plugin_headings_customfields($item) {
       $prof = new PluginCustomfieldsProfile();
       if ($prof->GetfromDB($ID) || $prof->createUserAccess($item)) {
          $prof->showForm($ID,
-                         array('target' => $CFG_GLPI["root_doc"]."/plugins/customfields/front/profile.form.php"));
+                         array('target' => $CFG_GLPI["root_doc"].
+                                           "/plugins/customfields/front/profile.form.php"));
       }
 
    } else {
@@ -411,58 +465,6 @@ function plugin_headings_customfields($item) {
    }
 }
 
-/*
-// Define fields that can be updated with the data_injection plugin
-function plugin_customfields_data_injection_variables()
-{
-   global $IMPORT_PRIMARY_TYPES, $DATA_INJECTION_MAPPING, $LANG, $IMPORT_TYPES,$DATA_INJECTION_INFOS,$DB;
-   $plugin = new Plugin();
-
-   if ($plugin->isActivated("customfields"))
-   {
-      $query="SELECT * FROM glpi_plugin_customfields_fields WHERE data_type <> 'sectionhead' AND deleted=0;";
-      $result=$DB->query($query);
-      while ($data=$DB->fetch_assoc($result))
-      {
-         $type=5200 + $data['device_type']; // this plugin uses the range 5200-7699
-         $field = $data['system_name'];
-         if($data['data_type']=='dropdown')
-         {
-            $DATA_INJECTION_MAPPING[$type][$field]['table'] = $data['dropdown_table'];
-            $DATA_INJECTION_MAPPING[$type][$field]['field'] = 'name';
-            $DATA_INJECTION_MAPPING[$type][$field]['linkfield'] = $field;
-            $DATA_INJECTION_INFOS[$type][$field]['linkfield'] = $field;
-            $DATA_INJECTION_MAPPING[$type][$field]['table_type'] = 'dropdown';
-            $DATA_INJECTION_INFOS[$type][$field]['table_type'] = 'dropdown';
-         }
-         else
-         {
-            $DATA_INJECTION_MAPPING[$type][$field]['table'] = plugin_customfields_table($type);
-            $DATA_INJECTION_MAPPING[$type][$field]['field'] = $field;
-         }
-         $DATA_INJECTION_MAPPING[$type][$field]['name'] = $data['label'];
-         switch($data['data_type'])
-         {
-            case 'number':
-            case 'yesno': $DATA_INJECTION_MAPPING[$type][$field]['type'] = 'integer'; break;
-            case 'date': $DATA_INJECTION_MAPPING[$type][$field]['type'] = 'date'; break;
-            case 'money': $DATA_INJECTION_MAPPING[$type][$field]['type'] = 'float'; break;
-            case 'text':
-            case 'notes':
-               $DATA_INJECTION_MAPPING[$type][$field]['table_type'] = 'multitext';
-               $DATA_INJECTION_INFOS[$type][$field]['table_type'] = 'multitext';
-               $DATA_INJECTION_MAPPING[$type][$field]['type'] = 'text';
-               break;
-            default: $DATA_INJECTION_MAPPING[$type][$field]['type'] = 'text';
-         }
-         $DATA_INJECTION_INFOS[$type][$field]['table'] = $DATA_INJECTION_MAPPING[$type][$field]['table'];
-         $DATA_INJECTION_INFOS[$type][$field]['field'] = $DATA_INJECTION_MAPPING[$type][$field]['field'];
-         $DATA_INJECTION_INFOS[$type][$field]['name'] = $DATA_INJECTION_MAPPING[$type][$field]['name'];
-         $DATA_INJECTION_INFOS[$type][$field]['type'] = $DATA_INJECTION_MAPPING[$type][$field]['type'];
-      }
-   }
-}
-*/
 
 function plugin_customfields_giveItem ($itemtype,$ID,$data,$num,$meta=0) {
    global $DB,$LANG;
@@ -493,6 +495,9 @@ function plugin_customfields_giveItem ($itemtype,$ID,$data,$num,$meta=0) {
                      "glpi_plugin_customfields_dropdownsitems",
                      $data[$NAME.$num]
                   );
+            break;
+         case "name":
+            return $data[$NAME.$num];
             break;
       }
    } elseif (strpos($table, "glpi_plugin_customfields_") !== false) {
