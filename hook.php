@@ -152,11 +152,13 @@ function plugin_customfields_getAddSearchOptions($itemtype) {
             $sopt[$i]['datatype'] = "itemtypename";
             $sopt[$i]['searchtype'] = "contains";
             $sopt[$i]['field'] = "name";
+            $sopt[$i]['linkfield'] = $search['system_name'];
             $sopt[$i]['joinparams'] = array(
+               //'condition' => 'AND NEWTABLE!=REFTABLE',
                'beforejoin' => array(
-                  'table'=>plugin_customfields_table($itemtype),
-                  'joinparams'=>array(
-                     'jointype'=>'child'
+                  'table' => plugin_customfields_table($itemtype),
+                  'joinparams' => array(
+                     'jointype'  => 'child'
                   )
                )
             );
