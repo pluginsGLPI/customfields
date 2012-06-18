@@ -87,7 +87,6 @@ function plugin_customfields_activate($itemtype, $ID) {
 // Activates custom fields for all devices of a specific type
 function plugin_customfields_activate_all($itemtype) {
    global $DB;
-logdebug("activateall ", $itemtype);
    $query = "SELECT `id`
              FROM `glpi_plugin_customfields_fields`
              WHERE `itemtype` = '$itemtype'";
@@ -285,7 +284,8 @@ function plugin_customfields_showAssociated($item, $withtemplate='') {
 
          $classnames = '';
          $classes    = '';
-         if ($fields['required'] && !$readonly) { // Requiring a readonly field would cause a problem
+         // Requiring a readonly field would cause a problem
+         if ($fields['required'] && !$readonly) { 
             $classnames = ' required';
             $classes    = ' class="required"';
          }
