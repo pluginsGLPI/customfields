@@ -57,7 +57,9 @@ include_once ('inc/dropdown.class.php');
 function plugin_init_customfields() {
    global $PLUGIN_HOOKS, $CFG_GLPI, $DB, $ACTIVE_CUSTOMFIELDS_TYPES, $ALL_CUSTOMFIELDS_TYPES;
 
-   $PLUGIN_HOOKS['change_profile']['customfields'] = array('PluginCustomfieldsProfile','changeprofile');
+   $PLUGIN_HOOKS['change_profile']['customfields'] = array(
+      'PluginCustomfieldsProfile','changeprofile'
+   );
 
    Plugin::registerClass('PluginCustomfieldsDropdowns');
    Plugin::registerClass('PluginCustomfieldsFields');
@@ -119,10 +121,12 @@ function plugin_init_customfields() {
          $PLUGIN_HOOKS['data_injection']['customfields'] = 'plugin_customfields_data_injection_variables';
 
          // added back - is it used?
-         $PLUGIN_HOOKS['use_massive_action']['customfields']=1; // for custom massive action category
+         $PLUGIN_HOOKS['use_massive_action']['customfields']=1; //for custom massive action category
 
          // initiate empty dropdowns
-         $PLUGIN_HOOKS['item_empty']['customfields']= array('PluginCustomfieldsDropdownsItem' => 'PluginCustomfieldsDropdownsItem::item_empty');
+         $PLUGIN_HOOKS['item_empty']['customfields']= array(
+            'PluginCustomfieldsDropdownsItem' => 'PluginCustomfieldsDropdownsItem::item_empty'
+         );
       }
 
       // Indicate where the configuration page can be found
@@ -146,7 +150,7 @@ function plugin_version_customfields() {
 
 // Checks prerequisites before install. May print errors or add message after redirect
 function plugin_customfields_check_prerequisites() {
-   if (GLPI_VERSION>=0.78) {
+   if (GLPI_VERSION>=0.80) {
       $plugin = new Plugin();
 
       // Automatically upgrade db (if necessary) when plugin is activated
@@ -158,21 +162,22 @@ function plugin_customfields_check_prerequisites() {
                     WHERE itemtype='Version';";
          $result = $DB->query($query);
          $data = $DB->fetch_array($result);
-         $dbversion = $data['enabled']; // Version of the last modification to the plugin tables' structure
+          //Version of the last modification to the plugin tables' structure
+         $dbversion = $data['enabled'];
 
          if($dbversion < CUSTOMFIELDS_DB_VERSION_REQUIRED) {
-//TODO: enable this
-//            plugin_customfields_upgrade($dbversion);
+            //TODO: enable this
+            //            plugin_customfields_upgrade($dbversion);
          }
          if(CUSTOMFIELDS_AUTOACTIVATE) {
-//TODO: enable this
-//            plugin_customfields_activate_all_types();
+            //TODO: enable this
+            //            plugin_customfields_activate_all_types();
          }
       }
       return true;
    }
    else {
-      echo "This plugin requires GLPI version 0.78 or higher";
+      echo "This plugin requires GLPI version 0.80 or higher";
    }
 }
 
