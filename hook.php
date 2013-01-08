@@ -35,7 +35,7 @@
 // Purpose of file: Code for hooks, etc.
 // ----------------------------------------------------------------------
 
-// Define dropdown relations for use by GLPI
+// Define dropdown relations for use by   GLPI
 function plugin_customfields_getDatabaseRelations() {
    //TODO: add in relations for multiselects?
    global $DB;
