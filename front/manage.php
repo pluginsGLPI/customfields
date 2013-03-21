@@ -67,15 +67,16 @@ if (isset($_GET['itemtype'])) {
          if (CUSTOMFIELDS_AUTOACTIVATE) {
             plugin_customfields_activate_all($itemtype);
          }
-         addMessageAfterRedirect($LANG['plugin_customfields']['cf_enabled']);
+         Session::addMessageAfterRedirect($LANG['plugin_customfields']['cf_enabled']);
       }
-      Http::redirect($_SERVER['HTTP_REFERER']); // So clicking refresh on browser will not send post data again
+ 
+      Html::back();
    }
 
    if (isset($_POST['disable'])) {// Disable custom fields for this device type
       plugin_customfields_disable_device($itemtype);
-      Http::redirect($_SERVER['HTTP_REFERER']); // So clicking refresh on browser will send post data again
-
+      
+      Html::back();
    } else if(isset($_POST['delete'])) {// Delete a field
       foreach($_POST['delete'] as $id => $garbage) {
          $sql = "SELECT *
@@ -307,7 +308,7 @@ if (isset($_GET['itemtype'])) {
             $DB->query($sql);
          }
       }
-      glpi_header($_SERVER['HTTP_REFERER']);
+      Html::back();
    }
 
 

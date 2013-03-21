@@ -195,7 +195,7 @@ function plugin_customfields_disable_device($itemtype) {
              SET `enabled` = 0
              WHERE `itemtype` = '$itemtype'";
    $result = $DB->query($query);
-   addMessageAfterRedirect($LANG['plugin_customfields']['cf_disabled']);
+   Session::addMessageAfterRedirect($LANG['plugin_customfields']['cf_disabled']);
 }
 
 
@@ -394,7 +394,7 @@ function plugin_customfields_showAssociated($item, $withtemplate='') {
 
                case 'money' :
                   if (!$readonly) {
-                     echo '<input type="text" size="16" value="'.formatNumber($value, true).
+                     echo '<input type="text" size="16" value="'.Html::formatNumber($value, true).
                            '" name="'.$field_name.'"/>';
                   } else {
                      plugin_customfields_showValue(formatNumber($value, true));
@@ -403,7 +403,7 @@ function plugin_customfields_showAssociated($item, $withtemplate='') {
 
                case 'yesno' :
                   if (!$readonly) {
-                     echo Dropdown::showYesNo($field_name, $value);
+                     Dropdown::showYesNo($field_name, $value);
                   } else {
                      plugin_customfields_showValue(Dropdown::getYesNo($field_name, $value));
                   }

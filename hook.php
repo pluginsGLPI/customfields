@@ -366,17 +366,17 @@ function plugin_customfields_MassiveActionsFieldsDisplay($options=array()) {
             break;
 
          case 'date' :
-             showDateFormItem($field, '', true, true);
+             Html::showDateFormItem($field, '', true, true);
              break;
 
          case 'money' :
              echo '<input type="text" size="16" value="'.
-                     formatNumber(0,true).'" name="'.$field.'"/>';
+                     Html::formatNumber(0,true).'" name="'.$field.'"/>';
              break;
 
          default :
              $item = new $type;
-             autocompletionTextField($item, $field);
+             Html::autocompletionTextField($item, $field);
              break;
       }
       return true;
@@ -501,12 +501,12 @@ function plugin_customfields_giveItem ($itemtype,$ID,$data,$num,$meta=0) {
                break;
 
             case 'date' :
-               echo convDate($data[$NAME.$num]);
-               return convDate($data[$NAME.$num]);
+               Html::convDate($data[$NAME.$num]);
+               return Html::convDate($data[$NAME.$num]);
                break;
 
             case 'money' :
-               return formatNumber($data[$NAME.$num]);
+               return Html::formatNumber($data[$NAME.$num]);
                break;
 
             default :
