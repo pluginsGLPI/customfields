@@ -19,7 +19,7 @@ $LANG['plugin_customfields']['device_type']['Group']           = $LANG['Menu'][3
 $LANG['plugin_customfields']['device_type']['Entity']          = $LANG['Menu'][37];
 $LANG['plugin_customfields']['device_type']['NetworkPort']     = $LANG['networking'][6];
 $LANG['plugin_customfields']['device_type']['ComputerDisk']    = $LANG['computers'][8];
-$LANG['plugin_customfields']['device_type']['Device']          = $LANG['title'][30];
+$LANG['plugin_customfields']['device_type']['Device']          = $LANG['Menu'][30];
 
 $LANG['plugin_customfields']['component_type']['DeviceMotherboard']  = $LANG['devices'][5];
 $LANG['plugin_customfields']['component_type']['DeviceProcessor']    = $LANG['devices'][4];

@@ -39,10 +39,10 @@
 define('GLPI_ROOT', '../..');
 include (GLPI_ROOT.'/inc/includes.php');
 
-commonHeader($LANG['plugin_customfields']['title'], $_SERVER['PHP_SELF'], 'plugins', 'customfields');
+Html::header($LANG['plugin_customfields']['title'], $_SERVER['PHP_SELF'], 'plugins', 'customfields');
 
-if (haveRight('config','w')) {
-   glpi_header('./front/config.form.php'); // redirect to the configuration page
+if (Session::haveRight('config','w')) {
+    Html::redirect('./front/config.form.php'); // redirect to the configuration page
 } else {
    echo '<div class="center"><br><br>'.
         '<img src="'.$CFG_GLPI['root_doc'].'/pics/warning.png" alt="warning"><br><br>';

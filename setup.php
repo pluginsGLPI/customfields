@@ -66,8 +66,8 @@ function plugin_init_customfields() {
 
    if (isset($_SESSION['glpiID'])){
       $plugin = new Plugin();
-
-      if ($plugin->isActivated('customfields')) {
+      
+    if ($plugin->isActivated("customfields")) {
          include_once ('inc/virtual_classes.php');
 
          $query = "SELECT `itemtype`, `enabled`
@@ -99,7 +99,7 @@ function plugin_init_customfields() {
          }*/
 
          // Display a menu entry in the main menu if the user has configuration rights
-         if (haveRight('config','w')) {
+         if (Session::haveRight('config','w')) {
             $PLUGIN_HOOKS['menu_entry']['customfields'] = true;
          }
 
@@ -130,7 +130,7 @@ function plugin_init_customfields() {
       }
 
       // Indicate where the configuration page can be found
-      if (haveRight('config','w')) {
+      if ( Session::haveRight('config','w')) {
          $PLUGIN_HOOKS['config_page']['customfields'] = 'front/config.form.php';
       }
    }
@@ -140,21 +140,20 @@ function plugin_init_customfields() {
 // Get the name and the version of the plugin (required function)
 function plugin_version_customfields() {
    global $LANG;
-
    return array('name'           => $LANG['plugin_customfields']['title'],
                 'author'         => 'Oregon State Data Center, Nelly Mahu Lasson',
                 'homepage'       => 'https://forge.indepnet.net/projects/show/customfields',
-                'minGlpiVersion' => '0.80',
-                'version'        => '1.3');
+                'minGlpiVersion' => '0.83',
+                'version'        => '1.4');
 }
 
 // Checks prerequisites before install. May print errors or add message after redirect
 function plugin_customfields_check_prerequisites() {
-   if (GLPI_VERSION>=0.80) {
+   if (GLPI_VERSION>=0.83) {
       $plugin = new Plugin();
 
       // Automatically upgrade db (if necessary) when plugin is activated
-      if (haveRight('config','w') && $plugin->isActivated('customfields')) {
+      if ( Session::haveRight('config','w') && $plugin->isActivated("customfields")) {
          global $DB;
          // Check the version of the database tables.
          $query =  "SELECT `enabled`
@@ -171,7 +170,7 @@ function plugin_customfields_check_prerequisites() {
          }
          if(CUSTOMFIELDS_AUTOACTIVATE) {
             //TODO: enable this
-            //            plugin_customfields_activate_all_types();
+            //           plugin_customfields_activate_all_types();
          }
       }
       return true;

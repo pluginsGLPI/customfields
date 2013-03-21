@@ -70,10 +70,10 @@ class PluginCustomfieldsProfile extends CommonDBTM {
     function checkRight($itemtype, $right) {
        global $CFG_GLPI;
 
-       if (!haveRight($itemtype, $right)) {
+       if (!Session::haveRight($itemtype, $right)) {
           // Check for session timeout
           if (!isset ($_SESSION['glpiID'])) {
-             glpi_header($CFG_GLPI['root_doc'] . '/index.php');
+             Html::redirect($CFG_GLPI['root_doc'] . '/index.php');
              exit ();
           }
           displayRightError();
@@ -124,11 +124,11 @@ class PluginCustomfieldsProfile extends CommonDBTM {
         $target = $options['target'];
       }
 
-      if (!haveRight("profile","w")) {
+      if (!Session::haveRight("profile","w")) {
         return false;
       }
 
-      $canedit = haveRight("profile","w");
+      $canedit = Session::haveRight("profile","w");
       $prof = new Profile();
       if ($ID) {
          $this->getFromDB($ID);

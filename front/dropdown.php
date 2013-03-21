@@ -39,12 +39,12 @@
 define('GLPI_ROOT', '../../..');
 
 include (GLPI_ROOT.'/inc/includes.php');
-checkRight('config', 'r');
+Session::checkRight('config', 'r');
 
-commonHeader($LANG['plugin_customfields']['Manage_Custom_Dropdowns'], $_SERVER['PHP_SELF'],
+ Html::header($LANG['plugin_customfields']['Manage_Custom_Dropdowns'], $_SERVER['PHP_SELF'],
              'plugins', 'customfields');
 
-$haveright = haveRight('config', 'w');
+$haveright = Session::haveRight('config', 'w');
 
 ///////// First process any actions //////////
 
@@ -68,7 +68,7 @@ if ($haveright) {
           $sql = "DROP TABLE IF EXISTS `$table`";
           $result = $DB->query($sql);
        }
-       glpi_header($_SERVER['HTTP_REFERER']); // Reload so clicking refresh on browser will not re-post old data
+       Html::redirect($_SERVER['HTTP_REFERER']); // Reload so clicking refresh on browser will not re-post old data
 
     } else if (isset($_POST['add'])) {
        $has_entities = isset($_POST['has_entities']) ? 1 : 0;
@@ -139,7 +139,7 @@ if ($haveright) {
              $DB->query($sql);
          }*/
        }
-       glpi_header($_SERVER['HTTP_REFERER']);
+       Html::redirect($_SERVER['HTTP_REFERER']);
 
    } else if(isset($_POST['update'])) {
       // Change the default label for the dropdown
@@ -155,7 +155,7 @@ if ($haveright) {
                  WHERE `id` = '$ID'";
          $DB->query($sql);
       }
-      glpi_header($_SERVER['HTTP_REFERER']);
+      Html::redirect($_SERVER['HTTP_REFERER']);
    }
 }
 
@@ -232,7 +232,7 @@ while ($data=$DB->fetch_assoc($result)) {
 
    $options_tooltip['link']         = GLPI_ROOT.'/plugins/customfields/front/dropdownsitem.php';
    $options_tooltip['linktarget']   = '_blank';
-   showToolTip($comment,$options_tooltip);
+   Html::showToolTip($comment,$options_tooltip);
 
    echo "<img alt='' title=\"".$LANG['buttons'][8]."\" src='".$CFG_GLPI["root_doc"].
                      "/pics/add_dropdown.png' style='cursor:pointer; margin-left:2px;'
@@ -279,6 +279,6 @@ if ($haveright) {
 }
 echo '</div>';
 
-commonFooter();
+Html::footer();
 
 ?>

@@ -39,9 +39,9 @@
 define('GLPI_ROOT', '../../..');
 
 include (GLPI_ROOT.'/inc/includes.php');
-checkRight('config', 'r');
+Session::checkRight('config', 'r');
 
-commonHeader($LANG['plugin_customfields']['Manage_Custom_Fields'], $_SERVER['PHP_SELF'], 'plugins',
+ Html::header($LANG['plugin_customfields']['Manage_Custom_Fields'], $_SERVER['PHP_SELF'], 'plugins',
              'customfields');
 
 if (isset($_GET['itemtype'])) {
@@ -69,12 +69,12 @@ if (isset($_GET['itemtype'])) {
          }
          addMessageAfterRedirect($LANG['plugin_customfields']['cf_enabled']);
       }
-      glpi_header($_SERVER['HTTP_REFERER']); // So clicking refresh on browser will not send post data again
+      Http::redirect($_SERVER['HTTP_REFERER']); // So clicking refresh on browser will not send post data again
    }
 
    if (isset($_POST['disable'])) {// Disable custom fields for this device type
       plugin_customfields_disable_device($itemtype);
-      glpi_header($_SERVER['HTTP_REFERER']); // So clicking refresh on browser will send post data again
+      Http::redirect($_SERVER['HTTP_REFERER']); // So clicking refresh on browser will send post data again
 
    } else if(isset($_POST['delete'])) {// Delete a field
       foreach($_POST['delete'] as $id => $garbage) {
@@ -133,7 +133,7 @@ if (isset($_GET['itemtype'])) {
          }
          $result = $DB->query($sql);
       }
-      glpi_header($_SERVER['HTTP_REFERER']); // So clicking refresh on browser will not send post data again
+      Html::redirect($_SERVER['HTTP_REFERER']); // So clicking refresh on browser will not send post data again
 
    } else if(isset($_POST['add'])) {// Add a field
       $data_ok = false;
@@ -147,7 +147,7 @@ if (isset($_GET['itemtype'])) {
          if ($result = $DB->query($sql)) {
             $data        = $DB->fetch_assoc($result);
             $system_name = $data['system_name'];
-            $label       = addslashes_deep($data['name']);
+            $label       = Toolbox::addslashes_deep($data['name']);
             $dd_table    = $data['dropdown_table'];
             $data_type   = 'dropdown';
             $data_ok     = true;
@@ -269,7 +269,7 @@ if (isset($_GET['itemtype'])) {
             $result = $DB->query($sql);
          }
       }
-      glpi_header($_SERVER['HTTP_REFERER']);
+      Html::redirect($_SERVER['HTTP_REFERER']);
 
    } else if(isset($_POST['update'])) {// Update labels, sort order, etc.
       $query = "SELECT *
@@ -462,7 +462,8 @@ if (isset($_GET['itemtype'])) {
    if ($DB->numrows($result) > 0) {
       echo '<br><form action="?itemtype='.$itemtype.'" method="post">';
       echo '<table class="tab_cadre" cellpadding="5">';
-      echo '<tr><th colspan="3"><a href="./plugin_customfields.dropdowns.php">'.
+//      echo '<tr><th colspan="3"><a href="./plugin_customfields.dropdowns.php">'.
+      echo '<tr><th colspan="3"><a href="./dropdown.php">'.
                               $LANG['plugin_customfields']['Add_Custom_Dropdown'].'</a></th></tr>';
       echo '<tr>';
       echo '<th>'.$LANG['plugin_customfields']['Dropdown_Name'].'</th>';
@@ -515,6 +516,6 @@ if (isset($_GET['itemtype'])) {
    echo '</div>';
 }
 
-commonFooter();
+Html::footer();
 
 ?>

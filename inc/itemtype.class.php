@@ -69,7 +69,7 @@ class PluginCustomfieldsItemtype extends CommonDBTM {
 
       if ($result = $DB->query($query)) {
          if ($DB->numrows($result)>0){
-            return haveRight($itemtype, 'w');
+            return Session::haveRight($itemtype, 'w');
          }
       }
 

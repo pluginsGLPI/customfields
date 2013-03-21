@@ -56,7 +56,7 @@ class PluginCustomfieldsDropdown extends CommonDBTM  {
                     WHERE `id` = '$ddID'";
           if (($result=$DB->query($query)) && ($DB->numrows($result))) {
              $data = $DB->fetch_array($result);
-             $data = addslashes_deep($data);
+             $data = Toolbox::addslashes_deep($data);
 
              // Search if the value already exists in the destination entity
              $query = "SELECT `id`

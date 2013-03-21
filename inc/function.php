@@ -389,7 +389,7 @@ function plugin_customfields_showAssociated($item, $withtemplate='') {
 
                case 'date' :
                   $editcalendar = ($withtemplate!=2) && (!$readonly);
-                  showDateFormItem($field_name, $value, true, $editcalendar);
+                  Html::showDateFormItem($field_name, $value, true, $editcalendar);
                   break;
 
                case 'money' :
