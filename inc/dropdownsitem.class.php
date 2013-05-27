@@ -127,7 +127,7 @@ class PluginCustomfieldsDropdownsItem extends CommonTreeDropdown  {
 
       if (!isset($input["plugin_customfields_dropdowns_id"])
          || empty($input["plugin_customfields_dropdowns_id"])) {
-         addMessageAfterRedirect($LANG['plugin_customfields']['error'][1], false, ERROR);
+         Session::addMessageAfterRedirect($LANG['plugin_customfields']['error'][1], false, ERROR);
          $mandatory_ok = false;
       }
 

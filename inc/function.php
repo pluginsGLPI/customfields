@@ -397,7 +397,7 @@ function plugin_customfields_showAssociated($item, $withtemplate='') {
                      echo '<input type="text" size="16" value="'.Html::formatNumber($value, true).
                            '" name="'.$field_name.'"/>';
                   } else {
-                     plugin_customfields_showValue(formatNumber($value, true));
+                     plugin_customfields_showValue(Html::formatNumber($value, true));
                   }
                   break;
 

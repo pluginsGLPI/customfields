@@ -243,7 +243,7 @@ function plugin_customfields_upgrade($oldversion) {
       plugin_customfields_upgradeto116();
 
       echo 'finished.';
-      glpi_flush();
+      Html::glpi_flush();
    }
 
    if ($oldversion < 117) {
@@ -389,7 +389,7 @@ function plugin_customfields_upgradeto116() {
 
    while ($data=$DB->fetch_array($result)) {
       echo '.';
-      glpi_flush();
+      Html::glpi_flush();
       $table   = plugin_customfields_table($data['itemtype']);
       $field   = $data['system_name'];
       $newtype = $transform[$data['data_type']];
@@ -424,7 +424,7 @@ function plugin_customfields_upgradeto116() {
    $DB->query($query) or die($DB->error());
 
    echo 'finished.';
-   glpi_flush();
+   Html::glpi_flush();
 }
 
 

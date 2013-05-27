@@ -37,6 +37,7 @@
 // ----------------------------------------------------------------------
 
 define('GLPI_ROOT', '../../..');
+define('DROPDOWN_EMPTY_VALUE', '');
 
 include (GLPI_ROOT.'/inc/includes.php');
 Session::checkRight('config', 'r');
@@ -78,7 +79,7 @@ if ($haveright) {
                                               : $LANG['plugin_customfields']['Custom_Dropdown'];
 
        if ($_POST['system_name']=='') {// use label for system name if no system name was provided
-          $system_name = plugin_customfields_make_system_name($label);
+          $system_name = plugin_customfields_make_system_name($name);
        } else {
           $system_name = plugin_customfields_make_system_name($_POST['system_name']);
        }
@@ -222,7 +223,7 @@ while ($data=$DB->fetch_assoc($result)) {
    $item = new PluginCustomfieldsDropdown();
    $table = $item->getTable();
    $rand          = mt_rand();
-   $name          = DROPDOWN_EMPTY_VALUE;
+   $name          = Dropdown::EMPTY_VALUE;
    $comment       = "";
    $tmpname = Dropdown::getDropdownName($table,'',1);
    if ($tmpname["name"]!="&nbsp;") {
