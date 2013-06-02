@@ -136,7 +136,7 @@ function plugin_customfields_getAddSearchOptions($itemtype) {
 
 
          //no option for disable displaypreferences, check page executed
-         if (strpos($_SERVER['SCRIPT_NAME'], "displaypreference.tabs.php") === false) {
+         if (strpos($_SERVER['SCRIPT_NAME'], "common.tabs.php") === false) {
             $sopt[$i+2000]['table']     = plugin_customfields_table($itemtype);
             $sopt[$i+2000]['field']     = $search['system_name'];
             $sopt[$i+2000]['linkfield'] = $search['system_name'];
