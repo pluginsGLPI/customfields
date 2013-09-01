@@ -63,7 +63,11 @@ function pluginCustomfieldsInstall() {
                        ('NetworkPort'), ('Peripheral'), ('Printer'), ('CartridgeItem'), 
                        ('ConsumableItem'), ('Phone'), ('Ticket'), ('Contact'),
                        ('Supplier'), ('Contract'), ('Document'), ('User'), 
-                       ('Group'), ('Entity')";
+                       ('Group'), ('Entity'), ('DeviceProcessor'), ('DeviceMemory'),
+                       ('DeviceMotherBoard'), ('DeviceNetworkCard'), ('DeviceHardDrive'),
+                       ('DeviceDrive'), ('DeviceControl'), ('DeviceGraphicCard'),
+                       ('DeviceSoundCard'), ('DeviceCase'), ('DevicePowerSupply'),
+                       ('DevicePci')";
       $DB->query($query) or die($DB->error());
 
 

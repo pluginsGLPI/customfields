@@ -242,10 +242,12 @@ function plugin_customfields_showAssociated($item, $withtemplate='') {
                 FROM `$table`
                 WHERE `id`= '$ID'";
       $result = $DB->query($query);
-      $number = $DB->numrows($result);
-      if ($number==1) {
-         $data   = $DB->fetch_array($result);
-         $entity = $data['entities_id'];
+      if ( $result != FALSE ) {
+         $number = $DB->numrows($result);
+         if ($number==1) {
+            $data   = $DB->fetch_array($result);
+            $entity = $data['entities_id'];
+         }
       }
    }
 
@@ -297,6 +299,7 @@ function plugin_customfields_showAssociated($item, $withtemplate='') {
          if ($fields['restricted']) {
             $checkfield = $fields['itemtype'].'_'.$fields['system_name'];
             $prof = new pluginCustomfieldsProfile();
+            if (!$prof->fieldHaveRight($checkfield, 'r')) { continue; }
             if (!$prof->fieldHaveRight($checkfield, 'w')) {
                $readonly = true;
             }

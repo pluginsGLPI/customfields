@@ -93,7 +93,7 @@ if ($plugin->isActivated("customfields")) {
 }
 
 if (strstr($_SERVER['PHP_SELF'],"popup")) {
-   popFooter();
+   Html::popFooter();
 } else {
    Html::footer();
 }

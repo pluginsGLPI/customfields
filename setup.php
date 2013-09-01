@@ -120,7 +120,7 @@ function plugin_init_customfields() {
          }
 
          // Define how to import data into custom fields with the Data_Injection plugin
-         $PLUGIN_HOOKS['data_injection']['customfields'] = 'plugin_customfields_data_injection_variables';
+         $PLUGIN_HOOKS['data_injection_populate']['customfields'] = 'plugin_datainjection_populate_customfields';
 
          // added back - is it used?
          $PLUGIN_HOOKS['use_massive_action']['customfields']=1; //for custom massive action category

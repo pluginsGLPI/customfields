@@ -133,7 +133,39 @@ function plugin_customfields_getAddSearchOptions($itemtype) {
          $sopt[$i]['linkfield']     = '';
          $sopt[$i]['name']          = $LANG['plugin_customfields']['title']." - ".$search['label'];
          $sopt[$i]['massiveaction'] = false;
-
+         //PS Add
+         $sopt[$i]['injectable']    = true;
+         if ($search['data_type']   == "general") {
+            $opt[$i]['checktype']    = "text";
+            $opt[$i]['displaytype']  = "text";
+         }
+         if ($search['data_type']   == "number") {
+            $opt[$i]['checktype']    = "integer";
+            $opt[$i]['displaytype']  = "integer";
+         }
+         if ($search['data_type']  == "yesno") {
+            $opt[$i]['checktype']   = "bool";
+            $opt[$i]['displaytype'] = "bool";
+         }
+         if ($search['data_type']  == "date") {
+            $opt[$i]['checktype']   = "date";
+            $opt[$i]['displaytype'] = "date";
+         }
+         if ($search['data_type']  == "money") {
+            $opt[$i]['checktype']   = "float";
+            $opt[$i]['displaytype'] = "decimal";
+         }
+         if ($search['data_type']  == "note") { //this is a notepad, equivalency ?
+            $opt[$i]['checktype']   = "multiline_text";
+            $opt[$i]['displaytype'] = "multiline_text";
+         }
+         if ($search['data_type']  == "text") {
+            $opt[$i]['checktype']   = "multiline_text";
+            $opt[$i]['displaytype'] = "multiline_text";
+         }
+         if ($search['data_type']  == "sectionhead") {
+            $opt[$i]['injectable']  = false;
+         }
 
          //no option for disable displaypreferences, check page executed
          if (strpos($_SERVER['SCRIPT_NAME'], "common.tabs.php") === false) {
@@ -530,4 +562,9 @@ function plugin_customfields_uninstall() {
    return pluginCustomfieldsUninstall();
 }
 
+function plugin_datainjection_populate_customfields() {
+   global $INJECTABLE_TYPES;
+
+   $INJECTABLE_TYPES['PluginCustomFieldsCustomFieldInjection'] = 'customfields';
+}
 ?>
