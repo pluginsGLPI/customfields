@@ -460,7 +460,7 @@ function plugin_customfields_showAssociated($item, $withtemplate='') {
       }
 
       echo '</table>';
-      echo '</form>';
+      Html::closeForm();
    }
 
 }

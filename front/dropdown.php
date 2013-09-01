@@ -239,7 +239,7 @@ while ($data=$DB->fetch_assoc($result)) {
                      "/pics/add_dropdown.png' style='cursor:pointer; margin-left:2px;'
                      onClick=\"var w = window.open('"
                      .GLPI_ROOT.'/plugins/customfields/front/dropdownsitem.form.php'
-                     ."?popup=1&amp;rand=".$rand."' ,'glpipopup', 'height=400, ".
+                     ."?popup=1&amp;rand=".$rand."&amp;plugin_customfields_dropdowns_id=".$ID."' ,'glpipopup', 'height=400, ".
                      "width=1000, top=100, left=100, scrollbars=yes' );w.focus();\">";
    echo '</td></tr>';
 }
@@ -254,7 +254,7 @@ if ($haveright) {
    echo '</td></tr>';
 }
 echo '</table>';
-echo '</form>';
+Html::closeForm();
 
 if ($haveright) {
    echo '<br><form action="#" method="post">';
@@ -276,7 +276,8 @@ if ($haveright) {
    echo '<td><input name="add" class="submit" type="submit" value=\''.$LANG['buttons'][8].'\'></td>';
    echo '</tr>';
    echo '</table>';
-   echo '</form>';
+   //echo '</form>';
+   Html::closeForm();
 }
 echo '</div>';
 

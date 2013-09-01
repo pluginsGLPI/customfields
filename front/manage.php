@@ -381,7 +381,7 @@ if (isset($_GET['itemtype'])) {
    }
    echo '</td></tr>';
    echo '</table>';
-   echo '</form>';
+   Html::closeForm();
 
    // Form to add fields
    echo '<br><form action="?itemtype='.$itemtype.'" method="post">';
@@ -411,7 +411,8 @@ if (isset($_GET['itemtype'])) {
    echo '<td><input name="add" class="submit" type="submit" value=\''.$LANG['buttons'][8].'\'></td>';
    echo '</tr>';
    echo '</table>';
-   echo '</form>';
+   //echo '</form>';
+   Html::closeForm();
 
    // Show clone field form if there are any fields that can be cloned
    $query = "SELECT DISTINCT `system_name`, `data_type`, `label`
@@ -446,7 +447,8 @@ if (isset($_GET['itemtype'])) {
       echo '<td><input name="add" class="submit" type="submit" value=\''.$LANG['buttons'][8].'\'></td>';
       echo '</tr>';
       echo '</table>';
-      echo '</form>';
+      //echo '</form>';
+      Html::closeForm();
    }
 
    // Form to add drop down menus
@@ -481,7 +483,8 @@ if (isset($_GET['itemtype'])) {
       echo '<td><input name="add" class="submit" type="submit" value=\''.$LANG['buttons'][8].'\'></td>';
       echo '</tr>';
       echo '</table>';
-      echo '</form>';
+      //echo '</form>';
+      Html::closeForm();
 
    } else {
       echo '<br><a href="./dropdown.php">'.$LANG['plugin_customfields']['Add_Custom_Dropdown'].'</a><br>';
@@ -513,7 +516,8 @@ if (isset($_GET['itemtype'])) {
    }
    echo '</td></tr>';
    echo '</table>';
-   echo '</form>';
+   //echo '</form>';
+   Html::closeForm();
    echo '</div>';
 }
 

@@ -181,7 +181,8 @@ class PluginCustomfieldsProfile extends CommonDBTM {
                    $LANG['buttons'][7]."\" class='submit'>";
              echo "</td></tr>";
           }
-          echo "</table></form>";
+          echo "</table>";
+          Html::closeForm();
       } else {
         echo $LANG['plugin_customfields']['setup'][1];
       }

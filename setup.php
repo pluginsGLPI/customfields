@@ -57,6 +57,8 @@ include_once ('inc/dropdown.class.php');
 function plugin_init_customfields() {
    global $PLUGIN_HOOKS, $CFG_GLPI, $DB, $ACTIVE_CUSTOMFIELDS_TYPES, $ALL_CUSTOMFIELDS_TYPES;
 
+   $PLUGIN_HOOKS['csrf_compliant']['customfields'] = true;
+   
    $PLUGIN_HOOKS['change_profile']['customfields'] = array(
       'PluginCustomfieldsProfile','changeprofile'
    );
@@ -142,9 +144,10 @@ function plugin_version_customfields() {
    global $LANG;
    return array('name'           => $LANG['plugin_customfields']['title'],
                 'author'         => 'Oregon State Data Center, Nelly Mahu Lasson',
+                'license'        => 'GPLv2+',
                 'homepage'       => 'https://forge.indepnet.net/projects/show/customfields',
-                'minGlpiVersion' => '0.83',
-                'version'        => '1.4');
+                'minGlpiVersion' => '0.83.3',
+                'version'        => '1.4.1');
 }
 
 // Checks prerequisites before install. May print errors or add message after redirect
@@ -176,7 +179,7 @@ function plugin_customfields_check_prerequisites() {
       return true;
    }
    else {
-      echo "This plugin requires GLPI version 0.80 or higher";
+      echo "This plugin requires GLPI version 0.83.3 or higher";
    }
 }
 

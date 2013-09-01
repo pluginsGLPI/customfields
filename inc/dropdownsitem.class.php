@@ -41,8 +41,8 @@ class PluginCustomfieldsDropdownsItem extends CommonTreeDropdown  {
    }
 
    function displaySpecificTypeField($ID, $field=array()) {
-
-      switch ($field['type']) {
+      
+      switch ($field['type']) { 
          case "plugin_customfields_dropdowns_id";
             if (isset($_REQUEST['plugin_customfields_dropdowns_id'])) {
                $ID = $_REQUEST['plugin_customfields_dropdowns_id'];
