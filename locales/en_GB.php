@@ -51,7 +51,7 @@ $LANG['plugin_customfields']['delete_warning'] = '(Warning: Can\'t undo!)';
 
 // Manage Custom Fields
 $LANG['plugin_customfields']['Manage_Custom_Fields'] = 'Manage '.$title;
-$LANG['plugin_customfields']['Type'] = $LANG['common'][17];
+$LANG['plugin_customfields']['Type'] = 'Type';
 $LANG['plugin_customfields']['Location'] = 'Location';
 $LANG['plugin_customfields']['Sort'] = 'Sort';
 $LANG['plugin_customfields']['Required'] = 'Required';
@@ -97,6 +97,7 @@ $LANG['plugin_customfields']['sectionhead'] = 'Section Header';
 $LANG['plugin_customfields']['multiselect'] = 'Multiselect';
 
 // Setup
+$LANG['plugin_customfields']['setup'][1] = 'There is no restricted field';
 $LANG['plugin_customfields']['setup'][2] = 'This plugin requires GLPI version 0.72 or higher';
 $LANG['plugin_customfields']['setup'][3] = 'Setup of '.$title.' Plugin';
 $LANG['plugin_customfields']['setup'][4] = 'Existing custom field data was found on your system. This data has been restored.';
@@ -116,4 +117,4 @@ include('devices.php');
 
 // Errors
 $LANG['plugin_customfields']['error'][1]  = "You have not selected Dropdown";
-?>
+$LANG['plugin_customfields']['No_Fields'] = 'There is no custom field available.';

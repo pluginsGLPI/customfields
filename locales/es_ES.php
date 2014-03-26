@@ -47,7 +47,7 @@ $LANG['plugin_customfields']['delete_warning']        = '(¡Atención: no se pue
 
 // Manage Custom Fields
 $LANG['plugin_customfields']['Manage_Custom_Fields']   = 'Gestionar '.$title;
-$LANG['plugin_customfields']['Type']                   = $LANG['common'][17];
+$LANG['plugin_customfields']['Type']                   = 'Tipo';
 $LANG['plugin_customfields']['Sort']                   = 'Ordenar';
 $LANG['plugin_customfields']['Required']               = 'Requerido';
 $LANG['plugin_customfields']['Restricted']             = 'Restringido';
@@ -89,7 +89,7 @@ $LANG['plugin_customfields']['yesno']           = 'Sí/No';
 $LANG['plugin_customfields']['sectionhead']     = 'Cabecera de sección';
 
 // Setup
-$LANG['plugin_customfields']['setup'][1] = 'Aucun champ restreint';
+$LANG['plugin_customfields']['setup'][1] = 'No hay ningún campo restringido';
 $LANG['plugin_customfields']['setup'][2] = 'Este plugin requiere la version 0.78  o mayor de GLPI.';
 $LANG['plugin_customfields']['setup'][3] = 'Configuración de '.$title.' Plugin';
 $LANG['plugin_customfields']['setup'][4] = 'Se encontraron datos de este plugin anteriores que han sido restaurados.';
@@ -110,5 +110,4 @@ include('devices.php');
 
 // Errors
 $LANG['plugin_customfields']['error'][1]  = "No ha seleccionado combo";
-
-?>
+$LANG['plugin_customfields']['No_Fields'] = 'No hay campos adicionales configurados';

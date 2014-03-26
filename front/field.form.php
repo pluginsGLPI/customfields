@@ -1,6 +1,6 @@
 <?php
 /*
- ----------------------------------------------------------------------
+----------------------------------------------------------------------
 GLPI - Gestionnaire Libre de Parc Informatique
 Copyright (C) 2003-2009 by the INDEPNET Development Team.
 
@@ -27,17 +27,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ------------------------------------------------------------------------
 */
 
+// ----------------------------------------------------------------------
 // Sponsor: Oregon Dept. of Administrative Services, State Data Center
-// Original Author of file: Ryan Foster
+// Original Author of file: Thierry Bugier
 // Contact: Matt Hoover <dev@opensourcegov.net>
 // Project Website: http://www.opensourcegov.net
-// Purpose of file: List of custom dropdown items
+// Purpose of file: Update custom data posted from a form in the 
+// customfield's tab
 // ----------------------------------------------------------------------
 
 include ('../../../inc/includes.php');
 
-$dropdown = new PluginCustomfieldsDropdownsItem();
+if (isset($_POST['update_customfield'])) {
+   if (isset($_POST['customfielditemtype']) && isset($_POST['id'])) {
 
-// Reuse the standard list for our custom dropdowns
+      // Update custom field
 
-include (GLPI_ROOT . "/front/dropdown.common.php");
+      $customFieldsItemType = $_POST['customfielditemtype'];
+      $customFieldsItem     = new $customFieldsItemType();
+      $customFieldsItem->getFromDB($_POST['id']);
+      $customFieldsItem->update($_POST);
+
+   }
+}
+
+Html::back();

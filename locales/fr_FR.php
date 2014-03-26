@@ -52,7 +52,7 @@ $LANG['plugin_customfields']['delete_warning'] = '(Attention: annulation impossi
 
 // Manage Custom Fields
 $LANG['plugin_customfields']['Manage_Custom_Fields'] = 'Gérer les '.$title;
-$LANG['plugin_customfields']['Type'] = $LANG['common'][17];
+$LANG['plugin_customfields']['Type'] = 'Type';
 $LANG['plugin_customfields']['Location'] = 'Lieu';
 $LANG['plugin_customfields']['Sort'] = 'Tri';
 $LANG['plugin_customfields']['Required'] = 'Required';
@@ -118,4 +118,4 @@ include('devices.php');
 
 // Errors
 $LANG['plugin_customfields']['error'][1]  = "Vous n'avez pas selectionné de liste déroulante";
-?>
+$LANG['plugin_customfields']['No_Fields'] = 'Aucun champ personnalisé n\'est disponible';
