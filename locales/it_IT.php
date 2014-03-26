@@ -93,6 +93,7 @@ $LANG['plugin_customfields']['yesno'] = 'Si/No';
 $LANG['plugin_customfields']['sectionhead'] = 'Intestazione';
 
 // Setup
+$LANG['plugin_customfields']['setup'][1] = 'There is no restricted field';
 $LANG['plugin_customfields']['setup'][2] = 'Questo plugin richiede una versione di GLPI 0.72 o superiore';
 $LANG['plugin_customfields']['setup'][3] = 'Setup del plugin '.$title;
 $LANG['plugin_customfields']['setup'][4] = 'Nel tuo sistema sono stati trovati dati di '.$title.'. Questi dati sono stati ripristinati.';
@@ -112,4 +113,4 @@ include('devices.php');
 
 // Errors
 $LANG['plugin_customfields']['error'][1]  = "Non hai selezionato combo";
-?>
+$LANG['plugin_customfields']['No_Fields'] = 'There is no custom field available.';
