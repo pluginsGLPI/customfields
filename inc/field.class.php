@@ -148,7 +148,6 @@ class PluginCustomfieldsField extends CommonDBTM
       }
 
       switch ($this->associatedItemType()) {
-         case "Computer":
          case "Contract":
          case "Document":
          case "User":
@@ -169,7 +168,11 @@ class PluginCustomfieldsField extends CommonDBTM
             $canedit = Session::haveRight("networking", "w");
             $canread = Session::haveRight("networking", "r");
             break;
+         case "Computer":
          case "ComputerVirtualMachine":
+            $canedit = Session::haveRight("computer", "w");
+            $canread = Session::haveRight("computer", "r");
+            break;
          case "ComputerDisk":
          case "DeviceProcessor":
          case "DeviceMemory":

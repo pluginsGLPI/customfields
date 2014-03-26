@@ -123,11 +123,17 @@ class PluginCustomfieldsItemtype extends CommonDBTM
       }
    }
    
+   /**
+    * Unregister an item type brought by an other plugin
+    *
+    * @param $itemtype
+    * 
+    */
    static function unregisterItemType($itemType)
    {
       global $DB;
       
-      // Check if the new itemtype has already been registered
+      // Check if the itemtype has already been registered
       $query  = "SELECT `enabled`
       FROM `glpi_plugin_customfields_itemtypes`
       WHERE `itemtype` = '$itemType'";
@@ -147,6 +153,12 @@ class PluginCustomfieldsItemtype extends CommonDBTM
             $query = "DROP TABLE IF EXISTS `$table`";
             $DB->query($query) or die($DB->error());
          }
+         
+         // Unregister the itemtype
+         $query  = "DELETE FROM `glpi_plugin_customfields_itemtypes`
+         WHERE `itemtype` = '$itemType'";
+         $DB->query($query) or die($DB->error());
+          
       }
    }
 
