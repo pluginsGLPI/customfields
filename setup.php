@@ -151,7 +151,7 @@ function plugin_version_customfields()
    global $LANG;
    return array(
       'name' => $LANG['plugin_customfields']['title'],
-      'author' => 'Oregon State Data Center, Nelly Mahu Lasson',
+      'author' => 'Oregon State Data Center, Nelly Mahu Lasson, Dennis Ploeger, Dethegeek',
       'license' => 'GPLv2+',
       'homepage' => 'https://forge.indepnet.net/projects/show/customfields',
       'minGlpiVersion' => '0.84',
