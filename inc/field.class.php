@@ -51,7 +51,6 @@ class PluginCustomfieldsField extends CommonDBTM
    static $supported_types = array(
       
       "Computer",
-      "ComputerVirtualMachine",
       "Monitor",
       "Software",
       "NetworkEquipment",
@@ -82,9 +81,8 @@ class PluginCustomfieldsField extends CommonDBTM
       "DeviceSoundCard",
       "DeviceCase",
       "DevicePowerSupply",
-      "DevicePci",
-      "Budget",
-      "PluginSimcardSimcard"
+      "DevicePci"
+
    );
 
    /**
@@ -95,7 +93,9 @@ class PluginCustomfieldsField extends CommonDBTM
    {
       global $LANG;
 
-      if (in_array($item->getType(), self::$supported_types)) {
+      if (
+         in_array($item->getType(), self::$supported_types)
+      ) {
 
          return $LANG["plugin_customfields"]["title"];
 
@@ -160,7 +160,6 @@ class PluginCustomfieldsField extends CommonDBTM
          case "CartridgeItem":
          case "ConsumableItem":
          case "Phone":
-         case "Budget":
             $canedit = Session::haveRight(strtolower($this->associatedItemType()), "w");
             $canread = Session::haveRight(strtolower($this->associatedItemType()), "r");
             break;
@@ -169,7 +168,6 @@ class PluginCustomfieldsField extends CommonDBTM
             $canedit = Session::haveRight("networking", "w");
             $canread = Session::haveRight("networking", "r");
             break;
-         case "ComputerVirtualMachine":
          case "ComputerDisk":
          case "DeviceProcessor":
          case "DeviceMemory":
@@ -200,12 +198,6 @@ class PluginCustomfieldsField extends CommonDBTM
             $canedit = Session::haveRight("update_ticket", "1");
             $canread = true;
             break;
-         case "PluginSimcardSimcard":
-            $canedit = Session::haveRight("simcard", "w");
-            $canread = Session::haveRight("simcard", "r");
-            break;
-         default:
-            $canread = false;
       }
       
       if ($canread != true) {
@@ -229,13 +221,14 @@ class PluginCustomfieldsField extends CommonDBTM
       
       $sql    = "SELECT *
 	  		    FROM `$table`
-	            WHERE `id` = $id";
+	          WHERE `id` = $id";
       $result = $DB->query($sql);
       
       $associatedItemCustomValues = $DB->fetch_assoc($result);
       
       $DB->free_result($result);
 
+      //Added
       $associatedTable = $associatedItemType::getTable();
       $entity = 0;
       if (!in_array($associatedItemType, array('ComputerDisk', 'NetworkPort', 'Entity', 'SoftwareVersion', 'SoftwareLicense'))) {
@@ -251,14 +244,15 @@ class PluginCustomfieldsField extends CommonDBTM
          }
       }
       $field_uses = false;
+      // End of added code
 
       // Select customfield configuration
 
       $sql = "SELECT `label`, `system_name`, `data_type`, `default_value`,
                      `entities`
-              FROM `glpi_plugin_customfields_fields`
-              WHERE `deleted` = '0' AND `itemtype` = '$associatedItemType' 
-              ORDER BY `sort_order` ASC, `label` ASC";
+	  		    FROM `glpi_plugin_customfields_fields`
+	    		 WHERE `deleted` = '0' AND `itemtype` = '$associatedItemType' 
+			    ORDER BY `sort_order` ASC, `label` ASC";
 
       $result             = $DB->query($sql);
       $currentSectionName = '';

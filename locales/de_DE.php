@@ -97,7 +97,6 @@ $LANG['plugin_customfields']['sectionhead'] = 'Überschrift';
 $LANG['plugin_customfields']['multiselect'] = 'Mehrfachauswahl';
 
 // Setup
-$LANG['plugin_customfields']['setup'][1] = 'There is no restricted field';
 $LANG['plugin_customfields']['setup'][2] = 'Dieses plugin erfordert GLPI version 0.72 oder höher';
 $LANG['plugin_customfields']['setup'][3] = 'Setup des '.$title.' Plugins';
 $LANG['plugin_customfields']['setup'][4] = 'Vorhandene Daten wurden gefunden. Diese wurden wiederhergestellt.';
@@ -117,4 +116,5 @@ include('devices.php');
 
 // Errors
 $LANG['plugin_customfields']['error'][1]  = "Sie haben keine Auswahlliste ausgewählt";
+
 $LANG['plugin_customfields']['No_Fields'] = "Es sind keine benutzerdefinierten Felder verfügbar.";

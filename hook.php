@@ -327,6 +327,8 @@ function plugin_item_add_customfields($obj)
 /**
  * Hook done on purge item case
  *
+ * FIXME Doesn't work! See issue #11
+ *
  * @param $parm Object to be purged
  * @return bool Success
  */
@@ -510,45 +512,6 @@ function plugin_customfields_giveItem($itemtype, $ID, $data, $num, $meta = 0)
 
    }
 
-}
-
-// ** PLUGIN TO PLUGIN COMPATIBILITY ** //
-
-/**
- * Initialization of features related to other plugins
- * This method runs after initialization of all plugins   
- * 
- * 
- */
-
-function plugin_customfields_postinit() {
-   global $DB;
-   // $plugin = new Plugin();
-   // if ($plugin->isInstalled('otherPlugin') && $plugin->isActivated('otherPlugin')) {
-      
-   // }
-   // TODO : Merge the query and the while loop in virtual_classes.php
-   //        and the query and while loop below
-    
-   include_once('inc/virtual_classes.php');
-    
-   $query  = "SELECT `itemtype`, `enabled`
-                   FROM `glpi_plugin_customfields_itemtypes`
-                   WHERE `itemtype` <> 'Version'";
-   $result = $DB->query($query);
-    
-   while ($data = $DB->fetch_assoc($result)) {
-      $ALL_CUSTOMFIELDS_TYPES[] = $data['itemtype'];
-      if ($data['enabled']) {
-         $ACTIVE_CUSTOMFIELDS_TYPES[] = $data['itemtype'];
-         Plugin::registerClass('PluginCustomfields' . $data['itemtype'], array(
-            'addtabon' => array(
-               $data['itemtype']
-            )
-         ));
-      }
-   }
-    
 }
 
 // ** SETUP HOOKS ** //
