@@ -35,6 +35,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // Purpose of file: Used to initialize the plugin and define its actions.
 // ----------------------------------------------------------------------
 
+define ("PLUGIN_CUSTOMFIELDS_VERSION", "1.6");
+
+// Minimal GLPI version, inclusive
+define ("PLUGIN_CUSTOMFIELDS_GLPI_MIN_VERSION", "0.84");
+// Maximum GLPI version, exclusive
+define ("PLUGIN_CUSTOMFIELDS_GLPI_MAX_VERSION", "0.85");
+
 // If auto activate set to true, custom fields will be automatically
 // added when a new record is inserted. If set to false, users must
 // click 'Activate custom fields' to add additional information.
@@ -141,8 +148,8 @@ function plugin_version_customfields()
       'author' => 'Oregon State Data Center, Nelly Mahu Lasson, Dennis Ploeger, Dethegeek',
       'license' => 'GPLv2+',
       'homepage' => 'https://forge.indepnet.net/projects/show/customfields',
-      'minGlpiVersion' => '0.84',
-      'version' => '1.6'
+      'minGlpiVersion' => PLUGIN_CUSTOMFIELDS_GLPI_MIN_VERSION,
+      'version' => PLUGIN_CUSTOMFIELDS_VERSION
    );
 }
 
@@ -155,7 +162,7 @@ function plugin_version_customfields()
 
 function plugin_customfields_check_prerequisites()
 {
-   if (version_compare(GLPI_VERSION, '0.84', 'ge') && version_compare(GLPI_VERSION, '0.85', 'lt')) {
+   if (version_compare(GLPI_VERSION, PLUGIN_CUSTOMFIELDS_GLPI_MIN_VERSION, 'ge') && version_compare(GLPI_VERSION, PLUGIN_CUSTOMFIELDS_GLPI_MAX_VERSION, 'lt')) {
       $plugin = new Plugin();
       
       // Automatically upgrade db (if necessary) when plugin is activated
@@ -198,7 +205,7 @@ function plugin_customfields_check_prerequisites()
 
    } else {
 
-      echo "This plugin requires GLPI >= 0.84 and < 0.85";
+      echo "This plugin requires GLPI >= " . PLUGIN_CUSTOMFIELDS_GLPI_MIN_VERSION . " and < " . PLUGIN_CUSTOMFIELDS_GLPI_MAX_VERSION;
       return false;
    }
 }
