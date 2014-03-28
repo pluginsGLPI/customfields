@@ -140,14 +140,26 @@ class PluginCustomfieldsItemtype extends CommonDBTM
       $result = $DB->query($query);
       
       if ($DB->numrows($result) != 0) {
+         
+         // The itemtype must be disabled before unregistration
+         //  Has no effect if the itemtype is not enabled
+         plugin_customfields_disable_device($itemType);
           
          // The new item type needs to be unregistered
-         $enabled = 0;
+         
+         // Remove the fields definition for the itemtype being deleted
+         $query  = "DELETE FROM `glpi_plugin_customfields_fields`
+                    WHERE `itemtype` = '$itemType'";
+          
+         $result = $DB->query($query) or die($DB->error());;
+      
+         // Remove the itemtype from the itemtypes supported by the plugin 
          $query  = "DELETE FROM `glpi_plugin_customfields_itemtypes`
                     WHERE `itemtype` = '$itemType'";
           
-         $result = $DB->query($query);
-      
+         $result = $DB->query($query) or die($DB->error());;
+         
+         // Remove all data for the itemtype
          $table       = plugin_customfields_table($itemType);
          if ($table) {
             $query = "DROP TABLE IF EXISTS `$table`";
