@@ -72,6 +72,14 @@ class PluginCustomfieldsItemtype extends CommonDBTM
    {
       global $DB;
       
+      // TODO : This method is useless because restrictions has been disabled when
+      // porting to GLPI 0.84
+      
+      // Something is probably wrong with this method :
+      // if an itemtype has several restricted fields
+      // then only the first field column name (in DB)
+      // is fetched. 
+      
       $query = "SELECT *
                 FROM `glpi_plugin_customfields_fields`
                 WHERE `itemtype` = '$itemtype'
@@ -118,7 +126,7 @@ class PluginCustomfieldsItemtype extends CommonDBTM
                          (`itemtype`,`enabled`)
                     VALUES ('$itemType', '$enabled')";
          
-         $result = $DB->query($query);     
+         $result = $DB->query($query);
           
       }
    }
