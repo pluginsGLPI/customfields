@@ -131,9 +131,9 @@ class PluginCustomfieldsProfile extends CommonDBTM
    function getTabNameForItem(CommonGLPI $item, $withtemplate=0) {
       global $LANG;
 
-      if ($item->getType()=='Profile' && $item->getField('interface')!='helpdesk') {
-            return $LANG['plugin_customfields']['title'];
-      }
+//       if ($item->getType()=='Profile' && $item->getField('interface')!='helpdesk') {
+//             return $LANG['plugin_customfields']['title'];
+//       }
       return '';
    }
    

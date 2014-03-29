@@ -37,15 +37,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // storage for items (No, there isn't currently another way!)
 // ----------------------------------------------------------------------
 
-// $query  = "SELECT *
-//            FROM `glpi_plugin_customfields_itemtypes`
-//            WHERE `itemtype` <> 'Version'
-//            ORDER BY `id`";
-
-// $result = $DB->query($query);
-
-// while ($data = $DB->fetch_assoc($result)) {
-
    if (!class_exists("PluginCustomfields" . $data['itemtype'], false)) {
 
       // It's ugly, but it's true.
