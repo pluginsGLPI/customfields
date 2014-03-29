@@ -108,70 +108,10 @@ class PluginCustomfieldsField extends CommonDBTM
       if (!Session::haveRight("profile", "r")) {
          //return false;
       }
-
-      switch ($this->associatedItemType()) {
-         case "Contract":
-         case "Document":
-         case "User":
-         case "Group":
-         case "Monitor":
-         case "Software":
-         case "Peripheral":
-         case "Printer":
-         case "CartridgeItem":
-         case "ConsumableItem":
-         case "Phone":
-         case "Budget":
-            $canedit = Session::haveRight(strtolower($this->associatedItemType()), "w");
-            $canread = Session::haveRight(strtolower($this->associatedItemType()), "r");
-            break;
-         // The "networkequipment" right doesn't exist in Session/Rigths variable. It's actually "networking".
-         case "NetworkEquipment":
-            $canedit = Session::haveRight("networking", "w");
-            $canread = Session::haveRight("networking", "r");
-            break;
-         case "Computer":
-         case "ComputerVirtualMachine":
-            $canedit = Session::haveRight("computer", "w");
-            $canread = Session::haveRight("computer", "r");
-            break;
-         case "ComputerDisk":
-         case "DeviceProcessor":
-         case "DeviceMemory":
-         case "DeviceMotherboard":
-         case "DeviceNetworkCard":
-         case "DeviceHardDrive":
-         case "DeviceDrive":
-         case "DeviceControl":
-         case "DeviceGraphicCard":
-         case "DeviceSoundCard":
-         case "DeviceCase":
-         case "DevicePowerSupply":
-         case "DevicePci":
-            $canedit = Session::haveRight("device", "w");
-            $canread = Session::haveRight("device", "r");
-            break;
-         case "Supplier":
-         case "Contact":
-            $canedit = Session::haveRight("contact_enterprise", "w");
-            $canread = Session::haveRight("contact_enterprise", "r");
-            break;
-         case "SoftwareVersion":
-         case "SoftwareLicense":
-            $canedit = Session::haveRight("software", "w");
-            $canread = Session::haveRight("software", "r");
-            break;
-         case "Ticket":
-            $canedit = Session::haveRight("update_ticket", "1");
-            $canread = true;
-            break;
-         case "PluginSimcardSimcard":
-            $canedit = Session::haveRight("simcard", "w");
-            $canread = Session::haveRight("simcard", "r");
-            break;
-         default:
-            $canread = false;
-      }
+      
+      $associatedItemType = $this->associatedItemType();
+      $canread = $associatedItemType::canView();
+      $canedit = $associatedItemType::canUpdate();
       
       if ($canread != true) {
          return false;
@@ -189,7 +129,6 @@ class PluginCustomfieldsField extends CommonDBTM
       }
       
       $itemType           = $this->getType();
-      $associatedItemType = $this->associatedItemType();
       $table              = $itemType::getTable();
       
       $sql    = "SELECT *
