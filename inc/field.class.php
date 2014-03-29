@@ -48,54 +48,15 @@ if (!defined('GLPI_ROOT')) {
 class PluginCustomfieldsField extends CommonDBTM
 {
    
-   static $supported_types = array(
-      
-      "Computer",
-      "ComputerVirtualMachine",
-      "Monitor",
-      "Software",
-      "NetworkEquipment",
-      "Peripheral",
-      "Printer",
-      "CartridgeItem",
-      "ConsumableItem",
-      "Phone",
-      "ComputerDisk",
-      "Supplier",
-      "SoftwareVersion",
-      "SoftwareLicense",
-      "Ticket",
-      "Contact",
-      "Contract",
-      "Document",
-      "User",
-      "Group",
-      "Entity",
-      "DeviceProcessor",
-      "DeviceMemory",
-      "DeviceMotherboard",
-      "DeviceNetworkCard",
-      "DeviceHardDrive",
-      "DeviceDrive",
-      "DeviceControl",
-      "DeviceGraphicCard",
-      "DeviceSoundCard",
-      "DeviceCase",
-      "DevicePowerSupply",
-      "DevicePci",
-      "Budget",
-      "PluginSimcardSimcard"
-   );
-
    /**
     * @see CommonDBTM::getTabNameForItem()
     */
 
    function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
    {
-      global $LANG;
+      global $LANG, $ACTIVE_CUSTOMFIELDS_TYPES;
 
-      if (in_array($item->getType(), self::$supported_types)) {
+      if (in_array($item->getType(), $ACTIVE_CUSTOMFIELDS_TYPES)) {
 
          return $LANG["plugin_customfields"]["title"];
 
@@ -113,10 +74,11 @@ class PluginCustomfieldsField extends CommonDBTM
       $tabnum = 1,
       $withtemplate = 0
    ) {
-
+      global $ACTIVE_CUSTOMFIELDS_TYPES;
+      
       $itemType = $item->getType();
 
-      if (in_array($itemType, self::$supported_types)) {
+      if (in_array($itemType, $ACTIVE_CUSTOMFIELDS_TYPES)) {
 
          $customFieldsItemType = "PluginCustomfields" . $itemType;
          $customFieldsItem     = new $customFieldsItemType();

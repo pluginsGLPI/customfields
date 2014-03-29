@@ -110,7 +110,7 @@ class PluginCustomfieldsItemtype extends CommonDBTM
     */
    static function registerItemtype($itemType)
    {
-      global $DB;
+      global $DB, $ALL_CUSTOMFIELDS_TYPES;
       
       // Check if the new itemtype has already been registered
       $query  = "SELECT `enabled`
@@ -129,6 +129,7 @@ class PluginCustomfieldsItemtype extends CommonDBTM
          $result = $DB->query($query);
           
       }
+      $ALL_CUSTOMFIELDS_TYPES[] = $itemType;
    }
    
    /**
