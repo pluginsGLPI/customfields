@@ -348,7 +348,7 @@ class PluginCustomfieldsField extends CommonDBTM
 
                      break;
                   
-                  case 'notes':
+                  case 'text':
 
                      # Multiline input
 
