@@ -546,21 +546,21 @@ function plugin_customfields_postinit() {
       }
    }
     
-         // Hooks for add item, update item (for active types)
+   // Hooks for add item, update item (for active types)
 
-         foreach ($ACTIVE_CUSTOMFIELDS_TYPES as $type) {
-            $PLUGIN_HOOKS['item_add']['customfields'][$type] =
-               'plugin_item_add_customfields';
-            $PLUGIN_HOOKS['pre_item_update']['customfields'][$type] =
-               'plugin_pre_item_update_customfields';
-         }
+   foreach ($ACTIVE_CUSTOMFIELDS_TYPES as $type) {
+      $PLUGIN_HOOKS['item_add']['customfields'][$type] =
+         'plugin_item_add_customfields';
+      $PLUGIN_HOOKS['pre_item_update']['customfields'][$type] =
+         'plugin_pre_item_update_customfields';
+   }
 
-         // Hooks for purge item
-
-         foreach ($ALL_CUSTOMFIELDS_TYPES as $type) {
-            $PLUGIN_HOOKS['item_purge']['customfields'][$type] =
-               'plugin_item_purge_customfields';
-         }
+   // Hooks for purge item
+   
+   foreach ($ALL_CUSTOMFIELDS_TYPES as $type) {
+      $PLUGIN_HOOKS['item_purge']['customfields'][$type] =
+        'plugin_item_purge_customfields';
+   }
 
 }
 
