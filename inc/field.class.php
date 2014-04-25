@@ -239,9 +239,9 @@ class PluginCustomfieldsField extends CommonDBTM
 
                // The current value comes from the data table
                
-               if ($data['data_type'] != 'sectionhead') {
-                  $value = $associatedItemCustomValues[$fieldName];
-               }
+               //if ($data['data_type'] != 'sectionhead') {
+               $value = $associatedItemCustomValues[$fieldName];
+               //}
 
                // Display input widgets based on the data type
                
@@ -348,7 +348,7 @@ class PluginCustomfieldsField extends CommonDBTM
 
                      break;
                   
-                  case 'text':
+                  case 'notes':
 
                      # Multiline input
 
@@ -391,6 +391,29 @@ class PluginCustomfieldsField extends CommonDBTM
 
                      break;
 
+                  case 'text':
+							
+                     # Textarea
+
+                     if (!$readonly) {
+
+                        echo '<textarea name="'
+                           . $fieldName
+                           . '" rows="4" cols="35">'
+                           . $value
+                           . '</textarea>';
+
+                     } else {
+
+                        plugin_customfields_showValue(
+                           $value,
+                           'height:6em;width:23em;'
+                        );
+
+                     }
+
+                     break;
+                  
                }
                
                echo "</td></tr>";

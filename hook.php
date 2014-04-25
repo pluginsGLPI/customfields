@@ -516,7 +516,7 @@ function plugin_customfields_giveItem($itemtype, $ID, $data, $num, $meta = 0)
 
 /**
  * Initialization of features related to other plugins
- * This method runs after initialization of all plugins   
+ * This function runs after initialization of all plugins   
  * 
  * 
  */
