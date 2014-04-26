@@ -120,7 +120,7 @@ function plugin_customfields_getAddSearchOptions($itemtype)
 
          $sopt[$i]['table']         = plugin_customfields_table($itemtype);
          $sopt[$i]['field']         = $search['system_name'];
-         $sopt[$i]['linkfield']     = '';
+         $sopt[$i]['linkfield']     = $search['system_name'];
          $sopt[$i]['name']          = $LANG['plugin_customfields']['title']
             . " - " . $search['label'];
          $sopt[$i]['massiveaction'] = false;
