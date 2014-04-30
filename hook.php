@@ -180,8 +180,10 @@ function plugin_customfields_getAddSearchOptions($itemtype)
          if ($search['data_type'] == "dropdown") {
 
             $sopt[$i]['table']      = 'glpi_plugin_customfields_dropdownsitems';
-            $sopt[$i]['datatype']   = "itemtypename";
-            $sopt[$i]['searchtype'] = "contains";
+            $sopt[$i]['datatype']   = "dropdown";
+            $sopt[$i]['displaytype'] = "dropdown";
+            $sopt[$i]['checktype'] = "text";
+            //$sopt[$i]['searchtype'] = "contains";
             $sopt[$i]['field']      = "name";
             $sopt[$i]['linkfield']  = $search['system_name'];
             $sopt[$i]['joinparams'] = array(
