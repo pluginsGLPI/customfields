@@ -120,7 +120,13 @@ function plugin_customfields_getAddSearchOptions($itemtype)
 
          $sopt[$i]['table']         = plugin_customfields_table($itemtype);
          $sopt[$i]['field']         = $search['system_name'];
-         $sopt[$i]['linkfield']     = $search['system_name'];
+         if (strpos($_SERVER['SCRIPT_NAME'], "datainjection/ajax/dropdownChooseField.php") === false) {
+         	$sopt[$i]['linkfield']     = '';
+         } else {
+         	// linkfield needs to be filled only to make the custom field visible when 
+         	// creating the data import template
+         	$sopt[$i]['linkfield']     = $search['system_name'];
+         }
          $sopt[$i]['name']          = $LANG['plugin_customfields']['title']
             . " - " . $search['label'];
          $sopt[$i]['massiveaction'] = false;
@@ -128,35 +134,35 @@ function plugin_customfields_getAddSearchOptions($itemtype)
          $sopt[$i]['injectable']    = true;
 
          if ($search['data_type'] == "general") {
-            $opt[$i]['checktype']   = "text";
-            $opt[$i]['displaytype'] = "text";
+            $sopt[$i]['checktype']   = "text";
+            $sopt[$i]['displaytype'] = "text";
          }
          if ($search['data_type'] == "number") {
-            $opt[$i]['checktype']   = "integer";
-            $opt[$i]['displaytype'] = "integer";
+            $sopt[$i]['checktype']   = "integer";
+            $sopt[$i]['displaytype'] = "integer";
          }
          if ($search['data_type'] == "yesno") {
-            $opt[$i]['checktype']   = "bool";
-            $opt[$i]['displaytype'] = "bool";
+            $sopt[$i]['checktype']   = "bool";
+            $sopt[$i]['displaytype'] = "bool";
          }
          if ($search['data_type'] == "date") {
-            $opt[$i]['checktype']   = "date";
-            $opt[$i]['displaytype'] = "date";
+            $sopt[$i]['checktype']   = "date";
+            $sopt[$i]['displaytype'] = "date";
          }
          if ($search['data_type'] == "money") {
-            $opt[$i]['checktype']   = "float";
-            $opt[$i]['displaytype'] = "decimal";
+            $sopt[$i]['checktype']   = "float";
+            $sopt[$i]['displaytype'] = "decimal";
          }
          if ($search['data_type'] == "note") {
-            $opt[$i]['checktype']   = "multiline_text";
-            $opt[$i]['displaytype'] = "multiline_text";
+            $sopt[$i]['checktype']   = "multiline_text";
+            $sopt[$i]['displaytype'] = "multiline_text";
          }
          if ($search['data_type'] == "text") {
-            $opt[$i]['checktype']   = "multiline_text";
-            $opt[$i]['displaytype'] = "multiline_text";
+            $sopt[$i]['checktype']   = "multiline_text";
+            $sopt[$i]['displaytype'] = "multiline_text";
          }
          if ($search['data_type'] == "sectionhead") {
-            $opt[$i]['injectable'] = false;
+            $sopt[$i]['injectable'] = false;
          }
 
          // No option for disable displaypreferences, check page executed
