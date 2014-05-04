@@ -42,20 +42,21 @@ define('DROPDOWN_EMPTY_VALUE', '');
 
 // ACL-Check
 
-Session::checkRight('config', 'r');
+Session::checkRight('config', READ);
 
 // Header
 
 Html::header(
-   $LANG['plugin_customfields']['Manage_Custom_Dropdowns'],
-   $_SERVER['PHP_SELF'],
-   'plugins',
+   __('Manage Custom Dropdowns', 'customfields'),
+   '',
+   'config',
+   'plugin',
    'customfields'
 );
 
 // Are we in read-only mode?
 
-$haveright = Session::haveRight('config', 'w');
+$haveright = Session::haveRight('config', UPDATE);
 
 // ** ACTIONS ** //
 
@@ -112,7 +113,7 @@ if ($haveright) {
       
       $name = ($_POST['name'] != '')
          ? $_POST['name']
-         : $LANG['plugin_customfields']['Custom_Dropdown'];
+         : __('Custom Dropdown', 'customfields');
       
       if ($_POST['system_name'] == '') {
 
@@ -197,17 +198,17 @@ if ($haveright) {
 echo '<div class="center">';
 
 echo '<a href="./config.form.php">'
-   . $LANG['plugin_customfields']['Back_to_Manage']
+   . __('Back to Manage Custom Fields', 'customfields')
    . '</a><br><br>';
 
 echo '<form action="#" method="post">';
 echo '<table class="tab_cadre" cellpadding="5">';
 echo '<tr><th colspan="6">'
-   . $LANG['plugin_customfields']['Manage_Custom_Dropdowns']
+   . __('Manage Custom Dropdowns', 'customfields')
    . '</th></tr>';
 echo '<tr>';
-echo '<th>' . $LANG['plugin_customfields']['Label'] . '</th>';
-echo '<th>' . $LANG['plugin_customfields']['System_Name'] . '</th>';
+echo '<th>' . __('Label', 'customfields') . '</th>';
+echo '<th>' . __('System Name', 'customfields') . '</th>';
 echo '<th></th>';
 echo '<th></th>';
 echo '</tr>';
@@ -255,11 +256,7 @@ while ($data = $DB->fetch_assoc($result)) {
 
       // Show usages
 
-      echo str_replace(
-         'NNN',
-         $data['num_links'],
-         $LANG['plugin_customfields']['Used_by_NNN_devices']
-      );
+      echo sprintf(_n('Used by %1$s device', 'Used by %1$s devices', $data['num_links'], 'customfields'), $data['num_links']);
 
    }
 
@@ -324,7 +321,7 @@ if ($haveright) {
 
    } else {
 
-      echo $LANG['plugin_customfields']['no_dd_yet'];
+      echo __('No custom dropdowns defined yet', 'customfields');
 
    }
 
@@ -341,11 +338,11 @@ if ($haveright) {
    echo '<br><form action="#" method="post">';
    echo '<table class="tab_cadre" cellpadding="4">';
    echo '<tr><th colspan="3">'
-      . $LANG['plugin_customfields']['Add_New_Dropdown']
+      . __('Add New Dropdown', 'customfields')
       . '</th></tr>';
    echo '<tr>';
-   echo '<th>' . $LANG['plugin_customfields']['Label'] . '</th>';
-   echo '<th>' . $LANG['plugin_customfields']['System_Name'] . '</th>';
+   echo '<th>' . __('Label', 'customfields') . '</th>';
+   echo '<th>' . __('System Name', 'customfields') . '</th>';
    echo '<th/>';
    echo '</tr>';
    

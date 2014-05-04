@@ -41,13 +41,13 @@ include ('../../inc/includes.php');
 // Header
 
 Html::header(
-   $LANG['plugin_customfields']['title'],
-   $_SERVER['PHP_SELF'],
+   __('Title','customfields'),
+   '',
    'plugins',
    'customfields'
 );
 
-if (Session::haveRight('config', 'w')) {
+if (Session::haveRight('config', UPDATE)) {
 
    // redirect to the configuration page
 
@@ -61,6 +61,6 @@ if (Session::haveRight('config', 'w')) {
       . '<img src="'
       . $CFG_GLPI['root_doc']
       . '/pics/warning.png" alt="warning"><br><br>';
-   echo '<b>' . $LANG['login'][5] . '</b></div>';
+   echo '<b>' . __('Access Denied') . '</b></div>';
 
 }

@@ -44,25 +44,31 @@ if ($plugin->isActivated("customfields")) {
 
    // Check ACL
 
-   Session::checkRight("config", 'w');
+   Session::checkRight("config", UPDATE);
 
    // Header
 
    Html::header(
       __('Configuration'),
-      $_SERVER['PHP_SELF'],
-      'plugins',
+      '',
+      'config',
+      'plugin',
       'customfields'
    );
 
    echo "<div class='center'>";
    
    echo "<table class='tab_cadre' cellpadding='5'>";
-   echo "<tr><th colspan='4'>"
-      . $LANG['plugin_customfields']['Manage_Custom_Fields']
+   echo "<tr><th colspan='5'>"
+      . __('Manage Custom Fields', 'customfields')
       . "</th></tr>";
-   echo "<tr><th>" . $LANG['plugin_customfields']['Device_Type'] . "</th>";
-   echo "<th>" . $LANG['plugin_customfields']['Status'] . "</th></tr>";
+   echo "<tr>";
+   echo "<th>" . __('Device Type', 'customfields') . "</th>";
+   echo "<th>" . __('Status', 'customfields') . "</th>";
+   echo "<th>&nbsp;</th>";
+   echo "<th>" . __('Device Type', 'customfields') . "</th>";
+   echo "<th>" . __('Status', 'customfields') . "</th>";
+   echo "</tr>";
 
    // List supported item types
    
@@ -72,50 +78,65 @@ if ($plugin->isActivated("customfields")) {
              ORDER BY `id`";
    
    $result = $DB->query($query);
-
-   while ($data = $DB->fetch_assoc($result)) {
-
-      if (class_exists($data['itemtype'])) {
-
-         $item = new $data['itemtype']();
-
-         if ($item->canCreate()) {
-
-            // List only, if the user can create an object of the type
-
-            echo "<tr class='tab_bg_1'>";
-            echo "<td><a href='./manage.php?itemtype="
-               . $data['itemtype']
-               . "'>"
-               . call_user_func(
-                  array(
-                     $data['itemtype'],
-                     'getTypeName'
-                  )
-               )
-               . "</a></td>";
-
-            // Show enabled or disabled?
-
-            if ($data['enabled'] == 1) {
-
-               echo "<td class='b'>"
-                  . $LANG['plugin_customfields']['Enabled']
-                  . "</td>";
-
-            } else {
-
-               echo "<td><i>"
-                  . $LANG['plugin_customfields']['Disabled']
-                  . "</i></td>";
-
-            }
-
-            echo "</tr>";
-
-         }
-
+   $twoData = array();
+   $twoDataOutput = array();
+   $continueFetchAssoc = true;
+   //while ( ($twoData[1] = $DB->fetch_assoc($result)) || ($twoData[2] = $DB->fetch_assoc($result)) ) {
+   while ($continueFetchAssoc) {
+   	  $twoData[1] = $DB->fetch_assoc($result);
+   	  $twoData[2] = $DB->fetch_assoc($result);
+   	  if ($twoData[1] == false || $twoData[2] == false) {
+   	  	$continueFetchAssoc = false;
+   	  }
+   	  $twoDataOutput[1] = "<td>&nbsp;</td><td>&nbsp;</td>";
+   	  $twoDataOutput[2] = $twoDataOutput[1];
+      echo "<tr class='tab_bg_1'>";
+      foreach($twoData as $index => $data) {
+	   	 if ($data !== false) {
+	   	 	if (class_exists($data['itemtype'])) {
+		
+		         $item = new $data['itemtype']();
+		
+		         if ($item->canCreate()) {
+		
+		            // List only, if the user can create an object of the type
+		
+		            $twoDataOutput[$index] = "<td><a href='./manage.php?itemtype="
+		               . $data['itemtype']
+		               . "'>"
+		               . call_user_func(
+		                  array(
+		                     $data['itemtype'],
+		                     'getTypeName'
+		                  )
+		               )
+		               . "</a></td>";
+		
+		            // Show enabled or disabled?
+		
+		            if ($data['enabled'] == 1) {
+		
+		               $twoDataOutput[$index] .=  "<td class='b'>"
+		                  . __('Enabled', 'customfields')
+		                  . "</td>";
+		
+		            } else {
+		
+		               $twoDataOutput[$index] .=  "<td><i>"
+		                  . __('Disabled', 'customfields')
+		                  . "</i></td>";
+		
+		            }
+		
+		        }
+		
+	   	 	 }
+	   	 	 
+	   	 }
+	   	  
       }
+      echo $twoDataOutput[1] . "<td>&nbsp;</td>" . $twoDataOutput[2];
+      echo "</tr>";
 
    }
 
@@ -124,10 +145,10 @@ if ($plugin->isActivated("customfields")) {
    // Custom dropdowns
    
    echo "<table class='tab_cadre' cellpadding='5'>";
-   echo "<tr><th>" . $LANG['plugin_customfields']['setup'][3] . "</th></tr>";
+   echo "<tr><th>" . __('Setup of Custom Fields Plugin', 'customfields') . "</th></tr>";
    echo "<tr class='tab_bg_1'><td class='center'>";
    echo "<a href='./dropdown.php'>"
-      . $LANG['plugin_customfields']['Manage_Custom_Dropdowns']
+      . __('Manage Custom Dropdowns', 'customfields')
       . "</a>";
    echo "</td></tr>";
    echo "</table></div>";
@@ -136,7 +157,7 @@ if ($plugin->isActivated("customfields")) {
 
    // Custom fields plugin not activated
 
-   Html::header($LANG['common'][12], $_SERVER['PHP_SELF'], "config", "plugins");
+   Html::header(__('Setup'), '', "config", "plugins");
    echo "<div class='center'><br><br>"
       . "<img src=\""
       . $CFG_GLPI["root_doc"]

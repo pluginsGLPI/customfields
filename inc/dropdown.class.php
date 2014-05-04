@@ -49,4 +49,3 @@ class PluginCustomfieldsDropdown extends CommonDBTM
 {
    
 }
-?>

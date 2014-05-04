@@ -35,12 +35,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // Purpose of file: Used to initialize the plugin and define its actions.
 // ----------------------------------------------------------------------
 
-define ("PLUGIN_CUSTOMFIELDS_VERSION", "1.6");
+define ("PLUGIN_CUSTOMFIELDS_VERSION", "1.7");
 
 // Minimal GLPI version, inclusive
-define ("PLUGIN_CUSTOMFIELDS_GLPI_MIN_VERSION", "0.84");
+define ("PLUGIN_CUSTOMFIELDS_GLPI_MIN_VERSION", "0.85");
 // Maximum GLPI version, exclusive
-define ("PLUGIN_CUSTOMFIELDS_GLPI_MAX_VERSION", "0.85");
+define ("PLUGIN_CUSTOMFIELDS_GLPI_MAX_VERSION", "0.86");
 
 // If auto activate set to true, custom fields will be automatically
 // added when a new record is inserted. If set to false, users must
@@ -94,10 +94,11 @@ function plugin_init_customfields()
          // Display a menu entry in the main menu if the user has
          // configuration rights
 
-         if (Session::haveRight('config', 'w')) {
-            $PLUGIN_HOOKS['menu_entry']['customfields'] = true;
+         if (Session::haveRight('config', UPDATE)) {
+//             $PLUGIN_HOOKS['menu_entry']['customfields'] = true;
+         	 $PLUGIN_HOOKS["menu_toadd"]['customfields'] = array('plugins'  => 'PluginCustomfieldsConfig');
          }
-
+          
          // initiate empty dropdowns
          $PLUGIN_HOOKS['item_empty']['customfields'] = array(
             'PluginCustomfieldsDropdownsItem' =>
@@ -106,7 +107,7 @@ function plugin_init_customfields()
       }
       
       // Indicate where the configuration page can be found
-      if (Session::haveRight('config', 'w')) {
+      if (Session::haveRight('config', UPDATE)) {
          $PLUGIN_HOOKS['config_page']['customfields'] = 'front/config.form.php';
       }
       
@@ -126,7 +127,7 @@ function plugin_version_customfields()
 {
    global $LANG;
    return array(
-      'name' => $LANG['plugin_customfields']['title'],
+      'name' => __('Title','customfields'),
       'author' => 'Oregon State Data Center, Nelly Mahu Lasson, Dennis Ploeger, Dethegeek',
       'license' => 'GPLv2+',
       'homepage' => 'https://forge.indepnet.net/projects/show/customfields',
@@ -145,43 +146,6 @@ function plugin_version_customfields()
 function plugin_customfields_check_prerequisites()
 {
    if (version_compare(GLPI_VERSION, PLUGIN_CUSTOMFIELDS_GLPI_MIN_VERSION, 'ge') && version_compare(GLPI_VERSION, PLUGIN_CUSTOMFIELDS_GLPI_MAX_VERSION, 'lt')) {
-      $plugin = new Plugin();
-      
-      // Automatically upgrade db (if necessary) when plugin is activated
-//       if (
-//          Session::haveRight('config', 'w')
-//          && $plugin->isActivated("customfields")
-//       ) {
-
-//          global $DB;
-//          // Check the version of the database tables.
-//          $query     = "SELECT `enabled`
-//                     FROM `glpi_plugin_customfields_itemtypes`
-//                     WHERE itemtype='Version'
-//                     ORDER BY `enabled` DESC
-//                     LIMIT 1;";
-//          $result    = $DB->query($query);
-//          $data      = $DB->fetch_array($result);
-//          //Version of the last modification to the plugin tables' structure
-//          $dbversion = $data['enabled'];
-
-//          if ($dbversion == 12) {
-
-//             $dbversion = 120;
-
-//          }
-         
-//          if ($dbversion < CUSTOMFIELDS_DB_VERSION_REQUIRED) {
-
-//             plugin_customfields_upgrade($dbversion);
-
-//          }
-//          if (CUSTOMFIELDS_AUTOACTIVATE) {
-
-//             plugin_customfields_activate_all_types();
-
-//          }
-//       }
 
       return true;
 
@@ -189,6 +153,7 @@ function plugin_customfields_check_prerequisites()
 
       echo "This plugin requires GLPI >= " . PLUGIN_CUSTOMFIELDS_GLPI_MIN_VERSION . " and < " . PLUGIN_CUSTOMFIELDS_GLPI_MAX_VERSION;
       return false;
+      
    }
 }
 

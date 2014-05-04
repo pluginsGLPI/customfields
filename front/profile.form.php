@@ -36,7 +36,7 @@
 define('GLPI_ROOT', '../../..');
 include(GLPI_ROOT . "/inc/includes.php");
 
-Session::checkRight("profile", "r");
+Session::checkRight("profile", READ);
 $prof = new pluginCustomfieldsProfile();
 
 //Save profile

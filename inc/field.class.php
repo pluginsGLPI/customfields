@@ -47,7 +47,15 @@ if (!defined('GLPI_ROOT')) {
 
 class PluginCustomfieldsField extends CommonDBTM
 {
-   
+	
+   /**
+    * @see CommonGLPI::getMenuName()
+   **/
+   static function getMenuContent() {
+   	  return 'Custom Fields';
+      return __('Custom Fields');
+   }
+
    /**
     * @see CommonDBTM::getTabNameForItem()
     */
@@ -58,7 +66,7 @@ class PluginCustomfieldsField extends CommonDBTM
 
       if (in_array($item->getType(), $ACTIVE_CUSTOMFIELDS_TYPES)) {
 
-         return $LANG["plugin_customfields"]["title"];
+         return __('Title','customfields');
 
       }
       
@@ -105,7 +113,7 @@ class PluginCustomfieldsField extends CommonDBTM
 
       // ACL check
 
-      if (!Session::haveRight("profile", "r")) {
+      if (!Session::haveRight("profile", READ)) {
          //return false;
       }
       
@@ -348,7 +356,7 @@ class PluginCustomfieldsField extends CommonDBTM
 
                      break;
                   
-                  case 'text':
+                  case 'notes':
 
                      # Multiline input
 
@@ -391,6 +399,28 @@ class PluginCustomfieldsField extends CommonDBTM
 
                      break;
 
+                  case 'text':
+							
+                     # Textarea
+
+                     if (!$readonly) {
+
+                        echo '<textarea name="'
+                           . $fieldName
+                           . '" rows="4" cols="35">'
+                           . $value
+                           . '</textarea>';
+
+                     } else {
+
+                        plugin_customfields_showValue(
+                           $value,
+                           'height:6em;width:23em;'
+                        );
+
+                     }
+
+                     break;
                }
                
                echo "</td></tr>";
@@ -414,7 +444,7 @@ class PluginCustomfieldsField extends CommonDBTM
             echo "</td></tr>";
          }
       } else {
-         echo $LANG['plugin_customfields']['No_Fields'];
+         echo __('No fields available','customfields');
       }
               
       echo "</table>";

@@ -51,7 +51,7 @@ $LANG['plugin_customfields']['delete_warning'] = '(Attenzione: non puoi annullar
 
 // Manage Custom Fields
 $LANG['plugin_customfields']['Manage_Custom_Fields'] = 'Gestione '.$title;
-$LANG['plugin_customfields']['Type'] = $LANG['common'][17];
+$LANG['plugin_customfields']['Type'] = 'Type';
 $LANG['plugin_customfields']['Sort'] = 'Ordine';
 $LANG['plugin_customfields']['Required'] = 'Required';
 $LANG['plugin_customfields']['Restricted'] = 'Restricted';

@@ -189,7 +189,7 @@ class PluginCustomfieldsDropdownsItem extends CommonTreeDropdown
    static function getTypeName($nb = 0) {
       global $LANG;
       
-      return $LANG['plugin_customfields']['Custom_Dropdown'];
+      return __('Add Custom Dropdown','customfields');
 
    }
 
@@ -207,7 +207,7 @@ class PluginCustomfieldsDropdownsItem extends CommonTreeDropdown
 
       $fields[] = array(
          'name' => 'plugin_customfields_dropdowns_id',
-         'label' => $LANG['plugin_customfields']['Custom_Dropdown'],
+         'label' => __('Custom Dropdown','customfields'),
          'type' => 'plugin_customfields_dropdowns_id',
          'list' => false
       );
@@ -236,7 +236,7 @@ class PluginCustomfieldsDropdownsItem extends CommonTreeDropdown
       
       $tab[3]['table'] = 'glpi_plugin_customfields_dropdownsitems';
       $tab[3]['field'] = 'plugin_customfields_dropdowns_id';
-      $tab[3]['name']  = $LANG['plugin_customfields']['Custom_Dropdown'];
+      $tab[3]['name']  = __('Custom Dropdown','customfields');
       
       $tab[4]['table'] = 'glpi_plugin_customfields_dropdownsitems';
       $tab[4]['field'] = 'plugin_customfields_dropdownsitems_id';
@@ -262,7 +262,7 @@ class PluginCustomfieldsDropdownsItem extends CommonTreeDropdown
       {
 
          Session::addMessageAfterRedirect(
-            $LANG['plugin_customfields']['error'][1],
+            __('You have not selected Dropdown','customfields'),
             false,
             ERROR
          );

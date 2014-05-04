@@ -609,7 +609,7 @@ function plugin_customfields_disable_device($itemtype)
    $result = $DB->query($query);
 
    Session::addMessageAfterRedirect(
-      $LANG['plugin_customfields']['cf_disabled']
+      __('Customfields disabled for this device type','customfields')
    );
 
 }

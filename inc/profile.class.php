@@ -131,8 +131,8 @@ class PluginCustomfieldsProfile extends CommonDBTM
    function getTabNameForItem(CommonGLPI $item, $withtemplate=0) {
       global $LANG;
 
-//       if ($item->getType()=='Profile' && $item->getField('interface')!='helpdesk') {
-//             return $LANG['plugin_customfields']['title'];
+//       if ($item->getType()=='Profile') {
+//             return __('Title','customfields');
 //       }
       return '';
    }
@@ -179,7 +179,7 @@ class PluginCustomfieldsProfile extends CommonDBTM
    {
       global $LANG, $DB;
       
-      if (!Session::haveRight("profile","r")) return false;
+      if (!Session::haveRight("profile", READ)) return false;
       
       $target = $this->getFormURL();
       if (isset($options['target'])) {
@@ -187,11 +187,11 @@ class PluginCustomfieldsProfile extends CommonDBTM
       }
       
       // TODO : Should be useless if we can use this->showFormHeader() and $this->ShowFormButtons()
-      if (!Session::haveRight("profile", "w")) {
+      if (!Session::haveRight("profile", UPDATE)) {
          return false;
       }
       
-      $canedit = Session::haveRight("profile", "w");
+      $canedit = Session::haveRight("profile", UPDATE);
       $prof    = new Profile();
       if ($ID) {
          $this->getFromDB($ID);
@@ -210,7 +210,7 @@ class PluginCustomfieldsProfile extends CommonDBTM
          echo "<form action='" . $target . "' method='post'>";
          echo "<table class='tab_cadre_fixe'>";
          echo "<tr class='tab_bg_2'>";
-         echo "<th colspan='4'>".$LANG['plugin_customfields']["title"]." ".
+         echo "<th colspan='4'>". __('Title','customfields') ." ".
                $prof->fields["name"]."</th>";
          echo "</tr>";
           
@@ -220,7 +220,7 @@ class PluginCustomfieldsProfile extends CommonDBTM
                echo "<tr><th colspan='3'>" . __($itemtype) . "</th></tr>";
             }
             $profile_field = $data['itemtype'] . '_' . $data['system_name'];
-            echo "<tr class='tab_bg_2'><td>" . $data['label'] . " (" . $LANG['plugin_customfields'][$data['data_type']] . "):</td><td>";
+            echo "<tr class='tab_bg_2'><td>" . $data['label'] . " (" . __($data['data_type'],'customfields') . "):</td><td>";
             
             if ($data['data_type'] == 'sectionhead') {
                Dropdown::showYesNo($profile_field, $this->fields[$profile_field], 1, 1, 1);
@@ -241,10 +241,9 @@ class PluginCustomfieldsProfile extends CommonDBTM
          $options['candel'] = false;
          Html::closeForm();
       } else {
-         echo $LANG['plugin_customfields']['setup'][1];
+         echo __('There is no restricted field','customfields');
       }
       
    }
    
 }
-?>

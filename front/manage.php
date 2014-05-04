@@ -40,12 +40,13 @@ include ('../../../inc/includes.php');
 
 // Do ACL checks
 
-Session::checkRight('config', 'r');
+Session::checkRight('config', READ);
 
 Html::header(
-   $LANG['plugin_customfields']['Manage_Custom_Fields'],
-   $_SERVER['PHP_SELF'],
-   'plugins',
+   __('Manage Custom Fields', 'customfields'),
+   '',
+   'config',
+   'plugin',
    'customfields'
 );
 
@@ -92,7 +93,7 @@ if (isset($_GET['itemtype'])) {
          }
 
          Session::addMessageAfterRedirect(
-            $LANG['plugin_customfields']['cf_enabled']
+            __('Custom fields have been enabled for this device type', 'customfields')
          );
       }
       
@@ -250,7 +251,7 @@ if (isset($_GET['itemtype'])) {
 
             $label = ($_POST['label'] != '')
                ? $_POST['label']
-               : $LANG['plugin_customfields']['Custom_Field'];
+               : __('Custom Field', 'customfields');
 
             if ($_POST['system_name'] == '') {
 
@@ -457,19 +458,23 @@ if (isset($_GET['itemtype'])) {
    
    echo '<div class="center">';
    
+   echo '<a href="./config.form.php">'
+   		. __('Back to Manage Custom Fields', 'customfields')
+   		. '</a><br><br>';
+      
    echo '<form action="?itemtype=' . $itemtype . '" method="post">';
    echo '<table class="tab_cadre" cellpadding="5">';
-   echo '<tr><th colspan="8">' . $LANG['plugin_customfields']['title'] . ' (' . call_user_func(array(
+   echo '<tr><th colspan="8">' . __('Title', 'customfields') . ' (' . call_user_func(array(
       $itemtype,
       'getTypeName'
    )) . ')</th></tr>';
    echo '<tr>';
-   echo '<th>' . $LANG['plugin_customfields']['Label'] . '</th>';
-   echo '<th>' . $LANG['plugin_customfields']['System_Name'] . '</th>';
-   echo '<th>' . $LANG['plugin_customfields']['Type'] . '</th>';
-   echo '<th>' . $LANG['plugin_customfields']['Sort'] . '</th>';
-   echo '<th>' . $LANG['plugin_customfields']['Required'] . '</th>';
-   echo '<th>' . $LANG['plugin_customfields']['Entities'] . '</th>';
+   echo '<th>' . __('Label', 'customfields') . '</th>';
+   echo '<th>' . __('System Name', 'customfields') . '</th>';
+   echo '<th>' . __('Type', 'customfields') . '</th>';
+   echo '<th>' . __('Sort', 'customfields') . '</th>';
+   echo '<th>' . __('Required', 'customfields') . '</th>';
+   echo '<th>' . __('Entities', 'customfields') . '</th>';
    echo '<th></th>';
    echo '</tr>';
 
@@ -503,7 +508,7 @@ if (isset($_GET['itemtype'])) {
 
       // Type
 
-      echo '<td>' . $LANG['plugin_customfields'][$data['data_type']] . '</td>';
+      echo '<td>' . __($data['data_type'], 'customfields') . '</td>';
 
       // Sort order
 
@@ -557,7 +562,7 @@ if (isset($_GET['itemtype'])) {
    if ($DB->numrows($result) > 0) {
       echo '<input type="submit" name="update" value=\'' . _sx('button', 'Save') . '\' class="submit"/>';
    } else {
-      echo $LANG['plugin_customfields']['no_cf_yet'];
+      echo __('No custom field yet', 'customfields');
    }
    echo '</td></tr>';
    echo '</table>';
@@ -570,13 +575,13 @@ if (isset($_GET['itemtype'])) {
    echo '<br><form action="?itemtype=' . $itemtype . '" method="post">';
    echo '<table class="tab_cadre" cellpadding="5">';
    echo '<tr><th colspan="5">'
-      . $LANG['plugin_customfields']['Add_New_Field']
+      . __('Add New Field', 'customfields')
       . '</th></tr>';
    echo '<tr>';
-   echo '<th>' . $LANG['plugin_customfields']['Label'] . '</th>';
-   echo '<th>' . $LANG['plugin_customfields']['System_Name'] . '</th>';
-   echo '<th>' . $LANG['plugin_customfields']['Type'] . '</th>';
-   echo '<th>' . $LANG['plugin_customfields']['Sort'] . '</th>';
+   echo '<th>' . __('Label', 'customfields') . '</th>';
+   echo '<th>' . __('System Name', 'customfields') . '</th>';
+   echo '<th>' . __('Type', 'customfields') . '</th>';
+   echo '<th>' . __('Sort', 'customfields') . '</th>';
    echo '<th></th>';
    echo '</tr>';
    echo '<tr class="tab_bg_1">';
@@ -593,28 +598,28 @@ if (isset($_GET['itemtype'])) {
 
    echo '<td><select name="data_type">';
    echo '<option value="general">'
-      . $LANG['plugin_customfields']['general']
+      . __('general', 'customfields')
       . '</option>';
    echo '<option value="text">'
-      . $LANG['plugin_customfields']['text_explained']
+      . __('text_explained', 'customfields')
       . '</option>';
    echo '<option value="notes">'
-      . $LANG['plugin_customfields']['notes_explained']
+      . __('notes_explained', 'customfields')
       . '</option>';
    echo '<option value="date">'
-      . $LANG['plugin_customfields']['date']
+      . __('date', 'customfields')
       . '</option>';
    echo '<option value="number">'
-      . $LANG['plugin_customfields']['number']
+      . __('number', 'customfields')
       . '</option>';
    echo '<option value="money">'
-      . $LANG['plugin_customfields']['money']
+      . __('money', 'customfields')
       . '</option>';
    echo '<option value="yesno">'
-      . $LANG['plugin_customfields']['yesno']
+      . __('yesno', 'customfields')
       . '</option>';
    echo '<option value="sectionhead">'
-      . $LANG['plugin_customfields']['sectionhead']
+      . __('sectionhead', 'customfields')
       . '</option>';
    echo '</select></td>';
 
@@ -653,10 +658,10 @@ if (isset($_GET['itemtype'])) {
 
       echo '<br><form action="?itemtype=' . $itemtype . '" method="post">';
       echo '<table class="tab_cadre" cellpadding="5">';
-      echo '<tr><th colspan="4">' . $LANG['plugin_customfields']['Clone_Field'] . '</th></tr>';
+      echo '<tr><th colspan="4">' . __('Clone Field', 'customfields') . '</th></tr>';
       echo '<tr>';
-      echo '<th>' . $LANG['plugin_customfields']['Field'] . '</th>';
-      echo '<th>' . $LANG['plugin_customfields']['Sort'] . '</th>';
+      echo '<th>' . __('Field', 'customfields') . '</th>';
+      echo '<th>' . __('Sort', 'customfields') . '</th>';
       echo '<th></th>';
       echo '</tr>';
       echo '<tr class="tab_bg_1">';
@@ -674,7 +679,7 @@ if (isset($_GET['itemtype'])) {
             . ' ('
             . $data['system_name']
             . ') - '
-            . $LANG['plugin_customfields'][$data['data_type']]
+            . __($data['data_type'], 'customfields')
             . '</option>';
       }
       echo '</select></td>';
@@ -715,11 +720,11 @@ if (isset($_GET['itemtype'])) {
       echo '<br><form action="?itemtype=' . $itemtype . '" method="post">';
       echo '<table class="tab_cadre" cellpadding="5">';
       echo '<tr><th colspan="3"><a href="./dropdown.php">'
-         . $LANG['plugin_customfields']['Add_Custom_Dropdown']
+         . __('Add Custom Dropdown','customfields')
          . '</a></th></tr>';
       echo '<tr>';
-      echo '<th>' . $LANG['plugin_customfields']['Dropdown_Name'] . '</th>';
-      echo '<th>' . $LANG['plugin_customfields']['Sort'] . '</th>';
+      echo '<th>' . __('Dropdown Name','customfields') . '</th>';
+      echo '<th>' . __('Sort','customfields') . '</th>';
       echo '<th></th>';
       echo '</tr>';
 
@@ -758,7 +763,7 @@ if (isset($_GET['itemtype'])) {
       // Link to Management of custom dropdowns
 
       echo '<br><a href="./dropdown.php">'
-         . $LANG['plugin_customfields']['Add_Custom_Dropdown']
+         . __('Add Custom Dropdown','customfields')
          . '</a><br>';
 
    }
@@ -777,17 +782,17 @@ if (isset($_GET['itemtype'])) {
    echo '<br><form action="?itemtype=' . $itemtype . '" method="post">';
    echo '<table class="tab_cadre" cellpadding="5">';
    echo '<tr class="tab_bg_1"><th>'
-      . $LANG['plugin_customfields']['status_of_cf']
+      . __('Status of Custom Fields','customfields')
       . ': </th><td>';
 
    if ($data['enabled'] == 1) {
 
       // It's enabled, display the "Disable"-Action
 
-      echo $LANG['plugin_customfields']['Enabled']
+      echo __('Enable','customfields')
          . '</td>'
          . '<td><input class="submit" type="submit" name="disable" value=\''
-         . $LANG['plugin_customfields']['Disable']
+         . __('Disable','customfields')
          . '\'>';
 
    } else {
@@ -795,7 +800,7 @@ if (isset($_GET['itemtype'])) {
       // Disabled. Display the "Enable"-Action...
 
       echo '<span style="color:#f00;font-weight:bold;">'
-         . $LANG['plugin_customfields']['Disabled']
+         . __('Disabled','customfields')
          . '</span></td>';
 
       // ...if there are some fields
@@ -803,13 +808,13 @@ if (isset($_GET['itemtype'])) {
       if ($numdatafields > 0) {
 
          echo '<td><input class="submit" type="submit" name="enable" value=\''
-            . $LANG['plugin_customfields']['Enable']
+            . __('Enable','customfields')
             . '\'>';
 
       } else {
 
          echo '</tr><tr><td class="tab_bg_2" colspan="2">'
-            . $LANG['plugin_customfields']['add_fields_first'];
+            . __('Custom Dropdown','customfields');
 
       }
    }

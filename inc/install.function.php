@@ -296,9 +296,6 @@ function pluginCustomfieldsUninstall()
                            WHERE num IN ($searchopts_keys_str)";
    $DB->query($query) or die($DB->error());
    
-   // TODO : The following query seems never used, but there is code using it !
-   // Needs testing 
-   
    $query = "SELECT `dropdown_table`
              FROM `glpi_plugin_customfields_dropdowns`";
 
@@ -390,6 +387,10 @@ function plugin_customfields_upgrade($oldversion)
       plugin_customfields_upgradeto160();
    }
    
+   if ($oldversion < 170) {
+   	  plugin_customfields_upgradeto170();
+   }
+   
    if (CUSTOMFIELDS_AUTOACTIVATE) {
       plugin_customfields_activate_all_types();
    }
@@ -398,6 +399,8 @@ function plugin_customfields_upgrade($oldversion)
 
 /**
  * Upgrade => 1.01
+ * 
+ * Upgrade logging feature
  */
 
 function plugin_customfields_upgradeto101()
@@ -416,6 +419,8 @@ function plugin_customfields_upgradeto101()
 
 /**
  * Upgrade => 1.1
+ * 
+ * Upgrade date fields to be compatible with GLPI 0.72+
  */
 
 function plugin_customfields_upgradeto110()
@@ -443,6 +448,8 @@ function plugin_customfields_upgradeto110()
 
 /**
  * Upgrade => 1.12
+ * 
+ * Add a column to indicate if a field is required
  */
 
 function plugin_customfields_upgradeto112()
@@ -460,6 +467,11 @@ function plugin_customfields_upgradeto112()
 
 /**
  * Upgrade => 1.13
+ * 
+ * Add a column to indicate which entities to show the field with
+ * Remove column for hidden field, use blank in entites
+ * field to replace this functionality
+ * Add restricted field to allow field-based permissions
  */
 
 function plugin_customfields_upgradeto113()
@@ -503,6 +515,8 @@ function plugin_customfields_upgradeto113()
 
 /**
  * Upgrade => 1.16
+ * 
+ * Upgrade fields to be compatable with mysql strict mode
  */
 
 function plugin_customfields_upgradeto116()
@@ -791,7 +805,7 @@ function plugin_customfields_upgradeto150() {
 }
 
 /**
- * Update to version 1.60
+ * Update to version 1.6.0
  */
 
 function plugin_customfields_upgradeto160() {
@@ -805,6 +819,21 @@ function plugin_customfields_upgradeto160() {
 			
 	$query = "UPDATE `glpi_plugin_customfields_itemtypes`
              SET enabled=160
+             WHERE itemtype='Version'";
+	$DB->query($query) or die($DB->error());
+
+}
+
+/**
+ * Update to version 1.7.0
+ */
+
+function plugin_customfields_upgradeto170() {
+
+	global $DB;
+
+	$query = "UPDATE `glpi_plugin_customfields_itemtypes`
+             SET enabled=170
              WHERE itemtype='Version'";
 	$DB->query($query) or die($DB->error());
 

@@ -120,8 +120,14 @@ function plugin_customfields_getAddSearchOptions($itemtype)
 
          $sopt[$i]['table']         = plugin_customfields_table($itemtype);
          $sopt[$i]['field']         = $search['system_name'];
-         $sopt[$i]['linkfield']     = '';
-         $sopt[$i]['name']          = $LANG['plugin_customfields']['title']
+         if (strpos($_SERVER['SCRIPT_NAME'], "datainjection/ajax/dropdownChooseField.php") === false) {
+         	$sopt[$i]['linkfield']     = '';
+         } else {
+         	// linkfield needs to be filled only to make the custom field visible when 
+         	// creating the data import template
+         	$sopt[$i]['linkfield']     = $search['system_name'];
+         }
+         $sopt[$i]['name']          = __('Title','customfields')
             . " - " . $search['label'];
          $sopt[$i]['massiveaction'] = false;
 
@@ -165,7 +171,7 @@ function plugin_customfields_getAddSearchOptions($itemtype)
             $sopt[$i + 2000]['table'] = plugin_customfields_table($itemtype);
             $sopt[$i + 2000]['field']     = $search['system_name'];
             $sopt[$i + 2000]['linkfield'] = $search['system_name'];
-            $sopt[$i + 2000]['name']  = $LANG['plugin_customfields']['title']
+            $sopt[$i + 2000]['name']  = __('Title','customfields')
                . " - " . $search['label'];
             $sopt[$i + 2000]['nosearch']  = true;
             $sopt[$i + 2000]['nosort']    = true;
@@ -174,8 +180,10 @@ function plugin_customfields_getAddSearchOptions($itemtype)
          if ($search['data_type'] == "dropdown") {
 
             $sopt[$i]['table']      = 'glpi_plugin_customfields_dropdownsitems';
-            $sopt[$i]['datatype']   = "itemtypename";
-            $sopt[$i]['searchtype'] = "contains";
+            $sopt[$i]['datatype']   = "dropdown";
+            $sopt[$i]['displaytype'] = "dropdown";
+            $sopt[$i]['checktype'] = "text";
+            //$sopt[$i]['searchtype'] = "contains";
             $sopt[$i]['field']      = "name";
             $sopt[$i]['linkfield']  = $search['system_name'];
             $sopt[$i]['joinparams'] = array(
