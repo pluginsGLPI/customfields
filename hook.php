@@ -349,11 +349,12 @@ function plugin_item_purge_customfields($parm)
       in_array($parm->getType(), $ALL_CUSTOMFIELDS_TYPES)
       && ($table = plugin_customfields_table($parm->getType()))
    ) {
-
-      $sql    = "DELETE FROM $table where id=" . $parm->getID();
-
-      $DB->query($sql);
-
+      
+      if (TableExists($table)) {
+         $sql    = "DELETE FROM $table where id=" . $parm->getID();
+         $DB->query($sql);
+      }
+         
       return true;
 
    }
