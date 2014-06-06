@@ -42,10 +42,18 @@ if (isset($_POST['update_customfield'])) {
    if (isset($_POST['customfielditemtype']) && isset($_POST['id'])) {
 
       // Update custom field
-
+      $_POST['id'] = Toolbox::cleanInteger($_POST['id']);
       $customFieldsItemType = $_POST['customfielditemtype'];
       $customFieldsItem     = new $customFieldsItemType();
-      $customFieldsItem->getFromDB($_POST['id']);
+      if (!$customFieldsItem->getFromDB($_POST['id'])) {
+         // This is a workaround for tickets created by the maigate.
+         // TODO : if this is a bug in GLPI, and if it has been fixed, this if block become useless
+         $type = $customFieldsItem->associatedItemType();
+         $object = new $type;
+         $object->fields['id'] = $_POST['id'];
+         plugin_item_add_customfields($object);
+         
+      }
       $customFieldsItem->update($_POST);
 
    }
