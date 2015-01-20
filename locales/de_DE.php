@@ -51,7 +51,7 @@ $LANG['plugin_customfields']['No_Fields'] = 'There is no custom field available.
 
 // Manage Custom Fields
 $LANG['plugin_customfields']['Manage_Custom_Fields'] = $title.' verwalten';
-$LANG['plugin_customfields']['Type'] = $LANG['common'][17];
+$LANG['plugin_customfields']['Type'] = 'Typ';
 $LANG['plugin_customfields']['Location'] = 'Ort';
 $LANG['plugin_customfields']['Sort'] = 'Sortieren';
 $LANG['plugin_customfields']['Required'] = 'Benötigt';
