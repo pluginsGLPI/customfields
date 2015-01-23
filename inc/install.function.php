@@ -219,7 +219,13 @@ function pluginCustomFieldsUpgrade()
       }
    }
    
-   plugin_customfields_upgradeto116();
+   // <1.1.6
+   if (TableExists("glpi_plugin_customfields_fields")) {
+      if (!FieldExists('glpi_plugin_customfields_fields', 'itemtype')) {
+         plugin_customfields_upgradeto116();
+      }
+   }
+   
    
    // <1.1.7
    
@@ -509,6 +515,16 @@ function plugin_customfields_upgradeto116()
 {
    global $DB;
    
+   // Save settings
+   $sql     = "SELECT `device_type`
+           FROM `glpi_plugin_customfields`
+           WHERE `enabled` = '1';";
+   $result  = $DB->query($sql);
+   $enabled = array();
+   while ($data = $DB->fetch_array($result)) {
+      $enabled[] = $data['device_type'];
+   }
+   
    // Upgrade
    $query = "DROP TABLE IF EXISTS `glpi_plugin_customfields`";
    $DB->query($query) or die($DB->error());
@@ -538,6 +554,14 @@ function plugin_customfields_upgradeto116()
                     ('15'), ('27'), ('28')";
    $DB->query($query) or die($DB->error());
    
+   // Restore settings
+   foreach ($enabled as $device_type) {
+      $sql = "UPDATE `glpi_plugin_customfields`
+              SET `enabled` = 1
+              WHERE `device_type` = '$device_type';";
+      $DB->query($sql) or die($DB->error());
+   }
+   
    $transform             = array();
    $transform['general']  = 'VARCHAR(255) collate utf8_unicode_ci default NULL';
    $transform['dropdown'] = 'INT(11) NOT NULL default \'0\'';
@@ -547,12 +571,12 @@ function plugin_customfields_upgradeto116()
    $transform['number']   = 'INT(11) NOT NULL default \'0\'';
    $transform['money']    = 'DECIMAL(20,4) NOT NULL default \'0.0000\'';
    
-   $sql = "SELECT `itemtype`, `system_name`, `data_type`
+   $sql = "SELECT `device_type`, `system_name`, `data_type`
            FROM `glpi_plugin_customfields_fields`
            WHERE `deleted` = 0
                  AND `data_type` != 'sectionhead'
                  AND `data_type` != 'date'
-           ORDER BY `itemtype`, `sort_order`, `ID`";
+           ORDER BY `device_type`, `sort_order`, `ID`";
    $result = $DB->query($sql) or die($DB->error());
    set_time_limit(300);
    echo 'Updating Custom Fields...';
@@ -561,7 +585,7 @@ function plugin_customfields_upgradeto116()
    while ($data = $DB->fetch_array($result)) {
       echo '.';
       Html::glpi_flush();
-      $table   = plugin_customfields_table($data['itemtype']);
+      $table   = plugin_customfields_table($data['device_type']);
       $field   = $data['system_name'];
       $newtype = $transform[$data['data_type']];
       $sql     = "ALTER TABLE `$table`
@@ -594,7 +618,7 @@ function plugin_customfields_upgradeto116()
    $query = "ALTER TABLE `glpi_plugin_customfields_dropdowns`
              CHANGE `system_name` `system_name` varchar(40)
               collate utf8_unicode_ci default NULL,
-             CHANGE `name` `name` varchar(70)
+             CHANGE `label` `label` varchar(70)
               collate utf8_unicode_ci default NULL,
              CHANGE `dropdown_table` `dropdown_table` varchar(255)
               collate utf8_unicode_ci default NULL";
@@ -621,6 +645,16 @@ function plugin_customfields_upgradeto117()
            ADD `unique` smallint(6) NOT NULL DEFAULT '0'";
    $DB->query($sql) or die($DB->error());
    
+   // Save settings
+   $sql     = "SELECT `device_type`
+           FROM `glpi_plugin_customfields`
+           WHERE `enabled` = '1';";
+   $result  = $DB->query($sql);
+   $enabled = array();
+   while ($data = $DB->fetch_array($result)) {
+      $enabled[] = $data['device_type'];
+   }
+   
    // Upgrade
    $query = "DROP TABLE IF EXISTS `glpi_plugin_customfields`";
    $DB->query($query) or die($DB->error());
@@ -645,23 +679,14 @@ function plugin_customfields_upgradeto117()
    
    $query = "INSERT INTO `glpi_plugin_customfields`
                    (`device_type`)
-            VALUES ('1', '41', '4', '6', '39', '20', '2', '42', '5', '3',
-            '11', '17', '23', '16',
-                    '7', '8', '10', '13', '15', '27', '28' , '501', '502',
-                    '503', '504', '505',
-                    '506', '507', '508', '509', '510', '511', '512')";
+            VALUES ('1'), ('41'), ('4'), ('6'), ('39'), ('20'), ('2'), ('42'), ('5'), ('3'),
+            ('11'), ('17'), ('23'), ('16'),
+                    ('7'), ('8'), ('10'), ('13'), ('15'), ('27'), ('28') , ('501'), ('502'),
+                    ('503'), ('504'), ('505'),
+                    ('506'), ('507)', ('508'), ('509'), ('510'), ('511'), ('512')";
    $DB->query($query) or die($DB->error());
    
-   // Save settings
-   $sql     = "SELECT `device_type`
-           FROM `glpi_plugin_customfields`
-           WHERE `enabled` = '1';";
-   $result  = $DB->query($sql);
-   $enabled = array();
-   while ($data = $DB->fetch_array($result)) {
-      $enabled[] = $data['device_type'];
-   }
-   
+   // Restore settings
    foreach ($enabled as $device_type) {
       $sql = "UPDATE `glpi_plugin_customfields`
               SET `enabled` = 1
