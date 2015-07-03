@@ -533,7 +533,7 @@ function plugin_customfields_giveItem($itemtype, $ID, $data, $num, $meta = 0)
 function plugin_customfields_postinit() {
    global $PLUGIN_HOOKS, $DB, $ALL_CUSTOMFIELDS_TYPES, $ACTIVE_CUSTOMFIELDS_TYPES;
    // $plugin = new Plugin();
-   // if ($plugin->isInstalled('otherPlugin') && $plugin->isActivated('otherPlugin')) {
+   // if ($plugin->isInstalled('pdf') && $plugin->isActivated('otherPlugin')) {
       
    // }
 

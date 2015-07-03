@@ -214,12 +214,12 @@ echo '</tr>';
 
 // Table content
 
-$query  = "SELECT dd.*, COUNT(linked.`id`) AS num_links
-          FROM `glpi_plugin_customfields_dropdowns` AS dd
-          LEFT JOIN `glpi_plugin_customfields_fields` AS linked
+$query  = "SELECT `dd`.*, COUNT(linked.`id`) AS num_links, `linked`.`label` as `name`
+          FROM `glpi_plugin_customfields_dropdowns` AS `dd`
+          LEFT JOIN `glpi_plugin_customfields_fields` AS `linked`
                ON (linked.`dropdown_table` = dd.`dropdown_table`)
           GROUP BY dd.`id`
-          ORDER BY `name`";
+          ORDER BY `label`";
 $result = $DB->query($query);
 
 while ($data = $DB->fetch_assoc($result)) {

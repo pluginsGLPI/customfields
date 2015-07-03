@@ -38,6 +38,17 @@
 
 include ('../../../inc/includes.php');
 
+//throw exception on php notice
+
+function exceptions_error_handler($severity, $message, $filename, $lineno) {
+	if (error_reporting() == 0) {
+		return;
+	}
+	if (error_reporting() & $severity) {
+		throw new ErrorException($message, 0, $severity, $filename, $lineno);
+	}
+}
+
 // Do ACL checks
 
 Session::checkRight('config', 'r');
@@ -697,14 +708,14 @@ if (isset($_GET['itemtype'])) {
    
    // Form to add drop down menus
 
-   $query  = "SELECT dd.*
-              FROM `glpi_plugin_customfields_dropdowns` AS dd
-              LEFT JOIN `glpi_plugin_customfields_fields` AS more
-              ON (more.`dropdown_table` = dd.`dropdown_table`
-                   AND more.`itemtype` = '$itemtype'
-                   AND more.`deleted` = 0)
-              WHERE more.`id` IS NULL
-              ORDER BY dd.`name`";
+   $query  = "SELECT `dd`.*
+              FROM `glpi_plugin_customfields_dropdowns` AS `dd`
+              LEFT JOIN `glpi_plugin_customfields_fields` AS `more`
+              ON (`more`.`dropdown_table` = dd.`dropdown_table`
+                   AND `more`.`itemtype` = '$itemtype'
+                   AND `more`.`deleted` = 0)
+              WHERE `more`.`id` IS NULL
+              ORDER BY `dd`.`name`";
 
    $result = $DB->query($query);
    
@@ -820,5 +831,4 @@ if (isset($_GET['itemtype'])) {
    Html::closeForm();
    echo '</div>';
 }
-
 Html::footer();

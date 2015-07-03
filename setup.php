@@ -35,7 +35,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // Purpose of file: Used to initialize the plugin and define its actions.
 // ----------------------------------------------------------------------
 
-define ("PLUGIN_CUSTOMFIELDS_VERSION", "1.6");
+define ("PLUGIN_CUSTOMFIELDS_VERSION", "1.6.1");
 
 // Minimal GLPI version, inclusive
 define ("PLUGIN_CUSTOMFIELDS_GLPI_MIN_VERSION", "0.84");
@@ -49,7 +49,7 @@ define('CUSTOMFIELDS_AUTOACTIVATE', true);
 
 // This is the last version that any tables changed.  This version may be
 // older than the plugin version if there were no changes db changes.
-define('CUSTOMFIELDS_DB_VERSION_REQUIRED', 160); // 1.6
+define('CUSTOMFIELDS_DB_VERSION_REQUIRED', 161); // 1.6
 
 global $ACTIVE_CUSTOMFIELDS_TYPES, $ALL_CUSTOMFIELDS_TYPES;
 $ACTIVE_CUSTOMFIELDS_TYPES = array();
