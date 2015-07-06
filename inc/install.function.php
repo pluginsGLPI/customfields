@@ -318,8 +318,7 @@ function pluginCustomfieldsUninstall()
       'glpi_plugin_customfields_dropdownsitems',
       'glpi_plugin_customfields_fields',
       'glpi_plugin_customfields_itemtypes',
-      'glpi_plugin_customfields_profiles',
-      'glpi_plugin_customfields'
+      'glpi_plugin_customfields_profiles'
    );
    
    foreach ($tables as $table) {
