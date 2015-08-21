@@ -1,10 +1,8 @@
 # GLPI Custom fields plugin
 
-### Latest news 
+### Latest news (2015-08-21)
 
-Further development will now be committed on the official repository of the plugin. 
-
-To download the latest development version, report bug, ask for new feature, or contribute, please go to the Forge : https://forge.indepnet.net/projects/customfields
+The Git repository has been fully erased and reimported from the SVN repository found at https://forge.glpi-project.org/svn/customfields
 
 ## Introduction
 
@@ -30,5 +28,5 @@ your data prior to this!)
 
 Do the same as the stable release, with the master branch.
 
-[GLPI forge]: https://forge.indepnet.net/projects/customfields
+[GLPI forge]: https://forge.glpi-project.org/svn/customfields
 
