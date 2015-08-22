@@ -34,3 +34,6 @@ Do the same as the stable release, with the master branch.
 
 [GLPI forge]: https://forge.glpi-project.org/svn/customfields
 
+## Screenshots
+
+![Alt text](../plugin-repo/screenshot-001.png?raw=true "List of supported assets")
