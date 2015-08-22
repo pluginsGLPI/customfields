@@ -49,7 +49,7 @@ class PluginCustomfieldsConfig extends CommonDBTM {
    
    	$menu = array();
 
-      $menu['title']   = __('Customfields');
+      $menu['title']   = __('Title','customfields');
       $menu['page']    = '/plugins/customfields/front/config.form.php';
    	return $menu;
    }
