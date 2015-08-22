@@ -507,14 +507,14 @@ function plugin_customfields_activate_all($itemtype)
 
       $table2 = plugin_customfields_table($itemtype);
 
-      if ($itemtype == 'Entity') {
+      //if ($itemtype == 'Entity') {
 
          // Add a row for the Root Entity
+      //no longer necessary since 0.84
+         //$sql = "INSERT INTO `$table2` (`id`) VALUES ('0')";
+         //$DB->query($sql);
 
-         $sql = "INSERT INTO `$table2` (`id`) VALUES ('0')";
-         $DB->query($sql);
-
-      }
+      //}
 
       // Add empty data for all existing objects
       
