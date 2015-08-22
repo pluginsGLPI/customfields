@@ -4,6 +4,10 @@
 
 The Git repository has been fully erased and reimported from the SVN repository found at https://forge.glpi-project.org/svn/customfields
 
+The bugs and feature requests are duplicated here.
+
+Contributions are still welcome, and should be easier thanks to git itself and github. If you do not want to use github, you're welcome to clone the repository anonymously and send patches (contact dethegeek via PM on the Forge or the forum)
+
 ## Introduction
 
 This plugin enables the management of custom fields for GLPI objects and is
