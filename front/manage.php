@@ -789,7 +789,7 @@ if (isset($_GET['itemtype'])) {
 
       // It's enabled, display the "Disable"-Action
 
-      echo __('Enable','customfields')
+      echo __('Enabled','customfields')
          . '</td>'
          . '<td><input class="submit" type="submit" name="disable" value=\''
          . __('Disable','customfields')
