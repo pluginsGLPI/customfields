@@ -490,7 +490,7 @@ class PluginCustomfieldsField extends CommonDBTM
                $oldvalues,
                $newvalues
             ),
-            0, 
+            "", 
             Log::HISTORY_UPDATE_SUBITEM
          );
 
