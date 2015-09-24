@@ -1,6 +1,15 @@
 # GLPI Custom fields plugin
 
-### Latest news (2015-08-21)
+### Latest news (2015-09-24)
+
+An plugin similar to Custom Fields is available. It is able to add fields on the main tab of an asset or any other object). As this is a frequent asked feature, please try it !
+
+Due to this, Custom Fields is now End of life. To permit an easy migration from Custom Fields, I will work on a new release, with the main goal of migrate data and self deactivate (without uninstallation).
+
+Any new installation of Custom Fields should be avoided in favor of Fields available here : https://github.com/pluginsglpi/fields
+
+
+(2015-08-21)
 
 The Git repository has been fully erased and reimported from the SVN repository found at https://forge.glpi-project.org/svn/customfields
 
