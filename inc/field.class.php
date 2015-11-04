@@ -116,7 +116,7 @@ class PluginCustomfieldsField extends CommonDBTM
       if (!Session::haveRight("profile", READ)) {
          //return false;
       }
-      
+ 
       $associatedItemType = $this->associatedItemType();
       $canread = $associatedItemType::canView();
       $canedit = $associatedItemType::canUpdate();

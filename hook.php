@@ -531,7 +531,7 @@ function plugin_customfields_giveItem($itemtype, $ID, $data, $num, $meta = 0)
 function plugin_customfields_postinit() {
    global $PLUGIN_HOOKS, $DB, $ALL_CUSTOMFIELDS_TYPES, $ACTIVE_CUSTOMFIELDS_TYPES;
    // $plugin = new Plugin();
-   // if ($plugin->isInstalled('otherPlugin') && $plugin->isActivated('otherPlugin')) {
+   // if ($plugin->isInstalled('pdf') && $plugin->isActivated('otherPlugin')) {
       
    // }
 
@@ -539,7 +539,7 @@ function plugin_customfields_postinit() {
                    FROM `glpi_plugin_customfields_itemtypes`
                    WHERE `itemtype` <> 'Version'";
    $result = $DB->query($query);
-    
+
    while ($data = $DB->fetch_assoc($result)) {
       $ALL_CUSTOMFIELDS_TYPES[] = $data['itemtype'];
       if ($data['enabled']) {
