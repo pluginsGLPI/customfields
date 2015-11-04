@@ -50,7 +50,7 @@ define('CUSTOMFIELDS_AUTOACTIVATE', true);
 
 // This is the last version that any tables changed.  This version may be
 // older than the plugin version if there were no changes db changes.
-define('CUSTOMFIELDS_DB_VERSION_REQUIRED', 161); // 1.6
+define('CUSTOMFIELDS_DB_VERSION_REQUIRED', 170); // 1.6
 
 global $ACTIVE_CUSTOMFIELDS_TYPES, $ALL_CUSTOMFIELDS_TYPES;
 $ACTIVE_CUSTOMFIELDS_TYPES = array();
