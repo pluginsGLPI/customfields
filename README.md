@@ -1,6 +1,14 @@
 # GLPI Custom fields plugin
 
-### Latest news (2015-09-24)
+### Latest news
+
+(2015-11-18)
+
+There is a [migration script](https://github.com/pluginsGLPI/customfields/blob/master/scripts/migrate-to-fields.php) to "fields" plugin.  
+**WARNING : this script is very experimental and deserved to be more tested. We strongly advise you to backup your data before using it**
+
+
+(2015-09-24)
 
 An plugin similar to Custom Fields is available. It is able to add fields on the main tab of an asset or any other object). As this is a frequent asked feature, please try it !
 
