@@ -531,6 +531,7 @@ function plugin_customfields_giveItem($itemtype, $ID, $data, $num, $meta = 0)
 
 function plugin_customfields_postinit() {
    global $PLUGIN_HOOKS, $DB, $ALL_CUSTOMFIELDS_TYPES, $ACTIVE_CUSTOMFIELDS_TYPES;
+   
    // $plugin = new Plugin();
    // if ($plugin->isInstalled('otherPlugin') && $plugin->isActivated('otherPlugin')) {
       
@@ -545,34 +546,29 @@ function plugin_customfields_postinit() {
       $ALL_CUSTOMFIELDS_TYPES[] = $data['itemtype'];
       if ($data['enabled']) {
          include('inc/virtual_classes.php');
-         $ACTIVE_CUSTOMFIELDS_TYPES[] = $data['itemtype'];
-         Plugin::registerClass('PluginCustomfields' . $data['itemtype'], array(
-            'addtabon' => array(
-               $data['itemtype']
-            )
-         ));
+         // Some installations may have a numeric itemtype due to 
+         // unknown itemtype ID kept from very old versions
+         if (!is_numeric($data['itemtype'])) {
+            $ACTIVE_CUSTOMFIELDS_TYPES[] = $data['itemtype'];
+            Plugin::registerClass('PluginCustomfields' . $data['itemtype'], array(
+               'addtabon' => array(
+                  $data['itemtype']
+               )
+            ));
+            
+            // Hooks for add item, update item (for active types)
+            $PLUGIN_HOOKS['item_add']['customfields'][$data['itemtype']] =
+            'plugin_item_add_customfields';
+            $PLUGIN_HOOKS['pre_item_update']['customfields'][$data['itemtype']] =
+            'plugin_pre_item_update_customfields';
+            
+            // Hooks for purge item
+            $PLUGIN_HOOKS['item_purge']['customfields'][$data['itemtype']] =
+              'plugin_item_purge_customfields';
+         }
       }
    }
-    
-   // Hooks for add item, update item (for active types)
-
-   foreach ($ACTIVE_CUSTOMFIELDS_TYPES as $type) {
-      $PLUGIN_HOOKS['item_add']['customfields'][$type] =
-         'plugin_item_add_customfields';
-      $PLUGIN_HOOKS['pre_item_update']['customfields'][$type] =
-         'plugin_pre_item_update_customfields';
-   }
-
-   // Hooks for purge item
-   
-   foreach ($ALL_CUSTOMFIELDS_TYPES as $type) {
-      $PLUGIN_HOOKS['item_purge']['customfields'][$type] =
-        'plugin_item_purge_customfields';
-   }
-
 }
-
-// ** SETUP HOOKS ** //
 
 /**
  * Install Custom fields plugin
