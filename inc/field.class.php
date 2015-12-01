@@ -486,7 +486,7 @@ class PluginCustomfieldsField extends CommonDBTM
             $this->fields["id"],
             $this->associatedItemType(), 
             array(
-               '',
+               0,
                $oldvalues,
                $newvalues
             ),
