@@ -160,13 +160,12 @@ class PluginCustomfieldsItemtype extends CommonDBTM
          $query  = "DELETE FROM `glpi_plugin_customfields_fields`
                     WHERE `itemtype` = '$itemType'";
           
-         $result = $DB->query($query) or die($DB->error());;
+         $result = $DB->query($query) or die($DB->error());
       
          // Remove the itemtype from the itemtypes supported by the plugin 
          $query  = "DELETE FROM `glpi_plugin_customfields_itemtypes`
                     WHERE `itemtype` = '$itemType'";
-          
-         $result = $DB->query($query) or die($DB->error());;
+         $result = $DB->query($query) or die($DB->error());
          
          // Remove all data for the itemtype
          $table       = plugin_customfields_table($itemType);
@@ -174,12 +173,6 @@ class PluginCustomfieldsItemtype extends CommonDBTM
             $query = "DROP TABLE IF EXISTS `$table`";
             $DB->query($query) or die($DB->error());
          }
-         
-         // Unregister the itemtype
-         $query  = "DELETE FROM `glpi_plugin_customfields_itemtypes`
-         WHERE `itemtype` = '$itemType'";
-         $DB->query($query) or die($DB->error());
-          
       }
    }
 
