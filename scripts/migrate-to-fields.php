@@ -51,50 +51,57 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 chdir(dirname($_SERVER["SCRIPT_FILENAME"]));
 
 include ('../../../inc/includes.php');
+
+if (isCommandLine()) {
+   $EndOfLine = "\n";
+} else {
+   $EndOfLine = "<br>";
+}
+
 // Sanitize console output
-echo "\n\n";
+echo $EndOfLine . $EndOfLine;
 
 // ---- Check prerequisites ----
-echo "Searching for Fields plugin\n";
+echo "Searching for Fields plugin$EndOfLine";
 if (! class_exists("PluginFieldsContainer")) {
-   die ("It appears you did not install or activate Fields plugin \nPlease download it here : http://github.com/pluginsglpi/fields\n");
+   die ("It appears you did not install or activate Fields plugin $EndOfLinePlease download it here : http://github.com/pluginsglpi/fields$EndOfLine");
 } else {
-   echo "Fields plugin found and activated\n";
+   echo "Fields plugin found and activated$EndOfLine";
 }
 
-echo "Checking for Fields version\n";
+echo "Checking for Fields version$EndOfLine";
 $query = "SELECT `version` FROM `glpi_plugins`  WHERE `directory`='fields' ";
 if (! $result = $DB->query($query)) {
-   die ("Could search plugins table for Fields version\n");
+   die ("Could search plugins table for Fields version$EndOfLine");
 }
 if (!($data = $DB->fetch_assoc($result))) {
-   die("Could not find Fields in the plugins table\n");
+   die("Could not find Fields in the plugins table$EndOfLine");
 }
 if ($data['version'] != '0.90-1.1') {
-   die("Fields version does not match 0.90-1.1\n");
+   die("Fields version does not match 0.90-1.1$EndOfLine");
 }
 
 
-echo "Searching for Custom Fields plugin\n";
+echo "Searching for Custom Fields plugin$EndOfLine";
 if (! class_exists("PluginCustomfieldsConfig")) {
-   die ("It appears you did not install or activate Custom Fields plugin\n");
+   die ("It appears you did not install or activate Custom Fields plugin$EndOfLine");
 } else {
-   echo "Custom Fields plugin found and activated\n";
+   echo "Custom Fields plugin found and activated$EndOfLine";
 }
 
-echo "Disabling Custom Fields before migration";
+echo "Disabling Custom Fields before migration$EndOfLine";
 $query = "UPDATE `glpi_plugins` SET `state`='4' WHERE `directory`='customfields' ";
-if (! $result = $DB->query($query)) {
-   die ("Could not disable Custom Fields\n");
-}
+// if (! $result = $DB->query($query)) {
+//    die ("Could not disable Custom Fields$EndOfLine");
+// }
 
 $query = "SELECT `enabled` FROM `glpi_plugin_customfields_itemtypes` WHERE `itemtype`='Version' LIMIT 1";
 if ($result = $DB->query($query)) {
    if (($row = $DB->fetch_assoc($result)) === null) {
-      die ("Custom Fields tables are damaged : unable to check version of the plugin\n");
+      die ("Custom Fields tables are damaged : unable to check version of the plugin$EndOfLine");
    } else {
-      if ($row['Version'] != '170') {
-         die("Please upgrade Custom Fields and carefully check data before running this migration tool again \nThis script supports the latest DB model only.\n");
+      if ($row['enabled'] < '160') {
+         die("Please upgrade Custom Fields and carefully check data before running this migration tool again. $EndOfLine This script supports the latest DB model only.$EndOfLine");
       }
    }
 }
@@ -102,12 +109,12 @@ if ($result = $DB->query($query)) {
 // ---- OK for migration ----
 $query = "SELECT * FROM `glpi_plugin_customfields_itemtypes` WHERE NOT `itemtype`='Version'";
 if (!$containerResult = $DB->query($query)) {
-   die("Could not find activated custom fields\n");
+   die("Could not find activated custom fields$EndOfLine");
 } else {
    while ($containerData = $DB->fetch_assoc($containerResult)) {
       $itemtype = $containerData['itemtype'];
       if (is_numeric($itemtype)) {
-         echo "Warning : ignoring itemtype $itemtype . This is mostly due to a very old Cutom Fields intallation; maybe some custom fields have been lost while upgrading to GLPI 0.84 or later.\n";
+         echo "Warning : ignoring itemtype $itemtype . This is mostly due to a very old Cutom Fields intallation; maybe some custom fields have been lost while upgrading to GLPI 0.84 or later.$EndOfLine";
       } else {
          $container = new PluginFieldsContainer();
          $container->fields["label"] = __('Custom Field', 'customfields');
@@ -120,7 +127,7 @@ if (!$containerResult = $DB->query($query)) {
          $container->fields["is_active"] = $containerData["enabled"];
          
          if (!$fieldResult = $DB->query("SELECT * FROM `glpi_plugin_customfields_fields` WHERE `itemtype`='$itemtype' ORDER BY `sort_order`")) {
-            die("Could not read customfields fields for itemtype $itemtype\n");
+            die("Could not read customfields fields for itemtype $itemtype$EndOfLine");
          }
          $customFieldsColumns = array("id");
          $fieldsColumns = array("items_id");
@@ -130,6 +137,7 @@ if (!$containerResult = $DB->query($query)) {
             // Override entities list as there is no way to convert arbitrary entities to a subtree of them 
             // without making duplate and inconsistent data
             $entities = array('*');
+            $entity = '*';
             
             $entity = trim($entity);
             if ($entity == '*') {
@@ -142,17 +150,19 @@ if (!$containerResult = $DB->query($query)) {
             
             // Check if a container already exists for the current entity
             $checkContainer = new PluginFieldsContainer();
-            $foundContainers = $checkContainer->find(" `itemtype`='$itemtype' AND `entities_id`='$entity' AND `type`='tab' AND `is_recursive`='0' ORDER BY `id` DESC");
+            $foundContainers = $checkContainer->find(" `itemtype`='$itemtype' AND `entities_id`='$entity' AND `type`='tab' AND `is_recursive`='1' ORDER BY `id` DESC");
             
             if (count($foundContainers) == 0) {
                // No eligible container, create it 
                if (!$container->addToDB()) {
-                  die("Could not add in DB the container for $itemtype\n");
+                  die("Could not add in DB the container for $itemtype$EndOfLine");
                }
-               $targetContainer = $container;
+               //$targetContainer = $container;
             } else {
                // shift should get the latest created container (first one because ordered descending by ID 
-               $targetContainer = array_shift($foundContainers);
+               //$targetContainer = array_shift($foundContainers);
+               $foundContainer = array_pop($foundContainers);
+               $container->getFromDB($foundContainer['id']);
             }
             
             $field = new PluginFieldsField();
@@ -170,15 +180,16 @@ if (!$containerResult = $DB->query($query)) {
             $fieldsColumns[] = $field->fields["name"];
             
             if (!$field->addToDB()) {
-               die("Could not create field " . $field->fields["name"] . " for $itemtype, entity $entity \n");
+               die("Could not create field " . $field->fields["name"] . " for $itemtype, entity $entity $EndOfLine");
             }
-            if ($field->fields["type"] != 'dropdown') {
-               $targetItemtype = "PluginFields".ucfirst($fields['itemtype'].
-                                       preg_replace('/s$/', '', $fields['name']));
+            if ($field->fields["type"] != 'dropdown' && $field->fields["type"] != 'header') {
+               $targetItemtype = "PluginFields".ucfirst($itemtype.
+                                       preg_replace('/s$/', '', $container->fields['name']));
+               PluginFieldsContainer::generateTemplate($container->fields);
                $targetTable = $targetItemtype::getTable();
                $sourceItemtype = "PluginCustomfields" . $itemtype;
                $sourceTable = $sourceItemtype::getTable();
-               
+               $targetItemtype::addField($field->fields["name"], $field->fields["type"]);
             } else {
                
             }
@@ -186,12 +197,12 @@ if (!$containerResult = $DB->query($query)) {
          }
          
          // Migrate all data for the container
-         $customFieldsColumns = explode(', ', $customFieldsColumns);
-         $fieldsColumns = explode(', ', fieldsColumns);
+         $customFieldsColumns = '`' . implode('`, `', $customFieldsColumns) . '`';
+         $fieldsColumns = '`' . implode('`, `', $fieldsColumns) . '`';
          $query = "INSERT INTO $targetTable ($fieldsColumns)
             SELECT $customFieldsColumns FROM $sourceTable";
          if (! $result = $DB->query($query)) {
-            die("Could not move data from $sourceTable to $targetTable\n");
+            die("Could not move data from $sourceTable to $targetTable$EndOfLine");
          }
       }
       
@@ -200,7 +211,7 @@ if (!$containerResult = $DB->query($query)) {
 
 function convertType($type) {
      switch ($type) {
-        case 'section_head':
+        case 'sectionhead':
            $convertedType = 'header';
            break;
            
