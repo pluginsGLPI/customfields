@@ -1,12 +1,11 @@
-# GLPI Custom fields plugin
+# This plugin is no longer maintained. Please use the [Fields plugin instead](https://github.com/pluginsglpi/fields)
 
-### Latest news
-
-(2015-11-18)
-
-There is a [migration script](https://github.com/pluginsGLPI/customfields/blob/master/scripts/migrate-to-fields.php) to "fields" plugin.  
+(2015-11-18) There is a [migration script](https://github.com/pluginsGLPI/customfields/blob/master/scripts/migrate-to-fields.php) to [Fields plugin](https://github.com/pluginsglpi/fields).  
 **WARNING : this script is very experimental and deserved to be more tested. We strongly advise you to backup your data before using it**
 
+## GLPI Custom fields plugin
+
+### Latest news
 
 (2015-09-24)
 
